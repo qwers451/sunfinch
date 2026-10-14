@@ -1,0 +1,11 @@
+# Исходники Firefox и артефакты сборки
+engine/
+dist/
+.surfer/
+.gluon/
+*.tar.xz
+
+node_modules/
+
+.DS_Store
+Thumbs.db
