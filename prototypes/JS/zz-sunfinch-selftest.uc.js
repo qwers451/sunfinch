@@ -45,10 +45,12 @@
     await delayedStartupPromise;
     if (phase == "2") {
       await spacesAfterRestart();
+      await notesAfterRestart();
       return;
     }
     await buttons();
     await spacesSetup();
+    await notesSetup();
   }
 
   async function buttons() {
@@ -208,6 +210,77 @@
       "resource:///modules/sessionstore/TabStateFlusher.sys.mjs"
     );
     await TabStateFlusher.flushWindow(window);
+  }
+
+  const { NotesStore } = ChromeUtils.importESModule(
+    "chrome://userscripts/content/SunfinchNotes/NotesStore.sys.mjs"
+  );
+
+  async function openNotes() {
+    document.getElementById("sunfinch-notes-button").click();
+    await waitFor(() => window.SunfinchNotes.isOpen);
+    return document.getElementById("sunfinch-notes-text");
+  }
+
+  async function closeNotes() {
+    const panel = document.getElementById("sunfinch-notes-text")?.closest("panel");
+    if (panel?.state == "open") {
+      const hidden = new Promise(r => panel.addEventListener("popuphidden", r, { once: true }));
+      panel.hidePopup();
+      await hidden;
+    }
+  }
+
+  async function notesSetup() {
+    const S = window.SunfinchSpaces;
+    const button = document.getElementById("sunfinch-notes-button");
+    check("notes: button in the toolbar", button?.closest("#nav-bar"));
+    const placement = CustomizableUI.getPlacementOfWidget("sunfinch-notes-button");
+    const switcher = CustomizableUI.getPlacementOfWidget("sunfinch-spaces-switcher");
+    check("notes: button is on the right of the switcher", placement?.position > switcher?.position,
+      JSON.stringify({ placement, switcher }));
+    if (!button || !S?.ready) {
+      return;
+    }
+    const [first, second] = SpacesStore.spaces.map(sp => sp.id);
+    S.switchTo(second);
+
+    const text = await openNotes();
+    check("notes: panel opens", window.SunfinchNotes.isOpen && text);
+    if (!text) {
+      return;
+    }
+    check("notes: panel title names the space",
+      text.closest("panelview")?.getAttribute("title")?.includes("Second"));
+    text.setUserInput("note for Second");
+
+    S.switchTo(first);
+    check("notes: switching space switches the note", text.value == "" && text.dataset.spaceId == first,
+      JSON.stringify([text.value, text.dataset.spaceId]));
+    text.setUserInput("note for Space 1");
+    S.switchTo(second);
+    check("notes: each space keeps its note", text.value == "note for Second", text.value);
+    await closeNotes();
+
+    await NotesStore.flush();
+    const saved = await IOUtils.readJSON(PathUtils.join(PathUtils.profileDir, "sunfinch-notes.json"));
+    check("notes: saved to the profile",
+      saved.notes?.[first]?.text == "note for Space 1" && saved.notes?.[second]?.text == "note for Second",
+      JSON.stringify(saved));
+    const { TabStateFlusher } = ChromeUtils.importESModule(
+      "resource:///modules/sessionstore/TabStateFlusher.sys.mjs"
+    );
+    await TabStateFlusher.flushWindow(window);
+  }
+
+  async function notesAfterRestart() {
+    await NotesStore.init();
+    const [first, second] = SpacesStore.spaces.map(sp => sp.id);
+    check("restart: notes are kept",
+      NotesStore.get(first) == "note for Space 1" && NotesStore.get(second) == "note for Second");
+    const text = await openNotes();
+    check("restart: panel shows the active space's note", text?.value == "note for Second", text?.value);
+    await closeNotes();
   }
 
   async function spacesAfterRestart() {

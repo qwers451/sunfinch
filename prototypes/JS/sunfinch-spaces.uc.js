@@ -148,6 +148,9 @@
       lazy.SessionStore.setCustomWindowValue(window, ACTIVE_SPACE_KEY, this.activeId);
       this.updateDivider();
       this.renderSwitcher();
+      window.dispatchEvent(
+        new CustomEvent("SunfinchSpaceChanged", { detail: { spaceId: this.activeId } })
+      );
     },
 
     switchTo(spaceId) {
