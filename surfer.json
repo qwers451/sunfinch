@@ -17,6 +17,10 @@
       "brandShortName": "SunFinch",
       "brandFullName": "SunFinch",
       "brandingVendor": "SunFinch",
+      "aboutUrl": "https://github.com/qwers451/sunfinch",
+      "releaseNotesUrl": "https://github.com/qwers451/sunfinch/releases",
+      "helpUrl": "https://github.com/qwers451/sunfinch/issues",
+      "downloadUrl": "https://github.com/qwers451/sunfinch/releases",
       "release": {
         "displayVersion": "0.1.0"
       }

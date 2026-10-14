@@ -11,3 +11,64 @@ index d245397..68caecd 100644
          if ((0, node_fs_1.existsSync)(constants_1.ENGINE_DIR)) {
              // remove the existing engine directory
              fs_extra_1.default.removeSync(constants_1.ENGINE_DIR);
+diff --git a/node_modules/@zen-browser/surfer/dist/commands/patches/branding-patch.js b/node_modules/@zen-browser/surfer/dist/commands/patches/branding-patch.js
+index e1ad7b8..ad4f9e7 100644
+--- a/node_modules/@zen-browser/surfer/dist/commands/patches/branding-patch.js
++++ b/node_modules/@zen-browser/surfer/dist/commands/patches/branding-patch.js
+@@ -177,9 +177,9 @@ function configureBrandingNsis(brandingNsis, brandingConfig) {
+ !define BrandFullNameInternal "${brandingConfig.brandFullName}"
+ !define BrandFullName         "${brandingConfig.brandFullName}"
+ !define CompanyName           "${brandingConfig.brandingVendor}"
+-!define URLInfoAbout          "https://zen-browser.app"
+-!define URLUpdateInfo         "https://zen-browser.app/release-notes/\${AppVersion}"
+-!define HelpLink              "https://github.com/zen-browser/desktop/issues"
++!define URLInfoAbout          "${brandingConfig.aboutUrl || ''}"
++!define URLUpdateInfo         "${brandingConfig.releaseNotesUrl || ''}"
++!define HelpLink              "${brandingConfig.helpUrl || ''}"
+ 
+ 
+ ; The OFFICIAL define is a workaround to support different urls for Release and
+@@ -189,7 +189,7 @@ function configureBrandingNsis(brandingNsis, brandingConfig) {
+ !define URLStubDownloadX86 "https://download.mozilla.org/?os=win&lang=\${AB_CD}&product=firefox-latest"
+ !define URLStubDownloadAMD64 "https://download.mozilla.org/?os=win64&lang=\${AB_CD}&product=firefox-latest"
+ !define URLStubDownloadAArch64 "https://download.mozilla.org/?os=win64-aarch64&lang=\${AB_CD}&product=firefox-latest"
+-!define URLManualDownload "https://zen-browser.app/download"
++!define URLManualDownload "${brandingConfig.downloadUrl || ''}"
+ !define URLSystemRequirements "https://www.mozilla.org/firefox/system-requirements/"
+ !define Channel "stable"
+ 
+@@ -260,26 +260,17 @@ function configureProfileBranding(brandingPath, brandingConfig) {
+  * License, v. 2.0. If a copy of the MPL was not distributed with this
+  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ 
+-pref("startup.homepage_override_url", "https://zen-browser.app/whatsnew?v=%VERSION%");
+-pref("startup.homepage_welcome_url", "https://zen-browser.app/welcome/");
+-pref("startup.homepage_welcome_url.additional", "https://zen-browser.app/privacy-policy/");
++pref("startup.homepage_override_url", "");
++pref("startup.homepage_welcome_url", "");
++pref("startup.homepage_welcome_url.additional", "");
+ 
+ // Give the user x seconds to react before showing the big UI. default=192 hours
+ pref("app.update.promptWaitTime", 691200);
+-// app.update.url.manual: URL user can browse to manually if for some reason
+-// all update installation attempts fail.
+-// app.update.url.details: a default value for the "More information about this
+-// update" link supplied in the "An update is available" page of the update
+-// wizard.
+-pref("app.update.url.manual", "https://zen-browser.app/download/");
+-pref("app.update.url.details", "https://zen-browser.app/release-notes/latest/");
+-pref("app.releaseNotesURL", "https://zen-browser.app/whatsnew/");
+-pref("app.releaseNotesURL.aboutDialog", "https://www.zen-browser.app/release-notes/%VERSION%/");
+-pref("app.releaseNotesURL.prompt", "https://zen-browser.app/release-notes/%VERSION%/");
+-
+-// Number of usages of the web console.
+-// If this is less than 5, then pasting code into the web console is disabled
+-pref("devtools.selfxss.count", 5);
++pref("app.update.url.manual", "${brandingConfig.downloadUrl || ''}");
++pref("app.update.url.details", "${brandingConfig.releaseNotesUrl || ''}");
++pref("app.releaseNotesURL", "${brandingConfig.releaseNotesUrl || ''}");
++pref("app.releaseNotesURL.aboutDialog", "${brandingConfig.releaseNotesUrl || ''}");
++pref("app.releaseNotesURL.prompt", "${brandingConfig.releaseNotesUrl || ''}");
+ `);
+ }
+ function setUpdateURLs() {
