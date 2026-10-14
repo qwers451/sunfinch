@@ -3,6 +3,8 @@ engine/
 dist/
 .surfer/
 .gluon/
+.dotbuild/
+firefox-*/
 *.tar.xz
 
 node_modules/

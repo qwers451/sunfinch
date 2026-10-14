@@ -1,0 +1,15 @@
+{
+  "name": "sunfinch",
+  "version": "0.0.0",
+  "private": true,
+  "description": "SunFinch browser, a Firefox ESR fork",
+  "license": "MPL-2.0",
+  "scripts": {
+    "surfer": "surfer",
+    "postinstall": "patch-package"
+  },
+  "devDependencies": {
+    "@zen-browser/surfer": "1.14.9",
+    "patch-package": "8.0.1"
+  }
+}

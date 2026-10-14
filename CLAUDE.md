@@ -15,5 +15,7 @@
 ## Окружение (Windows)
 
 - Репозиторий: `E:\dev\sunfinch`. Пути без кириллицы и пробелов.
-- `MOZBUILD_STATE_PATH=E:\mozbuild`.
+- `MOZBUILD_STATE_PATH=E:\mozbuild`, `CARGO_HOME=E:\mozbuild\cargo`, `RUSTUP_HOME=E:\mozbuild\rustup` (профиль пользователя с кириллицей, на C: мало места).
+- MozillaBuild — `E:\MozillaBuild`. Команды `surfer` запускать из его оболочки (`E:\MozillaBuild\start-shell.bat`), не из PowerShell.
 - Первая сборка: `surfer download` → `surfer bootstrap` → `surfer import` → `surfer build` → `surfer run`.
+- Исправления surfer — в `patches/` (patch-package, применяются при `npm install`).

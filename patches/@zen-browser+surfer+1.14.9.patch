@@ -1,0 +1,13 @@
+diff --git a/node_modules/@zen-browser/surfer/dist/commands/download/firefox.js b/node_modules/@zen-browser/surfer/dist/commands/download/firefox.js
+index d245397..68caecd 100644
+--- a/node_modules/@zen-browser/surfer/dist/commands/download/firefox.js
++++ b/node_modules/@zen-browser/surfer/dist/commands/download/firefox.js
+@@ -65,7 +65,7 @@ async function unpackFirefoxSource(name) {
+             (0, node_path_1.resolve)(constants_1.MELON_TMP_DIR, name.replace('.tar.xz', '.tar')),
+             '-o' + constants_1.MELON_TMP_DIR,
+         ]);
+-        const archiveDir = (0, node_path_1.resolve)(constants_1.MELON_TMP_DIR, 'firefox-' + (0, utils_1.getFFVersionOrCandidate)());
++        const archiveDir = (0, node_path_1.resolve)(constants_1.MELON_TMP_DIR, 'firefox-' + (0, utils_1.getFFVersionOrCandidate)().replace(/esr$/, ''));
+         if ((0, node_fs_1.existsSync)(constants_1.ENGINE_DIR)) {
+             // remove the existing engine directory
+             fs_extra_1.default.removeSync(constants_1.ENGINE_DIR);

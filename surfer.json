@@ -1,0 +1,29 @@
+{
+  "name": "SunFinch",
+  "vendor": "SunFinch",
+  "appId": "org.sunfinch.browser",
+  "binaryName": "sunfinch",
+  "version": {
+    "product": "firefox-esr",
+    "version": "153.5.0esr"
+  },
+  "buildOptions": {
+    "windowsUseSymbolicLinks": false
+  },
+  "brands": {
+    "release": {
+      "backgroundColor": "#2B2A33",
+      "brandShorterName": "SunFinch",
+      "brandShortName": "SunFinch",
+      "brandFullName": "SunFinch",
+      "brandingVendor": "SunFinch",
+      "release": {
+        "displayVersion": "0.1.0"
+      }
+    }
+  },
+  "license": {
+    "ignoredFiles": [".*\\.json"],
+    "licenseType": "MPL-2.0"
+  }
+}

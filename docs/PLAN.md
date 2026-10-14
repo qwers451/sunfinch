@@ -6,10 +6,10 @@
 
 | Что | Решение | Почему |
 |---|---|---|
-| База | **Firefox ESR 153** | С сентября 2026 Firefox выходит раз в 2 недели. На Release пришлось бы ребейзить патчи каждые 2 недели. На ESR большой переезд бывает раз в год, а между ними выходят только минорные security-версии 153.x. Вертикальные вкладки (136+) и нативный Split View (149+) в ESR 153 уже есть. |
-| Сборщик | **surfer** (`@zen-browser/surfer`), форк Gluon | Оригинальный `gluon-build` не обновлялся с декабря 2023. surfer наследует от Gluon те же команды и ту же структуру, но живой: v1.14.9 вышла в августе 2026, а в июне 2026 в нём починили mozconfig под свежий Firefox. Им собирается Zen. |
+| База | **Firefox ESR 153** (сейчас 153.5.0esr) | С сентября 2026 Firefox выходит раз в 2 недели. На Release пришлось бы ребейзить патчи каждые 2 недели. На ESR большой переезд бывает раз в год, а между ними выходят только минорные security-версии 153.x. Вертикальные вкладки (136+) и нативный Split View (149+) в ESR 153 уже есть. |
+| Сборщик | **surfer** (`@zen-browser/surfer`) 1.14.9, версия закреплена в `package.json` | Оригинальный `gluon-build` не обновлялся с декабря 2023. surfer наследует от Gluon те же команды и ту же структуру, но живой: v1.14.9 вышла в августе 2026, а в июне 2026 в нём починили mozconfig под свежий Firefox. Им собирается Zen, поэтому ESR в нём проверен хуже: свои исправления держим в `patches/` через patch-package. |
 | Лицензия | MPL-2.0 | Как у Firefox. Имя «Firefox» и логотипы Mozilla использовать нельзя: ребрендинг обязателен. |
-| Где лежит | `E:\dev\sunfinch`, кэш mach в `E:\mozbuild` | Путь без кириллицы и пробелов (MozillaBuild на таких ломается). На C: не хватает места. |
+| Где лежит | Всё на E:. Репозиторий `E:\dev\sunfinch`, MozillaBuild `E:\MozillaBuild`, кэш mach и Rust в `E:\mozbuild` (`MOZBUILD_STATE_PATH`, `CARGO_HOME`, `RUSTUP_HOME`), Visual Studio `E:\VS` | Путь без кириллицы и пробелов (MozillaBuild на таких ломается), а профиль пользователя — `C:\Users\Михаил`. На C: свободно ~18 ГБ. |
 
 ## Сравнение подходов
 
@@ -106,11 +106,16 @@
 ## Этапы
 
 ### Этап 0. Инфраструктура
-1. Установить MozillaBuild, Visual Studio 2022 (или Build Tools) с нагрузкой «Desktop development with C++» и Windows SDK, 7-Zip. Node 24 и Python 3.12 уже есть, Rust поставит bootstrap.
-2. Задать `MOZBUILD_STATE_PATH=E:\mozbuild` и добавить `E:\dev\sunfinch` и `E:\mozbuild` в исключения Defender: это заметно ускоряет сборку.
-3. `npm i -D @zen-browser/surfer`, затем `surfer setup-project`: продукт Firefox ESR, версия 153.x, имя SunFinch, бинарник `sunfinch`.
-4. Брендинг: `configs/branding/<brand>/logo.png` (PNG в высоком разрешении с прозрачным фоном) и `MacOSInstaller.svg`, плюс `brands` в конфиге, затем `surfer set brand <brand>`.
-5. `surfer download` → `surfer bootstrap` → `surfer import` → `surfer build` → `surfer run`.
+1. ✅ Софт. MozillaBuild 4.2.1 (`E:\MozillaBuild`), Visual Studio Community 2026 (`E:\VS`, MSVC 14.51/14.52), Windows SDK 10.0.26100, 7-Zip, Node 24.15, Python 3.12, Git 2.56. Rust поставит bootstrap. Нужен ли bootstrap'у установленный VS или он скачает свой набор MSVC/SDK — проверим на `surfer bootstrap`.
+2. Окружение.
+   - ✅ Переменные пользователя: `MOZBUILD_STATE_PATH=E:\mozbuild`, `CARGO_HOME=E:\mozbuild\cargo`, `RUSTUP_HOME=E:\mozbuild\rustup`. Без них кэш и Rust уйдут в профиль с кириллицей на C:: оболочка MozillaBuild считает домашней папкой профиль Windows.
+   - ⬜ Исключения Defender: `E:\dev\sunfinch`, `E:\mozbuild`, `E:\MozillaBuild`. Нужны права администратора; bootstrap предлагает добавить их сам через UAC.
+3. ✅ surfer: `npm i -D @zen-browser/surfer@1.14.9`. `surfer setup-project` интерактивный, поэтому его шаги повторены вручную: `surfer.json` (firefox-esr 153.5.0esr, имя SunFinch, бинарник `sunfinch`, бренд `release` с версией 0.1.0), mozconfig в `configs/`, строки в `.gitignore`.
+   - Исправление в `patches/`: на Windows surfer искал распакованные исходники в `firefox-153.5.0esr/`, а в архиве ESR папка называется `firefox-153.5.0/`.
+   - Остатки от Zen: surfer пишет в mozconfig `ZEN_FIREFOX_VERSION`, а `displayVersion` бренда — в `browser/config/version.txt`. Поэтому `Services.appinfo.version` будет 0.1.0, а версия движка (`platformVersion`) остаётся 153.5.
+4. ⬜ Брендинг: `configs/branding/release/logo.png` (PNG в высоком разрешении с прозрачным фоном) и `MacOSInstaller.svg`, затем `surfer set brand release`. Без логотипа сборка идёт со штатным брендом Firefox `unofficial`.
+5. ⬜ `surfer download` → `surfer bootstrap` → `surfer import` → `surfer build` → `surfer run`. **Запускать из оболочки MozillaBuild** (`E:\MozillaBuild\start-shell.bat`): mach находит MozillaBuild по переменной `MOZILLABUILD`, которую задаёт этот скрипт, а 7z для распаковки surfer берёт из `E:\MozillaBuild\bin`.
+6. ⬜ Для прототипов: Firefox ESR 153.5 в отдельной папке на E: со своим профилем и fx-autoconfig. Обычный Firefox 158 не трогаем.
 
 Первая сборка на i5-13400F и 32 ГБ займёт ориентировочно 1–2 часа, повторные — быстрее (кэш).
 
@@ -141,4 +146,5 @@
 - **Минорные версии ESR 153.x** надо регулярно подтягивать: это security-исправления.
 - **Логотип.** Исходник растровый, на белом фоне. Для брендинга нужен PNG высокого разрешения с прозрачностью, а лучше SVG. На 16–32 px птица из многих фигур превратится в кашу, поэтому нужна упрощённая версия для мелких размеров (например, голова с клювом и глазом).
 - **Prompt injection** в клиенте Claude: см. фичу 5.
-- **Окружение Windows:** пути с кириллицей и пробелами, место на C: (Visual Studio займёт 8–10 ГБ из 23 свободных).
+- **Окружение Windows:** профиль пользователя с кириллицей (`C:\Users\Михаил`) и мало места на C: (~18 ГБ). Всё сборочное держим на E: и задаём пути переменными (см. этап 0).
+- **surfer заточен под Zen и Firefox Release.** На ESR уже нашлась ошибка распаковки. Правки держим в `patches/` (patch-package), а при обновлении surfer проверяем, нужны ли они ещё. `npm audit` ругается на `sharp` и `braces`: это инструменты сборки, `sharp` обрабатывает только наш логотип.
