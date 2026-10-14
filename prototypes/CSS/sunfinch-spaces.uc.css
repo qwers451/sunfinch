@@ -1,0 +1,48 @@
+/* Spaces: switcher on top, divider between main and additional tabs. */
+
+#sunfinch-spaces-switcher {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-inline: 4px;
+}
+
+.sunfinch-space-button,
+.sunfinch-space-add {
+  appearance: none;
+  border: none;
+  border-radius: var(--toolbarbutton-border-radius, 4px);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 4px 8px;
+  max-width: 14em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sunfinch-space-button:hover,
+.sunfinch-space-add:hover {
+  background-color: var(--toolbarbutton-hover-background);
+}
+
+.sunfinch-space-button[selected] {
+  background-color: var(--toolbarbutton-active-background);
+  box-shadow: inset 0 -2px 0 var(--sunfinch-space-color);
+  font-weight: 600;
+}
+
+/* Divider above the first additional tab. */
+.tabbrowser-tab[sunfinch-first-temp] {
+  margin-top: 6px;
+  position: relative;
+}
+
+.tabbrowser-tab[sunfinch-first-temp]::before {
+  content: "";
+  position: absolute;
+  inset-inline: 8px;
+  top: -4px;
+  border-top: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+}
