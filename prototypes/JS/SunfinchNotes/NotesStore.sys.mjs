@@ -2,9 +2,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// Quick notes, one text per space. Stored as JSON in the profile, not in
-// prefs: notes can be large and prefs.js is rewritten on every pref change.
-// Windows listen to the "sunfinch-notes-changed" notification (data: space id).
+// Quick notes: one text shared by all spaces and windows. Stored as JSON in
+// the profile, not in prefs: notes can be large and prefs.js is rewritten on
+// every pref change. Windows listen to "sunfinch-notes-changed".
 
 const lazy = {};
 ChromeUtils.defineESModuleGetters(lazy, {
@@ -15,7 +15,7 @@ const FILE_NAME = "sunfinch-notes.json";
 const SAVE_DELAY_MS = 500;
 
 class Store {
-  #notes = {};
+  #text = "";
   #ready = null;
   #saveTask = null;
 
@@ -33,8 +33,8 @@ class Store {
   async #load() {
     try {
       const data = await IOUtils.readJSON(this.path);
-      if (data?.notes && typeof data.notes == "object") {
-        this.#notes = data.notes;
+      if (typeof data?.text == "string") {
+        this.#text = data.text;
       }
     } catch (e) {
       if (e.name != "NotFoundError") {
@@ -50,26 +50,22 @@ class Store {
   async #save() {
     await IOUtils.writeJSON(
       this.path,
-      { version: 1, notes: this.#notes },
+      { version: 1, text: this.#text, updated: Date.now() },
       { tmpPath: this.path + ".tmp" }
     );
   }
 
-  get(spaceId) {
-    return this.#notes[spaceId]?.text ?? "";
+  get text() {
+    return this.#text;
   }
 
-  set(spaceId, text) {
-    if (this.get(spaceId) == text) {
+  set text(value) {
+    if (value == this.#text) {
       return;
     }
-    if (text) {
-      this.#notes[spaceId] = { text, updated: Date.now() };
-    } else {
-      delete this.#notes[spaceId];
-    }
+    this.#text = value;
     this.#saveTask.arm();
-    Services.obs.notifyObservers(null, "sunfinch-notes-changed", spaceId);
+    Services.obs.notifyObservers(null, "sunfinch-notes-changed");
   }
 
   /** Flush to disk now (tests). */

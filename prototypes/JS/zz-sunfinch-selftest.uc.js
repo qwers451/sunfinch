@@ -250,23 +250,18 @@
     if (!text) {
       return;
     }
-    check("notes: panel title names the space",
-      text.closest("panelview")?.getAttribute("title")?.includes("Second"));
-    text.setUserInput("note for Second");
-
+    text.setUserInput("shared note");
     S.switchTo(first);
-    check("notes: switching space switches the note", text.value == "" && text.dataset.spaceId == first,
-      JSON.stringify([text.value, text.dataset.spaceId]));
-    text.setUserInput("note for Space 1");
+    check("notes: same note in every space", text.value == "shared note", text.value);
+    await closeNotes();
     S.switchTo(second);
-    check("notes: each space keeps its note", text.value == "note for Second", text.value);
+    const again = await openNotes();
+    check("notes: note is there after reopening", again?.value == "shared note", again?.value);
     await closeNotes();
 
     await NotesStore.flush();
     const saved = await IOUtils.readJSON(PathUtils.join(PathUtils.profileDir, "sunfinch-notes.json"));
-    check("notes: saved to the profile",
-      saved.notes?.[first]?.text == "note for Space 1" && saved.notes?.[second]?.text == "note for Second",
-      JSON.stringify(saved));
+    check("notes: saved to the profile", saved.text == "shared note", JSON.stringify(saved));
     const { TabStateFlusher } = ChromeUtils.importESModule(
       "resource:///modules/sessionstore/TabStateFlusher.sys.mjs"
     );
@@ -275,11 +270,9 @@
 
   async function notesAfterRestart() {
     await NotesStore.init();
-    const [first, second] = SpacesStore.spaces.map(sp => sp.id);
-    check("restart: notes are kept",
-      NotesStore.get(first) == "note for Space 1" && NotesStore.get(second) == "note for Second");
+    check("restart: note is kept", NotesStore.text == "shared note", NotesStore.text);
     const text = await openNotes();
-    check("restart: panel shows the active space's note", text?.value == "note for Second", text?.value);
+    check("restart: panel shows the note", text?.value == "shared note", text?.value);
     await closeNotes();
   }
 
