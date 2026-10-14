@@ -72,3 +72,24 @@ index e1ad7b8..ad4f9e7 100644
  `);
  }
  function setUpdateURLs() {
+diff --git a/node_modules/@zen-browser/surfer/dist/utils/dispatch.js b/node_modules/@zen-browser/surfer/dist/utils/dispatch.js
+index 840c258..8a8523a 100644
+--- a/node_modules/@zen-browser/surfer/dist/utils/dispatch.js
++++ b/node_modules/@zen-browser/surfer/dist/utils/dispatch.js
+@@ -49,8 +49,15 @@ const configDispatch = (cmd, config) => {
+       log_1.log.error('Command failed. See error above.')
+     }
+   }
++  // Windows cannot run the extensionless ./mach script directly (it ends up
++  // in cmd.exe); run it with Python, as MozillaBuild does.
++  let args = config?.args
++  if (process.platform === 'win32' && cmd === './mach' && !shell) {
++    cmd = 'python3'
++    args = ['mach', ...(args || [])]
++  }
+   return new Promise((resolve) => {
+-    const proc = (0, execa_1.default)(cmd, config?.args, {
++    const proc = (0, execa_1.default)(cmd, args, {
+       cwd: config?.cwd || process.cwd(),
+       shell: shell,
+       env: {
