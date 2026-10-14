@@ -28,4 +28,5 @@ Chrome-скрипты фич обкатываются здесь на обычн
 | Кнопка «мобильная версия» | `JS/sunfinch-mobile-view.uc.js` | Работает: RDM 390×844, DPR 3, тач, iPhone UA, состояние кнопки следует за RDM |
 | Кнопка «скриншот» | `JS/sunfinch-screenshot.uc.js`, `JS/SunfinchScreenshot/` | Работает: клик — видимая область, Shift+клик — вся страница; в файл (через менеджер загрузок) и/или в буфер, pref `sunfinch.screenshot.target` |
 | Иконки кнопок | `CSS/sunfinch-buttons.uc.css` | Временно штатные иконки Firefox |
+| Базовая тема (черновик) | `CSS/sunfinch-theme.uc.css` | Палитра логотипа, акцент у выбранной вкладки и включённых кнопок, цвет фокуса; ждёт оценки вживую |
 - Отладка: Browser Toolbox (Ctrl+Alt+Shift+I), консоль браузера (Ctrl+Shift+J).

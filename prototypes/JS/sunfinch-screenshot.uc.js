@@ -73,9 +73,15 @@
 
   async function saveToFile(blob, browser) {
     const title = browser.contentTitle || browser.currentURI.host || "page";
-    const { filename, accepted } = await lazy.getFilename(title, browser);
+    const { filename: suggested, accepted } = await lazy.getFilename(title, browser);
     if (!accepted) {
       return false;
+    }
+    // Names carry the time to the second; don't overwrite a shot taken
+    // within the same second.
+    let filename = suggested;
+    for (let i = 2; await IOUtils.exists(filename); i++) {
+      filename = suggested.replace(/\.png$/, ` (${i}).png`);
     }
     const isPrivate = lazy.PrivateBrowsingUtils.isBrowserPrivate(browser);
     const blobURL = URL.createObjectURL(blob);
