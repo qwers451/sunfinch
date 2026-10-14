@@ -9,7 +9,6 @@
 {
   const WIDGET_ID = "sunfinch-screenshot-button";
   const TARGET_PREF = "sunfinch.screenshot.target"; // "file" | "clipboard" | "both"
-  const MODULES = "chrome://browser/content/sunfinch/modules";
 
   const lazy = {};
   ChromeUtils.defineESModuleGetters(lazy, {
@@ -25,8 +24,8 @@
   // only answers while its overlay is open, so we use our own.
   try {
     ChromeUtils.registerWindowActor("SunfinchScreenshot", {
-      parent: { esModuleURI: `${MODULES}/SunfinchScreenshotParent.sys.mjs` },
-      child: { esModuleURI: `${MODULES}/SunfinchScreenshotChild.sys.mjs` },
+      parent: { esModuleURI: `${SUNFINCH_ACTOR_MODULES}/SunfinchScreenshotParent.sys.mjs` },
+      child: { esModuleURI: `${SUNFINCH_ACTOR_MODULES}/SunfinchScreenshotChild.sys.mjs` },
     });
   } catch (e) {
     // Registered by an earlier window.

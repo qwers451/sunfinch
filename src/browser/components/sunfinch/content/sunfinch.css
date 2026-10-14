@@ -186,3 +186,26 @@
 #sunfinch-glance-bar > button:hover {
   background: var(--toolbarbutton-hover-background);
 }
+
+/* Claude side panel on the right of the page. */
+
+#sunfinch-claude-button {
+  list-style-image: url("chrome://browser/content/sunfinch/icons/claude.svg");
+}
+
+#sunfinch-claude-button[checked] > .toolbarbutton-icon {
+  background-color: var(--toolbarbutton-active-background);
+}
+
+#sunfinch-claude-box {
+  width: 380px;
+  min-width: 260px;
+  max-width: 60vw;
+  border-inline-start: 1px solid var(--chrome-content-separator-color);
+
+  > iframe {
+    flex: 1;
+    border: none;
+    width: 100%;
+  }
+}

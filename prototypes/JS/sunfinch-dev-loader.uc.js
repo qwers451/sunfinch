@@ -51,16 +51,6 @@
     stream.close();
     Components.manager.QueryInterface(Ci.nsIComponentRegistrar).autoRegister(manifest);
 
-    // Overrides apply in the parent process only, so actor modules come from
-    // the sunfinchdev package that content processes know: the launch scripts
-    // add it to chrome/utils/chrome.manifest, which is read at startup.
-    // Registered before screenshot.js runs; its own registration then fails
-    // quietly as "already registered".
-    ChromeUtils.registerWindowActor("SunfinchScreenshot", {
-      parent: { esModuleURI: "chrome://sunfinchdev/content/SunfinchScreenshotParent.sys.mjs" },
-      child: { esModuleURI: "chrome://sunfinchdev/content/SunfinchScreenshotChild.sys.mjs" },
-    });
-
     registry.registerSources([
       new L10nFileSource(
         "sunfinch-dev-en-US",
@@ -105,6 +95,12 @@
       }
     }
   }
+
+  // Overrides apply in the parent process only, so actor modules come from
+  // the sunfinchdev package that content processes know: the launch scripts
+  // copy the modules into the profile (the content sandbox reads nothing
+  // outside it) and add the package to chrome/utils/chrome.manifest.
+  window.SUNFINCH_ACTOR_MODULES = "chrome://sunfinchdev/content";
 
   // Per window: what browser.xhtml does in the fork.
   document.l10n.addResourceIds(["browser/sunfinch.ftl"]);

@@ -33,6 +33,9 @@ foreach ($dir in 'JS', 'CSS') {
 if (Test-Path $downloads) { Remove-Item -Recurse -Force $downloads }
 New-Item -ItemType Directory -Force $downloads | Out-Null
 
+# The Claude check asserts that this variable does not reach the CLI.
+$env:SUNFINCH_TEST_SECRET = '1'
+
 $baseUserJs = Get-Content (Join-Path $repo 'prototypes\user.js') -Raw
 $failed = 0
 foreach ($phase in '1', '2') {

@@ -49,3 +49,19 @@ sunfinch-notes-text =
 sunfinch-glance-expand = Открыть вкладкой
 sunfinch-glance-close = Закрыть
     .title = Закрыть (Esc)
+
+## Claude side panel
+
+sunfinch-claude-button =
+    .label = Claude
+    .tooltiptext = Спросить Claude об этой странице
+sunfinch-claude-title = Claude
+sunfinch-claude-new-chat = Новый чат
+sunfinch-claude-use-page = Учитывать страницу:
+sunfinch-claude-input =
+    .placeholder = Спросите об этой странице…
+sunfinch-claude-send = Отправить
+sunfinch-claude-stop = Остановить
+sunfinch-claude-stopped = Остановлено.
+sunfinch-claude-not-found = Claude Code не найден. Установите его или укажите путь к claude.exe в about:config: sunfinch.claude.path
+sunfinch-claude-error = Claude не ответил: { $message }

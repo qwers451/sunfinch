@@ -10,16 +10,15 @@
 // permissions, downloads, security UI) works; we only show its panel on top.
 
 {
-  const MODULES = "chrome://browser/content/sunfinch/modules";
   const GLANCE_ATTR = "sunfinch-glance";
   const PANEL_CLASS = "sunfinch-glance-panel";
   const HTML_NS = "http://www.w3.org/1999/xhtml";
 
   try {
     ChromeUtils.registerWindowActor("SunfinchGlance", {
-      parent: { esModuleURI: `${MODULES}/SunfinchGlanceParent.sys.mjs` },
+      parent: { esModuleURI: `${SUNFINCH_ACTOR_MODULES}/SunfinchGlanceParent.sys.mjs` },
       child: {
-        esModuleURI: `${MODULES}/SunfinchGlanceChild.sys.mjs`,
+        esModuleURI: `${SUNFINCH_ACTOR_MODULES}/SunfinchGlanceChild.sys.mjs`,
         events: { click: { capture: true, mozSystemGroup: true } },
       },
       allFrames: true,

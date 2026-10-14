@@ -31,6 +31,13 @@ pref("devtools.responsive.reloadNotification.enabled", false);
 pref("sunfinch.glance.enabled", true);
 pref("sunfinch.glance.modifier", "alt");
 
+// Claude side panel: path to the claude CLI (empty: search PATH and the
+// npm and native install locations), model (empty: CLI default) and how much
+// page text goes to Claude.
+pref("sunfinch.claude.path", "");
+pref("sunfinch.claude.model", "");
+pref("sunfinch.claude.maxPageChars", 100000);
+
 // Screenshot button: "file", "clipboard" or "both".
 pref("sunfinch.screenshot.target", "both");
 

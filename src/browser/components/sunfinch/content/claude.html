@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src chrome:; img-src chrome: data:; object-src 'none'"
+    />
+    <link rel="localization" href="browser/sunfinch.ftl" />
+    <link rel="stylesheet" href="chrome://browser/content/sunfinch/claude.css" />
+    <script type="module" src="chrome://browser/content/sunfinch/claude.mjs"></script>
+    <title data-l10n-id="sunfinch-claude-title"></title>
+  </head>
+  <body>
+    <header>
+      <h1 data-l10n-id="sunfinch-claude-title"></h1>
+      <button id="new-chat" data-l10n-id="sunfinch-claude-new-chat"></button>
+    </header>
+    <label id="page">
+      <input type="checkbox" id="use-page" checked />
+      <span data-l10n-id="sunfinch-claude-use-page"></span>
+      <span id="page-title"></span>
+    </label>
+    <main id="messages" aria-live="polite"></main>
+    <footer>
+      <textarea id="input" rows="3" data-l10n-id="sunfinch-claude-input"></textarea>
+      <div class="buttons">
+        <button id="stop" hidden data-l10n-id="sunfinch-claude-stop"></button>
+        <button id="send" class="primary" data-l10n-id="sunfinch-claude-send"></button>
+      </div>
+    </footer>
+  </body>
+</html>

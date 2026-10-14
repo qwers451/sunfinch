@@ -51,3 +51,21 @@ sunfinch-notes-text =
 sunfinch-glance-expand = Open as tab
 sunfinch-glance-close = Close
     .title = Close (Esc)
+
+## Claude side panel
+
+sunfinch-claude-button =
+    .label = Claude
+    .tooltiptext = Ask Claude about this page
+sunfinch-claude-title = Claude
+sunfinch-claude-new-chat = New chat
+sunfinch-claude-use-page = Use the page:
+sunfinch-claude-input =
+    .placeholder = Ask about this page…
+sunfinch-claude-send = Send
+sunfinch-claude-stop = Stop
+sunfinch-claude-stopped = Stopped.
+sunfinch-claude-not-found = Claude Code is not found. Install it, or set the path to claude.exe in about:config: sunfinch.claude.path
+# Variables:
+#   $message (String) - error text from Claude Code
+sunfinch-claude-error = Claude did not answer: { $message }
