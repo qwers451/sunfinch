@@ -140,6 +140,20 @@
 3. **Крючки к файлам Firefox.** Готовим список, накладываем после сборки: подключение в `browser.xhtml`, регистрация в `jar.mn`/`moz.build`, prefs. Затем `surfer export` → `surfer build --ui` → `surfer run`.
 4. **Русская локализация в сборке.** Достаём `ru` из `firefox-l10n` на закреплённой ревизии, кладём рядом наши `.ftl`, `MOZ_CHROME_MULTILOCALE` и `--with-l10n-base` в mozconfig, `intl.locale.requested = "ru"` в prefs. Для пакета — `mach package-multi-locale`.
 5. **Прототипы на стенде:** Glance (Alt+клик), затем клиент Claude в боковой панели справа.
+
+**Статус на 23:10 14.10:**
+- Пункт 1 сделан: каркас компонента и перенос четырёх фич. Стенд теперь запускает код из `src/` (`prototypes/README.md`), самопроверка проверяет код форка.
+- Пункт 2 сделан: `src/browser/components/sunfinch/sunfinch-prefs.js`.
+- Пункт 4 частично сделан: `ru` из `firefox-l10n` лежит в `E:\mozbuild\l10n` (ревизия из `l10n-changesets.json`), путь прописан в mozconfig, наши строки — `l10n/ru/browser/browser/sunfinch.ftl`. Осталось после сборки скопировать наш `.ftl` в `E:\mozbuild\l10n\ru\browser\browser\` и выполнить `mach package-multi-locale --locales en-US ru`.
+
+**Крючки к файлам Firefox** (накладываем после первой сборки, затем `surfer export`):
+1. `browser/components/moz.build`: `"sunfinch"` в `DIRS`.
+2. `browser/base/content/browser.xhtml`, рядом с остальными подключениями:
+   - `<link rel="localization" href="browser/sunfinch.ftl"/>`;
+   - `<link rel="stylesheet" href="chrome://browser/content/sunfinch/sunfinch.css"/>`;
+   - `<script src="chrome://browser/content/sunfinch/browser-sunfinch.js"></script>` после `browser-main.js`.
+
+Больше патчей не нужно: prefs идут через `JS_PREFERENCE_FILES`, строки en-US — через wildcard `%browser/**/*.ftl` в `browser/locales/jar.mn`, акторы регистрируются из нашего кода.
 6. **После первой сборки:** первый запуск SunFinch с нашими фичами, затем Split View и История.
 
 ## Этапы
