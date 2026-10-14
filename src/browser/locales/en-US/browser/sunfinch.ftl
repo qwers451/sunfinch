@@ -45,3 +45,9 @@ sunfinch-notes-button =
 sunfinch-notes-title = Notes
 sunfinch-notes-text =
     .placeholder = Write anything…
+
+## Glance
+
+sunfinch-glance-expand = Open as tab
+sunfinch-glance-close = Close
+    .title = Close (Esc)

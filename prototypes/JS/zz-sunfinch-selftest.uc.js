@@ -51,6 +51,7 @@
     await buttons();
     await spacesSetup();
     await notesSetup();
+    await glance();
   }
 
   async function buttons() {
@@ -298,6 +299,76 @@
     const text = await openNotes();
     check("restart: panel shows the note", text?.value == "shared note", text?.value);
     await closeNotes();
+  }
+
+  async function glance() {
+    const G = window.SunfinchGlance;
+    const S = window.SunfinchSpaces;
+    check("glance: ready", G);
+    if (!G) {
+      return;
+    }
+    // Two local pages: a source with a big link and the link target.
+    const dir = PathUtils.profileDir;
+    const target = PathUtils.join(dir, "glance-target.html");
+    const source = PathUtils.join(dir, "glance-source.html");
+    await IOUtils.writeUTF8(target, "<title>sf-glance-target</title><p>target</p>");
+    await IOUtils.writeUTF8(source,
+      `<title>sf-glance-source</title><a id=l href="${PathUtils.toFileURI(target)}"
+        style="display:block;width:100vw;height:100vh">link</a>`);
+    const tab = gBrowser.addTab(PathUtils.toFileURI(source), { triggeringPrincipal: system });
+    gBrowser.selectedTab = tab;
+    await waitFor(() => tab.linkedBrowser.contentTitle == "sf-glance-source");
+    await wait(500);
+
+    // A real (trusted) Alt+click in the middle of the page.
+    const altClick = () => {
+      const rect = tab.linkedBrowser.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      for (const type of ["mousedown", "mouseup"]) {
+        window.synthesizeMouseEvent(type, x, y, {
+          button: 0,
+          clickCount: 1,
+          modifiers: Ci.nsIDOMWindowUtils.MODIFIER_ALT,
+        });
+      }
+    };
+    altClick();
+    check("glance: Alt+click opens Glance", await waitFor(() => G.isOpen));
+    if (!G.isOpen) {
+      return;
+    }
+    const glanceTab = G.tab;
+    check("glance: page stays where it was",
+      gBrowser.selectedTab == tab && tab.linkedBrowser.contentTitle == "sf-glance-source");
+    check("glance: link loads in Glance",
+      await waitFor(() => glanceTab.linkedBrowser.contentTitle == "sf-glance-target"),
+      glanceTab.linkedBrowser.currentURI.spec);
+    check("glance: shown over the page",
+      document.getElementById(glanceTab.linkedPanel)?.classList.contains("sunfinch-glance-panel") &&
+      document.getElementById("sunfinch-glance-backdrop") &&
+      glanceTab.linkedBrowser.docShellIsActive);
+    check("glance: not part of a space", !glanceTab.hasAttribute("sunfinch-space"));
+
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    check("glance: Escape closes it",
+      !G.isOpen && !glanceTab.isConnected && !document.getElementById("sunfinch-glance-backdrop"));
+
+    altClick();
+    await waitFor(() => G.isOpen);
+    document.getElementById("sunfinch-glance-backdrop")?.click();
+    check("glance: a click outside closes it", !G.isOpen);
+
+    altClick();
+    await waitFor(() => G.isOpen);
+    const kept = G.tab;
+    document.getElementById("sunfinch-glance-expand")?.click();
+    check("glance: Open as tab keeps a normal tab",
+      !G.isOpen && kept.isConnected && gBrowser.selectedTab == kept && !kept.hidden &&
+      !kept.hasAttribute("sunfinch-glance"));
+    check("glance: the kept tab joins the current space",
+      S && S.spaceOf(kept) == S.activeId && S.kindOf(kept) == "temp");
   }
 
   async function spacesAfterRestart() {

@@ -43,3 +43,9 @@ sunfinch-notes-button =
 sunfinch-notes-title = Заметки
 sunfinch-notes-text =
     .placeholder = Пишите что угодно…
+
+## Glance
+
+sunfinch-glance-expand = Открыть вкладкой
+sunfinch-glance-close = Закрыть
+    .title = Закрыть (Esc)

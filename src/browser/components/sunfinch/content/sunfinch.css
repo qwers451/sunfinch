@@ -142,3 +142,47 @@
   outline-offset: -1px;
 }
 
+
+/* Glance: the Glance tab's panel over the current page. */
+
+#tabbrowser-tabpanels > .sunfinch-glance-panel {
+  -moz-subtree-hidden-only-visually: 0 !important;
+  visibility: visible !important;
+  position: absolute;
+  inset: 4% 8%;
+  z-index: 3;
+  border-radius: 8px;
+  overflow: clip;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+}
+
+#sunfinch-glance-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+#sunfinch-glance-bar {
+  position: absolute;
+  top: 8px;
+  inset-inline-end: 8px;
+  z-index: 4;
+  display: flex;
+  gap: 4px;
+}
+
+#sunfinch-glance-bar > button {
+  appearance: none;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font: menu;
+  color: var(--toolbar-color);
+  background: var(--toolbar-bgcolor);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+#sunfinch-glance-bar > button:hover {
+  background: var(--toolbarbutton-hover-background);
+}

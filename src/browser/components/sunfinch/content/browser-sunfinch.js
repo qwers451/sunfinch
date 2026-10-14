@@ -7,7 +7,7 @@
 // so they load after delayed startup.
 
 {
-  const SUNFINCH_SCRIPTS = ["spaces.js", "notes.js", "mobile-view.js", "screenshot.js"];
+  const SUNFINCH_SCRIPTS = ["spaces.js", "notes.js", "glance.js", "mobile-view.js", "screenshot.js"];
 
   delayedStartupPromise.then(() => {
     for (const name of SUNFINCH_SCRIPTS) {

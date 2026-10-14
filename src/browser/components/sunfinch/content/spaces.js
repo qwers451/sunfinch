@@ -93,7 +93,18 @@
     kindOf: tab => tab.getAttribute(KIND_ATTR) || TEMP,
 
     isManaged(tab) {
-      return !tab.pinned && tab != FirefoxViewHandler.tab && !tab.closing;
+      return (
+        !tab.pinned &&
+        tab != FirefoxViewHandler.tab &&
+        !tab.closing &&
+        !window.SunfinchGlance?.isGlanceTab(tab)
+      );
+    },
+
+    /** A tab that was outside spaces (a Glance) becomes an additional tab here. */
+    adoptTab(tab) {
+      this.setTabState(tab, this.activeId, TEMP);
+      this.placeTab(tab);
     },
 
     setTabState(tab, spaceId, kind) {

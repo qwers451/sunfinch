@@ -26,6 +26,11 @@ pref("devtools.responsive.reloadConditions.userAgent", true);
 pref("devtools.responsive.reloadConditions.touchSimulation", true);
 pref("devtools.responsive.reloadNotification.enabled", false);
 
+// Glance: a link clicked with this modifier opens over the page.
+// "alt", "shift", "ctrl" or "meta".
+pref("sunfinch.glance.enabled", true);
+pref("sunfinch.glance.modifier", "alt");
+
 // Screenshot button: "file", "clipboard" or "both".
 pref("sunfinch.screenshot.target", "both");
 
