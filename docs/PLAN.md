@@ -109,13 +109,13 @@
 1. ✅ Софт. MozillaBuild 4.2.1 (`E:\MozillaBuild`), Visual Studio Community 2026 (`E:\VS`, MSVC 14.51/14.52), Windows SDK 10.0.26100, 7-Zip, Node 24.15, Python 3.12, Git 2.56. Rust поставит bootstrap. Нужен ли bootstrap'у установленный VS или он скачает свой набор MSVC/SDK — проверим на `surfer bootstrap`.
 2. Окружение.
    - ✅ Переменные пользователя: `MOZBUILD_STATE_PATH=E:\mozbuild`, `CARGO_HOME=E:\mozbuild\cargo`, `RUSTUP_HOME=E:\mozbuild\rustup`. Без них кэш и Rust уйдут в профиль с кириллицей на C:: оболочка MozillaBuild считает домашней папкой профиль Windows.
-   - ⬜ Исключения Defender: `E:\dev\sunfinch`, `E:\mozbuild`, `E:\MozillaBuild`. Нужны права администратора; bootstrap предлагает добавить их сам через UAC.
+   - ⬜ Исключения Defender: `E:\dev\sunfinch`, `E:\mozbuild`, `E:\MozillaBuild`. Нужны права администратора: `Add-MpPreference -ExclusionPath 'E:\dev\sunfinch','E:\mozbuild','E:\MozillaBuild'`. `mach bootstrap` их только проверяет и печатает предупреждение, сборка идёт и без них, но медленнее.
 3. ✅ surfer: `npm i -D @zen-browser/surfer@1.14.9`. `surfer setup-project` интерактивный, поэтому его шаги повторены вручную: `surfer.json` (firefox-esr 153.5.0esr, имя SunFinch, бинарник `sunfinch`, бренд `release` с версией 0.1.0), mozconfig в `configs/`, строки в `.gitignore`.
    - Исправление в `patches/`: на Windows surfer искал распакованные исходники в `firefox-153.5.0esr/`, а в архиве ESR папка называется `firefox-153.5.0/`.
    - Остатки от Zen: surfer пишет в mozconfig `ZEN_FIREFOX_VERSION`, а `displayVersion` бренда — в `browser/config/version.txt`. Поэтому `Services.appinfo.version` будет 0.1.0, а версия движка (`platformVersion`) остаётся 153.5.
-4. ⬜ Брендинг: `configs/branding/release/logo.png` (PNG в высоком разрешении с прозрачным фоном) и `MacOSInstaller.svg`, затем `surfer set brand release`. Без логотипа сборка идёт со штатным брендом Firefox `unofficial`.
-5. ⬜ `surfer download` → `surfer bootstrap` → `surfer import` → `surfer build` → `surfer run`. **Запускать из оболочки MozillaBuild** (`E:\MozillaBuild\start-shell.bat`): mach находит MozillaBuild по переменной `MOZILLABUILD`, которую задаёт этот скрипт, а 7z для распаковки surfer берёт из `E:\MozillaBuild\bin`.
-6. ⬜ Для прототипов: Firefox ESR 153.5 в отдельной папке на E: со своим профилем и fx-autoconfig. Обычный Firefox 158 не трогаем.
+4. ✅ Брендинг: иконки в `configs/branding/release/` генерирует `node tools/gen-branding.mjs` из `branding/source/sunfinch-logo.webp`. Ссылки установщика и prefs бренда берутся из `surfer.json` (`aboutUrl`, `releaseNotesUrl`, `helpUrl`, `downloadUrl`) — это тоже исправление в `patches/`, иначе surfer подставил бы сайт Zen. Упрощённая иконка для 16–32 px — позже.
+5. 🔄 `surfer download` (✅) → `mach bootstrap` → `surfer set brand release` → `surfer import` → `surfer build` → `surfer run`. **Запускать в оболочке MozillaBuild**: `tools\mozshell.cmd "<команда>"` или `E:\MozillaBuild\start-shell.bat`. mach находит MozillaBuild по переменной `MOZILLABUILD`, которую задаёт этот скрипт, а 7z для распаковки surfer берёт из `E:\MozillaBuild\bin`. Скачивание заняло около минуты, а распаковка и `git init` исходников без исключений Defender — больше 20 минут.
+6. ✅ Стенд прототипов: Firefox ESR 153.5 в `E:\tools\firefox-esr-153` (обновления выключены политикой), fx-autoconfig, профиль `E:\tools\sunfinch-proto\profile`. Подробности и самопроверка — в `prototypes/README.md`.
 
 Первая сборка на i5-13400F и 32 ГБ займёт ориентировочно 1–2 часа, повторные — быстрее (кэш).
 
@@ -123,6 +123,12 @@
 
 ### Этап 1. Быстрые победы
 Вертикальные вкладки по умолчанию, кнопка мобильной версии, кнопка скриншота, базовая тема.
+
+Прототипы готовы и проходят самопроверку (`prototypes/`): мобильная версия, скриншот (видимая область и вся страница, в файл и в буфер), черновик темы. Что выяснилось:
+- Штатный актор Screenshots отвечает на запросы размеров только при открытом оверлее. Видимую область снимаем через `drawSnapshot(null, …)`, размеры всей страницы берём своим JSWindowActor `SunfinchScreenshot`, тайлинг — `ScreenshotsUtils.createCanvas`.
+- Имя файла скриншота содержит время с точностью до секунды, поэтому добавляем суффикс ` (2)`, иначе второй снимок перезаписывает первый.
+
+Осталось: перенести прототипы в `src/browser/components/sunfinch/` (строки — во Fluent, дефолтные prefs — в prefs бренда) и оценить тему вживую.
 
 ### Этап 2. Пространства и заметки
 Пространства (фича 2) и заметки (фича 6) в одной боковой панели, заметки привязаны к пространству. Идёт раньше остальных фич, потому что split view, Glance и заметки с пространствами взаимодействуют.
@@ -144,7 +150,7 @@
 
 - **Ребейз на следующий ESR** раз в год. Смягчаем минимальными патчами и кодом в отдельных файлах.
 - **Минорные версии ESR 153.x** надо регулярно подтягивать: это security-исправления.
-- **Логотип.** Исходник растровый, на белом фоне. Для брендинга нужен PNG высокого разрешения с прозрачностью, а лучше SVG. На 16–32 px птица из многих фигур превратится в кашу, поэтому нужна упрощённая версия для мелких размеров (например, голова с клювом и глазом).
+- **Логотип.** Исходник растровый (1430×1100, прозрачный фон), SVG был бы лучше. На 16 px птица читается как цветное пятно, на 32 px уже узнаётся. Нужна упрощённая версия для мелких размеров (например, голова с клювом и глазом).
 - **Prompt injection** в клиенте Claude: см. фичу 5.
 - **Окружение Windows:** профиль пользователя с кириллицей (`C:\Users\Михаил`) и мало места на C: (~18 ГБ). Всё сборочное держим на E: и задаём пути переменными (см. этап 0).
 - **surfer заточен под Zen и Firefox Release.** На ESR уже нашлась ошибка распаковки. Правки держим в `patches/` (patch-package), а при обновлении surfer проверяем, нужны ли они ещё. `npm audit` ругается на `sharp` и `braces`: это инструменты сборки, `sharp` обрабатывает только наш логотип.
