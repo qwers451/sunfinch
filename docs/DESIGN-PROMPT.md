@@ -1,66 +1,67 @@
 # Промпт для Claude Design
 
-Вставить в Claude Design вместе с файлом `docs/DESIGN-BRIEF.md` (и логотипом `branding/source/sunfinch-logo.webp`).
+Вставить в Claude Design всё ниже линии вместе с файлом `docs/DESIGN-BRIEF.md` и логотипом `branding/source/sunfinch-logo.webp`.
 
 ---
 
-Ты — дизайнер интерфейсов. Спроектируй интерфейс браузера **SunFinch** — настольного браузера для Windows на движке Firefox. Во вложении бриф (`DESIGN-BRIEF.md`) со всеми функциями, раскладкой окна, состояниями и текстами, и логотип. Решения, помеченные в брифе **[решено]**, не меняй: что где расположено, уже определено. Твоя задача — как это выглядит.
+You are an interface designer. Design the UI of **SunFinch**, a desktop web browser for Windows built on the Firefox engine. Attached are the brief (`DESIGN-BRIEF.md`, in Russian) with every feature, the window layout, states and UI texts, and the logo. Decisions marked **[решено]** ("decided") in the brief are fixed: where things go is already settled. Your job is how it all looks.
 
-## Стиль
+The interface language is **Russian** (English is the source language). Use the Russian strings from the brief in the mockups; they are 20–40% longer than English, so layouts must hold them.
 
-**Ретрофутуризм, но ультрасовременный и минималистичный.** Представь интерфейс, каким его видели в эпоху космических программ и научной фантастики 60–70-х, но сделанный сегодня с точностью современного продукта. Ориентир по ощущению — монументальность и тёплый свет кино вроде «Дюны», но **без стилистики Дюны**: никакой пустыни, песка, арабесок, имитации камня или ткани.
+## Style
 
-Как это должно проявляться:
-- **Геометрия и точность.** Строгая сетка, тонкие линии-разделители (hairline, 1 px), выверенные отступы. Ощущение приборной панели или технического чертежа, но очень чистого.
-- **Почти прямые углы.** Скругления 0–4 px, не больше. Никаких «таблеток» и мягких пузырей.
-- **Минимализм.** Мало элементов, много воздуха, никакого декора ради декора. Ретрофутуристичность — в деталях: типографика, тонкие линии, метки, ритм, а не в украшениях.
-- **Типографика.** Геометрический или технический гротеск для заголовков и меток, например, с широкими пропорциями. Мелкие служебные метки — капителью или заглавными с разрядкой (например, «ОСНОВНЫЕ», «ДОПОЛНИТЕЛЬНЫЕ»). Допустимы моноширинные цифры и метки. Шрифты — только со свободной лицензией (OFL), чтобы их можно было встроить в браузер; основной текст — системный (Segoe UI Variable) или такой же открытый.
-- **Свет, а не тени.** Глубина через тон фона и тонкие линии, а не через тяжёлые тени. Акцент может «светиться»: тонкая полоска, свечение индикатора, но сдержанно.
+**Retro-futurism, but ultra-modern and minimal.** Picture an interface as the space-age and sci-fi of the 1960s–70s imagined it, built today with the precision of a modern product. The mood reference is the monumental scale and warm light of films like *Dune*, but **not the Dune aesthetic itself**: no desert, sand, arabesques, stone or fabric textures.
 
-## Цвет — под логотип
+How it should show:
+- **Geometry and precision.** A strict grid, hairline 1 px dividers, exact spacing. The feel of an instrument panel or a technical drawing, but very clean.
+- **Nearly square corners.** Radius 0–4 px, never more. No pills, no soft bubbles.
+- **Minimalism.** Few elements, plenty of air, no decoration for its own sake. The retro-futurism lives in the details: typography, thin rules, labels, rhythm — not ornaments.
+- **Typography.** A geometric or technical sans for headings and labels, possibly with wide proportions. Small utility labels in small caps or letter-spaced uppercase (e.g. «ОСНОВНЫЕ», «ДОПОЛНИТЕЛЬНЫЕ»). Tabular/monospaced figures and labels are welcome. Fonts must be open-licensed (OFL) so they can be bundled with the browser; body text in the system font (Segoe UI Variable) or an equally open one. The fonts must support Cyrillic.
+- **Light, not shadows.** Depth comes from background tone and thin lines, not heavy shadows. Accents may "glow" — a thin bar, an indicator glow — but with restraint.
 
-Логотип — геометрическая птица: жёлтый `#FFB300`, светло-жёлтый `#FFD020`, оранжевый `#FF5F00`, индиго `#4433E0`, тёмно-синий `#11132F`, бирюзовый `#00ADA0`.
-- **Тёмная тема — главная.** База на основе глубокого тёмно-синего `#11132F` (ночное небо, приборная панель). Тёплые жёлтый и оранжевый — для акцентов и активных состояний, индиго — для фокуса и выделения, бирюзовый — для статусов (успех, «сохранено»).
-- **Светлая тема** — тёплая бумажная или кремовая база, тот же акцентный набор, тёмно-синий для текста.
-- Яркие цвета — точечно. Интерфейс в целом спокойный, страница остаётся главной.
-- Цвета пространств подбери из той же палитры: 6–8 различимых цветов, хорошо видимых на обоих фонах.
-- Контраст текста — не ниже WCAG AA.
+## Color — matched to the logo
 
-## Вкладки в стиле GNOME
+The logo is a geometric bird: yellow `#FFB300`, light yellow `#FFD020`, orange `#FF5F00`, indigo `#4433E0`, deep navy `#11132F`, teal `#00ADA0`.
+- **Dark theme is the primary one.** Base on the deep navy `#11132F` (night sky, instrument panel). Warm yellow and orange for accents and active states, indigo for focus and selection, teal for status (success, "saved").
+- **Light theme**: a warm paper/cream base, the same accent set, navy for text.
+- Bright colors only as points of emphasis. The UI as a whole stays calm; the web page remains the main thing.
+- Pick 6–8 space colors from the same palette, distinct from each other and clearly visible on both backgrounds.
+- Text contrast at least WCAG AA.
 
-Вертикальный список вкладок слева оформи в духе вкладок GNOME (libadwaita, AdwTabBar):
-- плоские строки без рамок и разделителей между вкладками;
-- выбранная вкладка — мягкая заливка тоном чуть светлее фона (не яркая), в нашем стиле — с тонкой акцентной меткой слева;
-- кнопка закрытия появляется при наведении, у выбранной видна всегда;
-- фавиконка, название в одну строку, многоточие;
-- индикаторы (звук, загрузка, закреплена) — маленькие и спокойные;
-- секции «основные» и «дополнительные» разделены тонкой линией и маленькой меткой заглавными;
-- в свёрнутом режиме — колонка фавиконок с той же логикой выделения.
+## GNOME-style tabs
 
-Переключатель пространств сверху тоже в этом духе: ровный ряд, без рамок у неактивных, активное — заливка и метка цветом пространства.
+Style the vertical tab list on the left after GNOME tabs (libadwaita, AdwTabBar):
+- flat rows, no borders or separators between tabs;
+- the selected tab gets a soft fill slightly lighter than the background (not loud), and in our style a thin accent marker on the left;
+- the close button appears on hover and is always visible on the selected tab;
+- favicon, single-line title with ellipsis;
+- indicators (audio, loading, pinned) small and quiet;
+- the "main" and "additional" sections are divided by a thin line and a small uppercase label;
+- collapsed mode: a column of favicons with the same selection logic.
 
-## Что нужно сделать
+The space switcher at the top follows the same spirit: an even row, no borders on inactive spaces, the active one gets a fill and a marker in the space's color.
 
-**Шаг 1 — направления.** Покажи 3 разных направления стиля в рамках описанного выше на одном экране: главное окно в тёмной теме с открытой статьёй, 3 пространствами («Работа», «Учёба», «Личное»), 2 основными и 4 дополнительными вкладками. Подпиши, чем направления отличаются. Дальше я выберу одно.
+## What to make
 
-**Шаг 2 — по выбранному направлению:**
-1. Дизайн-токены: цвета (тёмная и светлая), цвета пространств, радиусы, толщины линий, отступы, типографика, тени и свечение. Оформи как CSS-переменные (`--sf-…`), чтобы их можно было перенести в код.
-2. Экраны в тёмной и светлой теме:
-   - главное окно;
-   - открытое окно заметок (всплывает справа вверху под кнопкой);
-   - Glance поверх страницы;
-   - панель Claude справа: пустая с подсказками, с диалогом, с ошибкой;
-   - диалог нового пространства (название, цвет, иконка);
-   - контекстное меню вкладки с нашими пунктами.
-3. Состояния элементов: наведение, нажатие, фокус, выключено, «включено» для кнопок-переключателей.
-4. Иконки 16×16 — **одноцветные SVG** с `fill="context-fill"` (цвет подставляет тема, градиенты невозможны): добавить пространство, заметки, Claude, мобильная версия, скриншот, «открыть вкладкой» (Glance), «основная вкладка», изолированное пространство. Стиль иконок — тот же: геометрия, тонкие линии, почти прямые углы.
-5. Иконка приложения на основе логотипа и упрощённый знак для 16–32 px (например, голова птицы с клювом и глазом).
+**Step 1 — directions.** Show 3 distinct style directions within the above, all on the same screen: the main window in the dark theme with an article open, 3 spaces («Работа», «Учёба», «Личное»), 2 main and 4 additional tabs. Label how the directions differ. I will pick one.
 
-**Позже:** страница истории, Split View, раздел настроек.
+**Step 2 — for the chosen direction:**
+1. Design tokens: colors (dark and light), space colors, radii, line weights, spacing, typography, shadows and glow. Deliver them as CSS custom properties (`--sf-…`) so they can go straight into code.
+2. Screens in the dark and light themes:
+   - the main window;
+   - the notes window open (pops up at the top right under its button);
+   - Glance over a page;
+   - the Claude panel on the right: empty with suggestions, with a conversation, with an error;
+   - the new space dialog (name, color, icon);
+   - the tab context menu with our items.
+3. Element states: hover, pressed, focus, disabled, and "on" for toggle buttons.
+4. 16×16 icons as **single-color SVG** with `fill="context-fill"` (the theme sets the color, so no gradients): add space, notes, Claude, mobile view, screenshot, "open as tab" (Glance), "main tab", isolated space. Same style: geometry, thin lines, nearly square corners.
+5. An app icon based on the logo, and a simplified mark for 16–32 px (e.g. the bird's head with beak and eye).
 
-## Ограничения
+**Later:** the history page, Split View, the settings section.
 
-- Это интерфейс браузера Firefox: панели инструментов, всплывающие окна со стрелкой, контекстные меню — штатные элементы, которые мы перекрашиваем CSS. Не придумывай то, что требует собственного движка отрисовки.
-- Русские тексты длиннее английских — проверь макеты на них (тексты в брифе).
-- Нельзя использовать имя «Firefox» и логотипы Mozilla.
-- Всё должно работать с клавиатуры, фокус всегда виден.
+## Constraints
+
+- This is the UI of a Firefox-based browser: toolbars, arrow popups and context menus are native elements that we restyle with CSS. Don't invent anything that needs a custom rendering engine.
+- Never use the name "Firefox" or Mozilla logos.
+- Everything must work from the keyboard, with focus always visible.
