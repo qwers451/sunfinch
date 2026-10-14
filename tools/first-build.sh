@@ -16,6 +16,17 @@ step() {
   fi
 }
 
+# The cc crate in Rust build scripts looks for Visual Studio by itself and
+# would take the headers of an installed VS, whose STL may need a newer clang
+# than the bootstrapped one. With VCINSTALLDIR set and cl.exe on PATH it
+# treats the environment as a developer prompt and keeps the INCLUDE/LIB that
+# the build sets for the bootstrapped toolchain.
+vc_tools=$(ls -d "$MOZBUILD_STATE_PATH"/vs/VC/Tools/MSVC/*/ 2>/dev/null | tail -n 1)
+if [ -n "$vc_tools" ]; then
+  export VCINSTALLDIR="$(cygpath -w "$MOZBUILD_STATE_PATH/vs/VC")\\"
+  export PATH="$(cygpath -u "$vc_tools")bin/Hostx64/x64:$PATH"
+fi
+
 steps=("$@")
 [ ${#steps[@]} -eq 0 ] && steps=(bootstrap brand import build)
 
