@@ -139,7 +139,7 @@
 2. **Prefs бренда.** Вертикальные вкладки, восстановление сессии, настройки RDM. Выключаем телеметрию и исследования Mozilla, промо и онбординг (ASRouter, spotlight, about:welcome, CFR), спонсорский контент новой вкладки.
 3. **Крючки к файлам Firefox.** Готовим список, накладываем после сборки: подключение в `browser.xhtml`, регистрация в `jar.mn`/`moz.build`, prefs. Затем `surfer export` → `surfer build --ui` → `surfer run`.
 4. **Русская локализация в сборке.** Достаём `ru` из `firefox-l10n` на закреплённой ревизии, кладём рядом наши `.ftl`, `MOZ_CHROME_MULTILOCALE` и `--with-l10n-base` в mozconfig, `intl.locale.requested = "ru"` в prefs. Для пакета — `mach package-multi-locale`.
-5. **Прототипы на стенде:** Glance (Alt+клик), затем клиент Claude в боковой панели справа.
+5. **Новые фичи — сразу в `src/`, проверка на стенде:** Glance (Alt+клик) — ✅ готов и проходит самопроверку; дальше клиент Claude в боковой панели справа.
 
 **Статус на 23:10 14.10:**
 - Пункт 1 сделан: каркас компонента и перенос четырёх фич. Стенд теперь запускает код из `src/` (`prototypes/README.md`), самопроверка проверяет код форка.
@@ -159,7 +159,7 @@
 ## Этапы
 
 ### Этап 0. Инфраструктура
-1. ✅ Софт. MozillaBuild 4.2.1 (`E:\MozillaBuild`), Visual Studio Community 2026 (`E:\VS`, MSVC 14.51/14.52), Windows SDK 10.0.26100, 7-Zip, Node 24.15, Python 3.12, Git 2.56. Rust поставит bootstrap. Нужен ли bootstrap'у установленный VS или он скачает свой набор MSVC/SDK — проверим на `surfer bootstrap`.
+1. ✅ Софт. MozillaBuild 4.2.1 (`E:\MozillaBuild`), Visual Studio Community 2026 (`E:\VS`, MSVC 14.51/14.52), Windows SDK 10.0.26100, 7-Zip, Node 24.15, Python 3.12, Git 2.56. Rust поставит bootstrap. Установленный VS сборке не нужен: `mach bootstrap` скачивает свой набор MSVC (14.50) в `E:mozbuild`.
 2. Окружение.
    - ✅ Переменные пользователя: `MOZBUILD_STATE_PATH=E:\mozbuild`, `CARGO_HOME=E:\mozbuild\cargo`, `RUSTUP_HOME=E:\mozbuild\rustup`. Без них кэш и Rust уйдут в профиль с кириллицей на C:: оболочка MozillaBuild считает домашней папкой профиль Windows.
    - ⬜ Исключения Defender: `E:\dev\sunfinch`, `E:\mozbuild`, `E:\MozillaBuild`. Нужны права администратора: `Add-MpPreference -ExclusionPath 'E:\dev\sunfinch','E:\mozbuild','E:\MozillaBuild'`. `mach bootstrap` их только проверяет и печатает предупреждение, сборка идёт и без них, но медленнее.
