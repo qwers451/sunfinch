@@ -1,34 +1,40 @@
-# Прототипы
+# Стенд
 
-Chrome-скрипты фич обкатываются здесь на обычном Firefox ESR 153 через [fx-autoconfig](https://github.com/MrOtherGuy/fx-autoconfig), без сборки форка. Готовый скрипт переносится модулем в `src/browser/components/sunfinch/`.
+Код фич SunFinch живёт в `src/browser/components/sunfinch/`, и стенд запускает **именно его** на обычном Firefox ESR 153 через [fx-autoconfig](https://github.com/MrOtherGuy/fx-autoconfig). Пересобирать форк не нужно: правка и перезапуск занимают секунды.
 
-## Стенд
+## Как устроено
 
 | Что | Где |
 |---|---|
 | Firefox ESR 153.5 (portable, обновления выключены политикой) | `E:\tools\firefox-esr-153` |
 | fx-autoconfig: `config.js` и `defaults/pref/config-prefs.js` | там же |
-| Профиль, в нём `chrome/utils` из fx-autoconfig | `E:\tools\sunfinch-proto\profile` |
+| Рабочий профиль стенда | `E:\tools\sunfinch-proto\profile` |
 | `chrome/JS`, `chrome/CSS` профиля | junction на `prototypes/JS` и `prototypes/CSS` |
 
-Запуск: `tools\proto.cmd`. Скрипт копирует `user.js` в профиль и стартует браузер с `-purgecaches`, чтобы правки скриптов подхватывались после перезапуска.
+`JS/sunfinch-dev-loader.uc.js` делает в браузере стенда то же, что в форке делают сборка и `browser.xhtml`:
+- подменяет `chrome://browser/content/sunfinch/…` файлами из `src/` (override в `sunfinch-dev.manifest` профиля);
+- регистрирует строки Fluent из `src/browser/locales/en-US/` и `l10n/ru/`;
+- выставляет дефолтные prefs из `sunfinch-prefs.js`;
+- подключает `sunfinch.css` и запускает `browser-sunfinch.js`.
 
-## Правила
+Override действует только в родительском процессе, а sandbox content-процессов не читает файлы вне профиля. Поэтому модули акторов скрипты запуска копируют в профиль (`chrome/sunfinch-dev-modules`) и регистрируют пакетом `chrome://sunfinchdev/` в `chrome/utils/chrome.manifest`.
 
-- Скрипты окна: `JS/*.uc.js` или `JS/*.uc.mjs`, стили: `CSS/*.uc.css`.
-- Пишем так же, как потом в форке: `IOUtils`/`PathUtils`, без `UC_API` там, где можно обойтись без него, чтобы перенос был механическим.
-- `sunfinch-proto-check.uc.js` проверяет загрузку: пишет `proto-check.txt` в профиль.
-- Самопроверка: `powershell -File tools\proto-selftest.ps1` запускает браузер headless на чистом временном профиле (`E:\tools\sunfinch-proto\selftest-profile`, рабочий профиль не трогается) в две фазы. Фаза 1 — проверки и подготовка, затем выход. Фаза 2 — запуск с восстановлением сессии и проверка того, что пережило перезапуск. `zz-sunfinch-selftest.uc.js` пишет отчёты `selftest-1.json` и `selftest-2.json`. Без настройки `sunfinch.proto.selftest` скрипт ничего не делает. Новую фичу добавляем вместе с проверками в нём.
-- JSWindowActor: папка `JS/<Имя>/` с `<Имя>Parent.sys.mjs` и `<Имя>Child.sys.mjs`, регистрация через `ChromeUtils.registerWindowActor` с адресами `chrome://userscripts/content/<Имя>/...`.
-- Отладка: Browser Toolbox (Ctrl+Alt+Shift+I), консоль браузера (Ctrl+Shift+J).
+## Запуск
 
-## Что есть
+- `tools\proto.cmd` — браузер стенда с рабочим профилем. Скрипт копирует `user.js` и модули, стартует с `-purgecaches`, чтобы правки подхватывались после перезапуска.
+- `powershell -File tools\proto-selftest.ps1` — самопроверка. Запускает headless на чистом временном профиле (`selftest-profile`, рабочий профиль не трогается) в две фазы. Фаза 1 — проверки и подготовка, затем выход. Фаза 2 — запуск с восстановлением сессии и проверка того, что пережило перезапуск. `JS/zz-sunfinch-selftest.uc.js` пишет отчёты `selftest-1.json` и `selftest-2.json`; без pref `sunfinch.proto.selftest` скрипт ничего не делает.
 
-| Прототип | Файлы | Статус |
-|---|---|---|
-| Кнопка «мобильная версия» | `JS/sunfinch-mobile-view.uc.js` | Работает: RDM 390×844, DPR 3, тач, iPhone UA, состояние кнопки следует за RDM |
-| Кнопка «скриншот» | `JS/sunfinch-screenshot.uc.js`, `JS/SunfinchScreenshot/` | Работает: клик — видимая область, Shift+клик — вся страница; в файл (через менеджер загрузок) и/или в буфер, pref `sunfinch.screenshot.target` |
-| Иконки кнопок | `CSS/sunfinch-buttons.uc.css` | Временно штатные иконки Firefox |
-| Пространства | `JS/sunfinch-spaces.uc.js`, `JS/SunfinchSpaces/`, `CSS/sunfinch-spaces.uc.css` | Работает: переключатель сверху, вкладки пространства слева; основные вкладки переживают перезапуск, дополнительные закрываются; контекстное меню вкладки «сделать основной/дополнительной», «в пространство…»; правый клик по пространству — переименовать/удалить |
-| Заметки | `JS/sunfinch-notes.uc.js`, `JS/SunfinchNotes/`, `CSS/sunfinch-notes.uc.css` | Работает: кнопка справа вверху открывает окно заметок (`panel noautohide`). Оно остаётся открытым при работе со страницей, смене вкладок и пространств, игнорирует Esc и закрывается только кнопкой. Одна заметка на все пространства и окна; `sunfinch-notes.json` в профиле |
-| Базовая тема (черновик) | `CSS/sunfinch-theme.uc.css` | Палитра логотипа, акцент у выбранной вкладки и включённых кнопок, цвет фокуса; ждёт оценки вживую |
+Новую фичу пишем сразу в `src/` и добавляем её проверки в `zz-sunfinch-selftest.uc.js`.
+
+## Отладка
+
+Browser Toolbox (Ctrl+Alt+Shift+I), консоль браузера (Ctrl+Shift+J). `sunfinch-proto-check.uc.js` пишет `proto-check.txt` в профиль: так видно, что fx-autoconfig вообще работает.
+
+## Что покрыто самопроверкой
+
+| Фича | Проверки |
+|---|---|
+| Мобильная версия | RDM включается и выключается, кнопка показывает состояние, страница получает iPhone UA |
+| Скриншот | Видимая область и вся страница (высота документа), PNG через менеджер загрузок, без перезаписи в ту же секунду |
+| Пространства | Переключатель, скрытие чужих вкладок, основные над дополнительными с разделителем, переход по вкладке чужого пространства, перенос вкладки, контекстное меню; после перезапуска — только основные вкладки, пространства и активное пространство сохранены |
+| Заметки | Окно не закрывается при работе со страницей, смене вкладок и пространств, по Esc; закрывается кнопкой; заметка общая, сохраняется и переживает перезапуск |
