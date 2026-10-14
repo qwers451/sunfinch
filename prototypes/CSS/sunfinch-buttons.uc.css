@@ -1,0 +1,13 @@
+/* Icons for SunFinch toolbar buttons (prototype: built-in Firefox icons). */
+
+#sunfinch-mobile-view-button {
+  list-style-image: url("chrome://devtools/skin/images/command-responsivemode.svg");
+}
+
+#sunfinch-screenshot-button {
+  list-style-image: url("chrome://browser/skin/screenshot.svg");
+}
+
+#sunfinch-mobile-view-button[checked] > .toolbarbutton-icon {
+  background-color: var(--toolbarbutton-active-background);
+}

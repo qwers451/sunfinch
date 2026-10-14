@@ -18,4 +18,14 @@ Chrome-скрипты фич обкатываются здесь на обычн
 - Скрипты окна: `JS/*.uc.js` или `JS/*.uc.mjs`, стили: `CSS/*.uc.css`.
 - Пишем так же, как потом в форке: `IOUtils`/`PathUtils`, без `UC_API` там, где можно обойтись без него, чтобы перенос был механическим.
 - `sunfinch-proto-check.uc.js` проверяет загрузку: пишет `proto-check.txt` в профиль.
+- Самопроверка: `powershell -File tools\proto-selftest.ps1` запускает браузер headless, `zz-sunfinch-selftest.uc.js` нажимает кнопки прототипов, проверяет результат и пишет `selftest.json`. Без настройки `sunfinch.proto.selftest` скрипт ничего не делает. Новую фичу добавляем вместе с проверками в нём.
+- JSWindowActor: папка `JS/<Имя>/` с `<Имя>Parent.sys.mjs` и `<Имя>Child.sys.mjs`, регистрация через `ChromeUtils.registerWindowActor` с адресами `chrome://userscripts/content/<Имя>/...`.
+
+## Что есть
+
+| Прототип | Файлы | Статус |
+|---|---|---|
+| Кнопка «мобильная версия» | `JS/sunfinch-mobile-view.uc.js` | Работает: RDM 390×844, DPR 3, тач, iPhone UA, состояние кнопки следует за RDM |
+| Кнопка «скриншот» | `JS/sunfinch-screenshot.uc.js`, `JS/SunfinchScreenshot/` | Работает: клик — видимая область, Shift+клик — вся страница; в файл (через менеджер загрузок) и/или в буфер, pref `sunfinch.screenshot.target` |
+| Иконки кнопок | `CSS/sunfinch-buttons.uc.css` | Временно штатные иконки Firefox |
 - Отладка: Browser Toolbox (Ctrl+Alt+Shift+I), консоль браузера (Ctrl+Shift+J).
