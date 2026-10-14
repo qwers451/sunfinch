@@ -20,6 +20,7 @@ Chrome-скрипты фич обкатываются здесь на обычн
 - `sunfinch-proto-check.uc.js` проверяет загрузку: пишет `proto-check.txt` в профиль.
 - Самопроверка: `powershell -File tools\proto-selftest.ps1` запускает браузер headless, `zz-sunfinch-selftest.uc.js` нажимает кнопки прототипов, проверяет результат и пишет `selftest.json`. Без настройки `sunfinch.proto.selftest` скрипт ничего не делает. Новую фичу добавляем вместе с проверками в нём.
 - JSWindowActor: папка `JS/<Имя>/` с `<Имя>Parent.sys.mjs` и `<Имя>Child.sys.mjs`, регистрация через `ChromeUtils.registerWindowActor` с адресами `chrome://userscripts/content/<Имя>/...`.
+- Отладка: Browser Toolbox (Ctrl+Alt+Shift+I), консоль браузера (Ctrl+Shift+J).
 
 ## Что есть
 
@@ -29,4 +30,3 @@ Chrome-скрипты фич обкатываются здесь на обычн
 | Кнопка «скриншот» | `JS/sunfinch-screenshot.uc.js`, `JS/SunfinchScreenshot/` | Работает: клик — видимая область, Shift+клик — вся страница; в файл (через менеджер загрузок) и/или в буфер, pref `sunfinch.screenshot.target` |
 | Иконки кнопок | `CSS/sunfinch-buttons.uc.css` | Временно штатные иконки Firefox |
 | Базовая тема (черновик) | `CSS/sunfinch-theme.uc.css` | Палитра логотипа, акцент у выбранной вкладки и включённых кнопок, цвет фокуса; ждёт оценки вживую |
-- Отладка: Browser Toolbox (Ctrl+Alt+Shift+I), консоль браузера (Ctrl+Shift+J).
