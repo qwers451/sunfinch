@@ -217,22 +217,25 @@
   );
 
   async function openNotes() {
-    document.getElementById("sunfinch-notes-button").click();
-    await waitFor(() => window.SunfinchNotes.isOpen);
+    if (!window.SunfinchNotes.isOpen) {
+      document.getElementById("sunfinch-notes-button").doCommand();
+    }
+    await waitFor(() => window.SunfinchNotes.panel?.state == "open");
     return document.getElementById("sunfinch-notes-text");
   }
 
   async function closeNotes() {
-    const panel = document.getElementById("sunfinch-notes-text")?.closest("panel");
+    const panel = window.SunfinchNotes.panel;
     if (panel?.state == "open") {
       const hidden = new Promise(r => panel.addEventListener("popuphidden", r, { once: true }));
-      panel.hidePopup();
-      await hidden;
+      document.getElementById("sunfinch-notes-button").doCommand();
+      await Promise.race([hidden, wait(5000)]);
     }
   }
 
   async function notesSetup() {
     const S = window.SunfinchSpaces;
+    const N = window.SunfinchNotes;
     const button = document.getElementById("sunfinch-notes-button");
     check("notes: button in the toolbar", button?.closest("#nav-bar"));
     const placement = CustomizableUI.getPlacementOfWidget("sunfinch-notes-button");
@@ -246,14 +249,34 @@
     S.switchTo(second);
 
     const text = await openNotes();
-    check("notes: panel opens", window.SunfinchNotes.isOpen && text);
+    check("notes: panel opens", N.panel?.state == "open" && text);
     if (!text) {
       return;
     }
+    check("notes: button shows the panel is open", button.hasAttribute("checked"));
     text.setUserInput("shared note");
+
+    // Working with the page must not close the panel.
+    gBrowser.selectedBrowser.focus();
+    await wait(300);
+    check("notes: stays open when the page gets focus", N.panel.state == "open");
+    const otherTab = gBrowser.visibleTabs.find(t => t != gBrowser.selectedTab && !t.pinned);
+    if (otherTab) {
+      gBrowser.selectedTab = otherTab;
+      await wait(300);
+      check("notes: stays open when switching tabs", N.panel.state == "open");
+    }
     S.switchTo(first);
+    await wait(300);
+    check("notes: stays open when switching spaces", N.panel.state == "open");
     check("notes: same note in every space", text.value == "shared note", text.value);
+    // Escape and outside clicks end up in hidePopup().
+    N.panel.hidePopup();
+    await wait(300);
+    check("notes: ignores other attempts to close it", N.panel.state == "open", N.panel.state);
+
     await closeNotes();
+    check("notes: the button closes it", N.panel.state == "closed" && !button.hasAttribute("checked"), N.panel.state);
     S.switchTo(second);
     const again = await openNotes();
     check("notes: note is there after reopening", again?.value == "shared note", again?.value);

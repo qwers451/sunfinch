@@ -4,8 +4,22 @@
   list-style-image: url("chrome://global/skin/icons/edit-outline.svg");
 }
 
-#PanelUI-sunfinch-notes {
+#sunfinch-notes-button[checked] > .toolbarbutton-icon {
+  background-color: var(--toolbarbutton-active-background);
+}
+
+#sunfinch-notes-panel {
+  --panel-padding: 8px;
   width: 26em;
+}
+
+.sunfinch-notes-header {
+  padding: 2px 4px 6px;
+}
+
+.sunfinch-notes-title {
+  font-weight: 600;
+  margin: 0;
 }
 
 #sunfinch-notes-text {
