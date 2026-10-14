@@ -7,5 +7,6 @@ mk_add_options MOZ_TELEMETRY_REPORTING=
 mk_add_options MOZ_DATA_REPORTING=
 # clang-cl in Rust build scripts (cc crate) looks for MSVC by itself and would
 # pick an installed Visual Studio, whose STL may need a newer clang. Point it
-# at the toolchain that mach bootstrap installed.
-export VCToolsInstallDir="$(ls -d "$MOZBUILD_STATE_PATH"/vs/VC/Tools/MSVC/*/ | tail -n 1)"
+# at the toolchain that mach bootstrap installed. mk_add_options: the variable
+# must reach make and cargo, not only configure.
+mk_add_options "export VCToolsInstallDir=$(ls -d "$MOZBUILD_STATE_PATH"/vs/VC/Tools/MSVC/*/ | tail -n 1)"
