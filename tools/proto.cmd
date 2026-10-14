@@ -11,6 +11,10 @@ if not exist "%SUNFINCH_PROTO_PROFILE%\chrome" mkdir "%SUNFINCH_PROTO_PROFILE%\c
 if not exist "%SUNFINCH_PROTO_PROFILE%\chrome\JS" mklink /J "%SUNFINCH_PROTO_PROFILE%\chrome\JS" "%REPO%\prototypes\JS" >nul
 if not exist "%SUNFINCH_PROTO_PROFILE%\chrome\CSS" mklink /J "%SUNFINCH_PROTO_PROFILE%\chrome\CSS" "%REPO%\prototypes\CSS" >nul
 copy /y "%REPO%\prototypes\user.js" "%SUNFINCH_PROTO_PROFILE%\user.js" >nul
+rem Actor modules of the fork for content processes (see sunfinch-dev-loader.uc.js).
+rem The content sandbox reads only inside the profile, so they are copied there.
+robocopy "%REPO%\src\browser\components\sunfinch\modules" "%SUNFINCH_PROTO_PROFILE%\chrome\sunfinch-dev-modules" /MIR /NJH /NJS /NFL /NDL >nul
+findstr /c:"content sunfinchdev" "%SUNFINCH_PROTO_PROFILE%\chrome\utils\chrome.manifest" >nul || (echo content sunfinchdev ../sunfinch-dev-modules/)>> "%SUNFINCH_PROTO_PROFILE%\chrome\utils\chrome.manifest"
 
 rem -purgecaches: scripts are cached in the startup cache, edits need a purge.
 start "" "%SUNFINCH_PROTO_FF%" -profile "%SUNFINCH_PROTO_PROFILE%" -no-remote -purgecaches %*

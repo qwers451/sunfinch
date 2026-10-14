@@ -1,0 +1,15 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# SunFinch browser features. Window scripts, styles and modules are served
+# from chrome://browser/content/sunfinch/ (see jar.mn).
+
+JAR_MANIFESTS += ["jar.mn"]
+
+# Default prefs; DIST_SUBDIR "browser" is inherited from browser/moz.build,
+# so the file lands in browser/defaults/preferences/.
+JS_PREFERENCE_FILES += ["sunfinch-prefs.js"]
+
+with Files("**"):
+    BUG_COMPONENT = ("Firefox", "General")

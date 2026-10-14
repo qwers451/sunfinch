@@ -1,0 +1,51 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+// SunFinch default prefs.
+
+// Interface language. Falls back to en-US when ru is not packaged.
+pref("intl.locale.requested", "ru");
+
+// Vertical tabs.
+pref("sidebar.revamp", true);
+pref("sidebar.verticalTabs", true);
+
+// Spaces: main tabs survive restarts through session restore; additional
+// tabs are closed at the next start.
+pref("browser.startup.page", 3);
+
+// Mobile view button: Responsive Design Mode as a phone.
+pref("devtools.responsive.viewport.width", 390);
+pref("devtools.responsive.viewport.height", 844);
+pref("devtools.responsive.viewport.pixelRatio", 3);
+pref("devtools.responsive.touchSimulation.enabled", true);
+pref("devtools.responsive.userAgent", "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1");
+// Reload so the page gets the mobile UA and touch events right away.
+pref("devtools.responsive.reloadConditions.userAgent", true);
+pref("devtools.responsive.reloadConditions.touchSimulation", true);
+pref("devtools.responsive.reloadNotification.enabled", false);
+
+// Screenshot button: "file", "clipboard" or "both".
+pref("sunfinch.screenshot.target", "both");
+
+// No Mozilla telemetry, studies or remote experiments.
+pref("datareporting.policy.dataSubmissionEnabled", false);
+pref("datareporting.healthreport.uploadEnabled", false);
+pref("app.normandy.enabled", false);
+pref("app.shield.optoutstudies.enabled", false);
+pref("messaging-system.rsexperimentloader.enabled", false);
+
+// No Mozilla onboarding and promo messages: they carry Firefox branding and
+// some are modal.
+pref("browser.aboutwelcome.enabled", false);
+pref("browser.preonboarding.enabled", false);
+pref("termsofuse.bypassNotification", true);
+pref("browser.startup.upgradeDialog.enabled", false);
+pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.addons", false);
+pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features", false);
+
+// No sponsored content on the new tab page.
+pref("browser.newtabpage.activity-stream.showSponsored", false);
+pref("browser.newtabpage.activity-stream.showSponsoredTopSites", false);
+pref("browser.newtabpage.activity-stream.feeds.section.topstories", false);

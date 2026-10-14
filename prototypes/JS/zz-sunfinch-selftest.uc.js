@@ -142,9 +142,13 @@
     }
   }
 
-  const { SpacesStore } = ChromeUtils.importESModule(
-    "chrome://userscripts/content/SunfinchSpaces/SpacesStore.sys.mjs"
-  );
+  // Imported lazily: if the fork code fails to load, the checks fail
+  // instead of the whole self-test.
+  const lazy = {};
+  ChromeUtils.defineESModuleGetters(lazy, {
+    SpacesStore: "chrome://browser/content/sunfinch/modules/SunfinchSpacesStore.sys.mjs",
+    NotesStore: "chrome://browser/content/sunfinch/modules/SunfinchNotesStore.sys.mjs",
+  });
 
   async function spacesSetup() {
     const S = window.SunfinchSpaces;
@@ -168,7 +172,7 @@
     check("spaces: one divider above the first additional tab",
       divided.length == 1 && S.kindOf(divided[0]) == "temp");
 
-    const second = SpacesStore.add("Second").id;
+    const second = lazy.SpacesStore.add("Second").id;
     S.switchTo(second);
     check("spaces: switching hides the other space", mainA.hidden && tempA.hidden);
     const dump = () => JSON.stringify({
@@ -199,22 +203,19 @@
     TabContextMenu.contextTab = mainA;
     S.updateContextMenu();
     check("spaces: tab context menu",
-      document.getElementById("sunfinch-context-kind")?.getAttribute("label")?.startsWith("Make additional") &&
+      document.l10n.getAttributes(document.getElementById("sunfinch-context-kind")).id == "sunfinch-tab-make-additional" &&
       document.getElementById("sunfinch-context-move")?.menupopup.childElementCount == 1);
 
     // Phase 2 expects the second space to be active after the restart.
     S.switchTo(second);
     await waitFor(() => [mainA, tempA, mainB, tempB].every(t => t.linkedBrowser.currentURI.spec.startsWith("data:")));
-    await SpacesStore.flush();
+    await lazy.SpacesStore.flush();
     const { TabStateFlusher } = ChromeUtils.importESModule(
       "resource:///modules/sessionstore/TabStateFlusher.sys.mjs"
     );
     await TabStateFlusher.flushWindow(window);
   }
 
-  const { NotesStore } = ChromeUtils.importESModule(
-    "chrome://userscripts/content/SunfinchNotes/NotesStore.sys.mjs"
-  );
 
   async function openNotes() {
     if (!window.SunfinchNotes.isOpen) {
@@ -245,7 +246,7 @@
     if (!button || !S?.ready) {
       return;
     }
-    const [first, second] = SpacesStore.spaces.map(sp => sp.id);
+    const [first, second] = lazy.SpacesStore.spaces.map(sp => sp.id);
     S.switchTo(second);
 
     const text = await openNotes();
@@ -282,7 +283,7 @@
     check("notes: note is there after reopening", again?.value == "shared note", again?.value);
     await closeNotes();
 
-    await NotesStore.flush();
+    await lazy.NotesStore.flush();
     const saved = await IOUtils.readJSON(PathUtils.join(PathUtils.profileDir, "sunfinch-notes.json"));
     check("notes: saved to the profile", saved.text == "shared note", JSON.stringify(saved));
     const { TabStateFlusher } = ChromeUtils.importESModule(
@@ -292,8 +293,8 @@
   }
 
   async function notesAfterRestart() {
-    await NotesStore.init();
-    check("restart: note is kept", NotesStore.text == "shared note", NotesStore.text);
+    await lazy.NotesStore.init();
+    check("restart: note is kept", lazy.NotesStore.text == "shared note", lazy.NotesStore.text);
     const text = await openNotes();
     check("restart: panel shows the note", text?.value == "shared note", text?.value);
     await closeNotes();
@@ -309,9 +310,9 @@
     const urls = gBrowser.tabs.map(tabUrl).join(" | ");
     check("restart: main tabs are kept", find("sf-main-A") && find("sf-main-B"), urls);
     check("restart: additional tabs are closed", !find("sf-temp-A") && !find("sf-temp-B"), urls);
-    check("restart: spaces are kept", SpacesStore.spaces.map(s => s.name).join(",") == "Space 1,Second",
-      SpacesStore.spaces.map(s => s.name).join(","));
-    check("restart: active space is kept", SpacesStore.get(S.activeId)?.name == "Second");
+    check("restart: spaces are kept", lazy.SpacesStore.spaces.map(s => s.name).join(",") == "Space 1,Second",
+      lazy.SpacesStore.spaces.map(s => s.name).join(","));
+    check("restart: active space is kept", lazy.SpacesStore.get(S.activeId)?.name == "Second");
     const mainA = find("sf-main-A");
     const mainB = find("sf-main-B");
     check("restart: visibility follows the active space", mainA?.hidden && mainB && !mainB.hidden);

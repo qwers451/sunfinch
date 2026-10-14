@@ -23,6 +23,10 @@ if (Test-Path $profile) {
 }
 New-Item -ItemType Directory -Force (Join-Path $profile 'chrome') | Out-Null
 Copy-Item -Recurse $autoconfigUtils (Join-Path $profile 'chrome\utils')
+# Actor modules of the fork for content processes (see sunfinch-dev-loader.uc.js).
+# The content sandbox reads only inside the profile, so they are copied there.
+Copy-Item -Recurse (Join-Path $repo 'src\browser\components\sunfinch\modules') (Join-Path $profile 'chrome\sunfinch-dev-modules')
+Add-Content -Path (Join-Path $profile 'chrome\utils\chrome.manifest') -Value "content sunfinchdev ../sunfinch-dev-modules/" -Encoding ascii
 foreach ($dir in 'JS', 'CSS') {
   New-Item -ItemType Junction -Path (Join-Path $profile "chrome\$dir") -Target (Join-Path $repo "prototypes\$dir") | Out-Null
 }

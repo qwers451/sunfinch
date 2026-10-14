@@ -14,6 +14,14 @@ const FILE_NAME = "sunfinch-spaces.json";
 const SAVE_DELAY_MS = 500;
 const COLORS = ["#ff5f00", "#4433e0", "#00ada0", "#ffb300", "#e0338a", "#5b8c00"];
 
+/** "Space N" in the UI language. */
+export function defaultName(number) {
+  return new Localization(["browser/sunfinch.ftl"]).formatValue(
+    "sunfinch-space-default-name",
+    { number }
+  );
+}
+
 function newId() {
   return Services.uuid.generateUUID().toString().slice(1, 9);
 }
@@ -46,11 +54,11 @@ class Store {
         console.error("[SunFinch] spaces: cannot read", e);
       }
     }
+    this.#saveTask = new lazy.DeferredTask(() => this.#save(), SAVE_DELAY_MS);
     if (!this.#spaces.length) {
-      this.#spaces.push({ id: newId(), name: "Space 1", color: COLORS[0] });
+      this.#spaces.push({ id: newId(), name: await defaultName(1), color: COLORS[0] });
       this.#scheduleSave();
     }
-    this.#saveTask = new lazy.DeferredTask(() => this.#save(), SAVE_DELAY_MS);
     // Flush pending writes before the profile goes away.
     IOUtils.profileBeforeChange.addBlocker("SunFinch spaces: save", () =>
       this.#saveTask.finalize()

@@ -30,3 +30,6 @@ user_pref("sidebar.revamp", true);
 user_pref("sidebar.verticalTabs", true);
 // Main tabs of spaces survive restarts through session restore.
 user_pref("browser.startup.page", 3);
+
+// The dev loader runs the fork code from this repo.
+user_pref("sunfinch.dev.repo", "E:/dev/sunfinch");

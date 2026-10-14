@@ -1,13 +1,14 @@
-// ==UserScript==
-// @name           SunFinch spaces
-// @description    Spaces: switcher on top, the space's tabs in the vertical
-//                 tab list. Each space has main tabs (kept) and additional
-//                 tabs (closed when the browser quits).
-// ==/UserScript==
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-(function () {
-  const { SpacesStore, SpacesSession } = ChromeUtils.importESModule(
-    "chrome://userscripts/content/SunfinchSpaces/SpacesStore.sys.mjs"
+// Spaces: switcher on top, the space's tabs in the vertical tab list. Each
+// space has main tabs (kept) and additional tabs (closed when the browser
+// quits).
+
+{
+  const { SpacesStore, SpacesSession, defaultName } = ChromeUtils.importESModule(
+    "chrome://browser/content/sunfinch/modules/SunfinchSpacesStore.sys.mjs"
   );
   const lazy = {};
   ChromeUtils.defineESModuleGetters(lazy, {
@@ -23,9 +24,6 @@
   const TEMP = "temp";
   const WIDGET_ID = "sunfinch-spaces-switcher";
   const HTML_NS = "http://www.w3.org/1999/xhtml";
-
-  // Main tabs survive restarts only if the session is restored.
-  Services.prefs.getDefaultBranch("").setIntPref("browser.startup.page", 3);
 
   // Temporary tabs of the previous run are closed once per app run, in all
   // restored windows, before any window applies its spaces.
@@ -310,14 +308,18 @@
       const add = document.createElementNS(HTML_NS, "button");
       add.className = "sunfinch-space-add";
       add.textContent = "+";
-      add.title = "New space";
+      document.l10n.setAttributes(add, "sunfinch-space-add");
       add.addEventListener("click", () => this.promptNewSpace());
       item.append(add);
     },
 
-    promptNewSpace() {
-      const name = { value: `Space ${SpacesStore.spaces.length + 1}` };
-      if (Services.prompt.prompt(window, "New space", "Name:", name, null, {}) && name.value.trim()) {
+    async promptNewSpace() {
+      const [title, label] = await document.l10n.formatValues([
+        "sunfinch-space-new-title",
+        "sunfinch-space-name-label",
+      ]);
+      const name = { value: await defaultName(SpacesStore.spaces.length + 1) };
+      if (Services.prompt.prompt(window, title, label, name, null, {}) && name.value.trim()) {
         const space = SpacesStore.add(name.value.trim());
         this.switchTo(space.id);
       }
@@ -331,20 +333,24 @@
         document.getElementById("mainPopupSet").append(popup);
       }
       popup.replaceChildren();
-      const add = (label, handler, disabled = false) => {
+      const add = (l10nId, handler, disabled = false) => {
         const item = document.createXULElement("menuitem");
-        item.setAttribute("label", label);
+        document.l10n.setAttributes(item, l10nId);
         item.disabled = disabled;
         item.addEventListener("command", handler);
         popup.append(item);
       };
-      add("Rename…", () => {
+      add("sunfinch-space-rename", async () => {
+        const [title, label] = await document.l10n.formatValues([
+          "sunfinch-space-rename-title",
+          "sunfinch-space-name-label",
+        ]);
         const name = { value: space.name };
-        if (Services.prompt.prompt(window, "Rename space", "Name:", name, null, {})) {
+        if (Services.prompt.prompt(window, title, label, name, null, {})) {
           SpacesStore.rename(space.id, name.value.trim());
         }
       });
-      add("Delete space (tabs move to the first space)", () => {
+      add("sunfinch-space-delete", () => {
         SpacesStore.remove(space.id);
       }, SpacesStore.spaces.length < 2);
       popup.openPopupAtScreen(event.screenX, event.screenY, true);
@@ -366,7 +372,7 @@
 
       const move = document.createXULElement("menu");
       move.id = "sunfinch-context-move";
-      move.setAttribute("label", "Move to space");
+      document.l10n.setAttributes(move, "sunfinch-tab-move-to-space");
       move.append(document.createXULElement("menupopup"));
 
       menu.append(separator, kind, move);
@@ -381,9 +387,9 @@
       if (!managed) {
         return;
       }
-      document.getElementById("sunfinch-context-kind").setAttribute(
-        "label",
-        this.kindOf(tab) == MAIN ? "Make additional tab (closes on exit)" : "Make main tab (keep)"
+      document.l10n.setAttributes(
+        document.getElementById("sunfinch-context-kind"),
+        this.kindOf(tab) == MAIN ? "sunfinch-tab-make-additional" : "sunfinch-tab-make-main"
       );
       const move = document.getElementById("sunfinch-context-move");
       const popup = move.menupopup;
@@ -401,7 +407,7 @@
 
   // The switcher widget is global; its contents are rendered per window.
   if (CustomizableUI.getWidget(WIDGET_ID)?.provider !== CustomizableUI.PROVIDER_API) {
-    try {
+    {
       CustomizableUI.createWidget({
         id: WIDGET_ID,
         type: "custom",
@@ -410,7 +416,7 @@
           const item = doc.createXULElement("toolbaritem");
           item.id = WIDGET_ID;
           item.className = "sunfinch-spaces";
-          item.setAttribute("label", "Spaces");
+          doc.l10n.setAttributes(item, "sunfinch-spaces-switcher");
           return item;
         },
       });
@@ -419,11 +425,9 @@
         CustomizableUI.addWidgetToArea(WIDGET_ID, CustomizableUI.AREA_NAVBAR, 0);
         Services.prefs.setBoolPref("sunfinch.spaces.placed", true);
       }
-    } catch (e) {
-      console.error("[SunFinch] spaces widget", e);
     }
   }
 
   window.SunfinchSpaces = Spaces;
   Spaces.init().catch(e => console.error("[SunFinch] spaces init", e));
-})();
+}
