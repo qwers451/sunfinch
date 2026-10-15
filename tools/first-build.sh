@@ -43,7 +43,8 @@ for s in "${steps[@]}"; do
     # mach directly, after `surfer build` has written mozconfig and the
     # version files: surfer keeps mach's stdin open and its output buffered,
     # and mach can then sit silently waiting for an answer.
-    mach) step mach bash -c "cd engine && PYTHONUNBUFFERED=1 ./mach --no-interactive build </dev/null" ;;
+    # Without AI_AGENT/CLAUDECODE: under an AI agent mach hides error details.
+    mach) step mach bash -c "cd engine && env -u AI_AGENT -u CLAUDECODE PYTHONUNBUFFERED=1 ./mach --no-interactive build </dev/null" ;;
     *) echo "unknown step: $s"; exit 2 ;;
   esac
 done
