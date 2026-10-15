@@ -59,6 +59,18 @@ pref("browser.startup.upgradeDialog.enabled", false);
 pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.addons", false);
 pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features", false);
 
+// No promos of other Mozilla products (VPN, Relay, Focus, mobile apps,
+// "More from Mozilla" in Settings) and no personalized add-on recommendations.
+pref("browser.preferences.moreFromMozilla", false);
+pref("browser.vpn_promo.enabled", false);
+pref("browser.promo.focus.enabled", false);
+pref("browser.promo.pin.enabled", false);
+pref("browser.contentblocking.report.show_mobile_app", false);
+pref("browser.contentblocking.report.monitor.enabled", false);
+pref("signon.firefoxRelay.feature", "disabled");
+pref("browser.discovery.enabled", false);
+pref("extensions.htmlaboutaddons.recommendations.enabled", false);
+
 // No sponsored content on the new tab page.
 pref("browser.newtabpage.activity-stream.showSponsored", false);
 pref("browser.newtabpage.activity-stream.showSponsoredTopSites", false);
