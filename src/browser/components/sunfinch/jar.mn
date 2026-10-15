@@ -5,3 +5,6 @@
 browser.jar:
     content/browser/sunfinch/                  (content/**)
     content/browser/sunfinch/modules/          (modules/**)
+
+# Bookmarks of a new profile.
+% override chrome://browser/content/default-bookmarks.html chrome://browser/content/sunfinch/default-bookmarks.html

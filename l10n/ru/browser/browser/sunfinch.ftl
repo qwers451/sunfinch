@@ -92,3 +92,12 @@ sunfinch-prefs-claude-path-input =
 sunfinch-prefs-claude-model = Модель Claude:
 sunfinch-prefs-claude-model-input =
     .placeholder = По умолчанию Claude Code
+
+## Закладки нового профиля
+
+sunfinch-bookmarks-title = Закладки
+sunfinch-bookmarks-heading = Закладки
+sunfinch-bookmarks-folder = { -brand-short-name }
+sunfinch-bookmarks-project = { -brand-short-name } на GitHub
+sunfinch-bookmarks-releases = Выпуски и изменения
+sunfinch-bookmarks-issues = Сообщить о проблеме

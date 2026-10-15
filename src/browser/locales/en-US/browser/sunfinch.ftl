@@ -96,3 +96,12 @@ sunfinch-prefs-claude-path-input =
 sunfinch-prefs-claude-model = Claude model:
 sunfinch-prefs-claude-model-input =
     .placeholder = Claude Code default
+
+## Bookmarks of a new profile
+
+sunfinch-bookmarks-title = Bookmarks
+sunfinch-bookmarks-heading = Bookmarks
+sunfinch-bookmarks-folder = { -brand-short-name }
+sunfinch-bookmarks-project = { -brand-short-name } on GitHub
+sunfinch-bookmarks-releases = Releases and changes
+sunfinch-bookmarks-issues = Report a problem
