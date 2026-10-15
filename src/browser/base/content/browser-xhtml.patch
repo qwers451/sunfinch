@@ -1,0 +1,28 @@
+diff --git a/browser/base/content/browser.xhtml b/browser/base/content/browser.xhtml
+index 661a81551967fb1c67671ab236c8a0c104913fb6..db520505daad57dd77520c48161da5173b7e53df 100644
+--- a/browser/base/content/browser.xhtml
++++ b/browser/base/content/browser.xhtml
+@@ -53,6 +53,7 @@
+     rel="stylesheet"
+     href="chrome://global/content/resistfingerprinting/letterboxing.css"
+   />
++  <link rel="stylesheet" href="chrome://browser/content/sunfinch/sunfinch.css" />
+ 
+   <link rel="localization" href="branding/brand.ftl"/>
+   <link rel="localization" href="browser/allTabsMenu.ftl"/>
+@@ -60,6 +61,7 @@
+   <link rel="localization" href="browser/browser.ftl"/>
+   <link rel="localization" href="browser/browserContext.ftl"/>
+   <link rel="localization" href="browser/browserSets.ftl"/>
++  <link rel="localization" href="browser/sunfinch.ftl"/>
+   <link rel="localization" href="browser/firefoxRelay.ftl"/>
+   <link rel="localization" href="browser/firefoxView.ftl"/>
+   <link rel="localization" href="browser/genai.ftl"/>
+@@ -102,6 +104,7 @@
+ 
+   <script src="chrome://browser/content/global-scripts.js"></script>
+   <script src="chrome://browser/content/browser-main.js"></script>
++  <script src="chrome://browser/content/sunfinch/browser-sunfinch.js"></script>
+ </head>
+ <html:body xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+ # All sets except for popupsets (commands, keys, and stringbundles)

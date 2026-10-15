@@ -28,7 +28,7 @@ if [ -n "$vc_tools" ]; then
 fi
 
 steps=("$@")
-[ ${#steps[@]} -eq 0 ] && steps=(bootstrap brand import build)
+[ ${#steps[@]} -eq 0 ] && steps=(bootstrap brand import build mach)
 
 for s in "${steps[@]}"; do
   case $s in
@@ -36,7 +36,8 @@ for s in "${steps[@]}"; do
     bootstrap) step bootstrap bash -c "cd engine && ./mach --no-interactive bootstrap --application-choice browser" ;;
     brand) step brand npx surfer set brand release ;;
     import) step import npx surfer import ;;
-    build) step build npx surfer build ;;
+    # surfer writes mozconfig and the version files; mach (next step) builds.
+    build) step build env SURFER_MOZCONFIG_ONLY=1 npx surfer build ;;
     # mach directly, after `surfer build` has written mozconfig and the
     # version files: surfer keeps mach's stdin open and its output buffered,
     # and mach can then sit silently waiting for an answer.

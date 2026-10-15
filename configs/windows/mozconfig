@@ -1,6 +1,8 @@
 ac_add_options --enable-js-shell 
 ac_add_options --enable-rust-simd 
-ac_add_options --enable-crashreporter 
+# No crash reporter until SunFinch has its own crash server: the default one
+# is Mozilla's.
+ac_add_options --disable-crashreporter
 
 # Disable telemetry and tracking
 mk_add_options MOZ_TELEMETRY_REPORTING=
