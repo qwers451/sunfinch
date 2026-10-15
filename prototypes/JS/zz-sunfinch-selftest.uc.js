@@ -208,6 +208,22 @@
       document.l10n.getAttributes(document.getElementById("sunfinch-context-kind")).id == "sunfinch-tab-make-additional" &&
       document.getElementById("sunfinch-context-move")?.menupopup.childElementCount == 1);
 
+    // Unloading a space you left: tabs stay in the list, without a process.
+    await waitFor(() => [mainB, tempB].every(t => t.linkedBrowser.currentURI.spec.startsWith("data:")));
+    S.switchTo(first);
+    check("spaces: leaving a space schedules unloading", S.unloadTimers.has(second));
+    await S.unloadSpace(second);
+    check("spaces: tabs of a space you left are unloaded",
+      [mainB, tempB].every(t => t.isConnected && t.hasAttribute("pending")),
+      JSON.stringify([mainB, tempB].map(t => [t.isConnected, t.getAttribute("pending")])));
+    check("spaces: the active space is never unloaded",
+      !S.tabsOf(first).some(t => t.selected && t.hasAttribute("pending")));
+    S.switchTo(second);
+    check("spaces: coming back cancels unloading", !S.unloadTimers.has(second));
+    gBrowser.selectedTab = mainB;
+    check("spaces: unloaded tab loads again when selected",
+      await waitFor(() => !mainB.hasAttribute("pending") && mainB.linkedBrowser.currentURI.spec.startsWith("data:")));
+
     // Phase 2 expects the second space to be active after the restart.
     S.switchTo(second);
     await waitFor(() => [mainA, tempA, mainB, tempB].every(t => t.linkedBrowser.currentURI.spec.startsWith("data:")));

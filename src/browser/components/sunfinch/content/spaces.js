@@ -23,6 +23,8 @@
   const MAIN = "main";
   const TEMP = "temp";
   const WIDGET_ID = "sunfinch-spaces-switcher";
+  // Tabs of a space you left are unloaded after this many minutes (0: never).
+  const UNLOAD_PREF = "sunfinch.spaces.unloadAfterMinutes";
   const HTML_NS = "http://www.w3.org/1999/xhtml";
 
   // Temporary tabs of the previous run are closed once per app run, in all
@@ -59,6 +61,7 @@
     activeId: null,
     ready: false,
     lastTabBySpace: new Map(),
+    unloadTimers: new Map(),
 
     async init() {
       await SpacesStore.init();
@@ -166,8 +169,56 @@
       if (!SpacesStore.get(spaceId) || spaceId == this.activeId) {
         return;
       }
+      this.scheduleUnload(this.activeId);
       this.activeId = spaceId;
+      this.cancelUnload(spaceId);
       this.apply();
+    },
+
+    // --- Unloading spaces you are not using ------------------------------
+
+    scheduleUnload(spaceId) {
+      this.cancelUnload(spaceId);
+      const minutes = Services.prefs.getIntPref(UNLOAD_PREF, 30);
+      if (minutes > 0) {
+        this.unloadTimers.set(
+          spaceId,
+          setTimeout(() => this.unloadSpace(spaceId), minutes * 60 * 1000)
+        );
+      }
+    },
+
+    cancelUnload(spaceId) {
+      clearTimeout(this.unloadTimers.get(spaceId));
+      this.unloadTimers.delete(spaceId);
+    },
+
+    /**
+     * Unloads the space's tabs; they stay in the list and load again when
+     * selected. Tabs playing sound or sharing camera, microphone or screen
+     * stay; discardBrowser itself keeps tabs with dialogs or a beforeunload
+     * prompt (e.g. unsaved forms).
+     */
+    async unloadSpace(spaceId) {
+      this.unloadTimers.delete(spaceId);
+      if (spaceId == this.activeId) {
+        return;
+      }
+      for (const tab of this.tabsOf(spaceId)) {
+        const browser = tab.linkedBrowser;
+        if (
+          tab.selected ||
+          tab.soundPlaying ||
+          browser._sharingState?.webRTC?.sharing ||
+          !browser.isRemoteBrowser
+        ) {
+          continue;
+        }
+        await gBrowser.prepareDiscardBrowser(tab);
+        if (this.spaceOf(tab) == spaceId && spaceId != this.activeId) {
+          gBrowser.discardBrowser(tab);
+        }
+      }
     },
 
     /** Marks the first additional tab after the main ones (divider in CSS). */
@@ -290,6 +341,7 @@
       }
       if (!SpacesStore.get(this.activeId)) {
         this.activeId = first;
+        this.cancelUnload(first);
       }
       this.apply();
     },

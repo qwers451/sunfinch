@@ -14,6 +14,8 @@ pref("sidebar.verticalTabs", true);
 // Spaces: main tabs survive restarts through session restore; additional
 // tabs are closed at the next start.
 pref("browser.startup.page", 3);
+// Tabs of a space you left are unloaded after this many minutes (0: never).
+pref("sunfinch.spaces.unloadAfterMinutes", 30);
 
 // Mobile view button: Responsive Design Mode as a phone.
 pref("devtools.responsive.viewport.width", 390);
