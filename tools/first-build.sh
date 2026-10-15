@@ -37,7 +37,9 @@ for s in "${steps[@]}"; do
     brand) step brand npx surfer set brand release ;;
     import) step import npx surfer import ;;
     # surfer writes mozconfig and the version files; mach (next step) builds.
-    build) step build env SURFER_MOZCONFIG_ONLY=1 npx surfer build ;;
+    # --skip-patch-check: hooks exported with `surfer export` count as
+    # "not imported", and the check then waits for a y/N answer.
+    build) step build env SURFER_MOZCONFIG_ONLY=1 npx surfer build --skip-patch-check ;;
     # mach directly, after `surfer build` has written mozconfig and the
     # version files: surfer keeps mach's stdin open and its output buffered,
     # and mach can then sit silently waiting for an answer.
