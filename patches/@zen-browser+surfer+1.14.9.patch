@@ -1,3 +1,20 @@
+diff --git a/node_modules/@zen-browser/surfer/dist/commands/build.js b/node_modules/@zen-browser/surfer/dist/commands/build.js
+index 6008f7b..30bcea6 100644
+--- a/node_modules/@zen-browser/surfer/dist/commands/build.js
++++ b/node_modules/@zen-browser/surfer/dist/commands/build.js
+@@ -78,7 +78,11 @@ const applyConfig = async (os) => {
+     const brandingConfig = __1.config.brands[brandingKey];
+     const version = brandingConfig?.release?.displayVersion || '1.0.0';
+     log_1.log.debug(`Writing ${version} to the browser version files`);
+-    (0, node_fs_1.writeFileSync)((0, node_path_1.join)(constants_1.ENGINE_DIR, 'browser/config/version.txt'), version);
++    // The app version stays Firefox's: add-on updates (AMO), GMP downloads
++    // (OpenH264, Widevine), system add-ons and Remote Settings filters key off
++    // it. The brand's own version is only the display version.
++    const engineVersion = String(__1.config.version.version).replace(/esr$/, '');
++    (0, node_fs_1.writeFileSync)((0, node_path_1.join)(constants_1.ENGINE_DIR, 'browser/config/version.txt'), engineVersion);
+     (0, node_fs_1.writeFileSync)((0, node_path_1.join)(constants_1.ENGINE_DIR, 'browser/config/version_display.txt'), version);
+ };
+ const genericBuild = async (os, fast = false, jobs) => {
 diff --git a/node_modules/@zen-browser/surfer/dist/commands/download/firefox.js b/node_modules/@zen-browser/surfer/dist/commands/download/firefox.js
 index d245397..68caecd 100644
 --- a/node_modules/@zen-browser/surfer/dist/commands/download/firefox.js
