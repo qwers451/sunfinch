@@ -147,7 +147,7 @@
 
 **Статус на 23:10 14.10:**
 - Пункт 1 сделан: каркас компонента и перенос четырёх фич. Стенд теперь запускает код из `src/` (`prototypes/README.md`), самопроверка проверяет код форка.
-- Пункт 2 сделан: `src/browser/components/sunfinch/sunfinch-prefs.js`.
+- Пункт 2 сделан: `src/browser/components/sunfinch/app-sunfinch-prefs.js`.
 - Пункт 4 частично сделан: `ru` из `firefox-l10n` лежит в `E:\mozbuild\l10n` (ревизия из `l10n-changesets.json`), путь прописан в mozconfig, наши строки — `l10n/ru/browser/browser/sunfinch.ftl`. Осталось после сборки скопировать наш `.ftl` в `E:\mozbuild\l10n\ru\browser\browser\` и выполнить `mach package-multi-locale --locales en-US ru`.
 
 **Крючки к файлам Firefox** (накладываем после первой сборки, затем `surfer export`):

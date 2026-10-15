@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 // Mobile view button: toggles Responsive Design Mode for the current tab.
-// Phone viewport, touch and user agent come from sunfinch-prefs.js.
+// Phone viewport, touch and user agent come from app-sunfinch-prefs.js.
 
 {
   const WIDGET_ID = "sunfinch-mobile-view-button";

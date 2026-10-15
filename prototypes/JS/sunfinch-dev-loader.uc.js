@@ -68,7 +68,7 @@
 
     // Default prefs as the fork ships them (pref() lines are valid JS).
     // intl.locale.requested is skipped: this browser has no ru package.
-    const prefsFile = new FileUtils.File(PathUtils.join(component, "sunfinch-prefs.js"));
+    const prefsFile = new FileUtils.File(PathUtils.join(component, "app-sunfinch-prefs.js"));
     const source = Cu.readUTF8File(prefsFile);
     const defaults = Services.prefs.getDefaultBranch("");
     const pref = (name, value) => {

@@ -8,8 +8,10 @@
 JAR_MANIFESTS += ["jar.mn"]
 
 # Default prefs; DIST_SUBDIR "browser" is inherited from browser/moz.build,
-# so the file lands in browser/defaults/preferences/.
-JS_PREFERENCE_FILES += ["sunfinch-prefs.js"]
+# so the file lands in browser/defaults/preferences/. Files there load in
+# reverse alphabetical order and the last value wins, so the name must sort
+# before firefox.js to override its defaults.
+JS_PREFERENCE_FILES += ["app-sunfinch-prefs.js"]
 
 with Files("**"):
     BUG_COMPONENT = ("Firefox", "General")

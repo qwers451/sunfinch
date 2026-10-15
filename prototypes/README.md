@@ -14,7 +14,7 @@
 `JS/sunfinch-dev-loader.uc.js` делает в браузере стенда то же, что в форке делают сборка и `browser.xhtml`:
 - подменяет `chrome://browser/content/sunfinch/…` файлами из `src/` (override в `sunfinch-dev.manifest` профиля);
 - регистрирует строки Fluent из `src/browser/locales/en-US/` и `l10n/ru/`;
-- выставляет дефолтные prefs из `sunfinch-prefs.js`;
+- выставляет дефолтные prefs из `app-sunfinch-prefs.js`;
 - подключает `sunfinch.css` и запускает `browser-sunfinch.js`.
 
 Override действует только в родительском процессе, а sandbox content-процессов не читает файлы вне профиля. Поэтому модули акторов скрипты запуска копируют в профиль (`chrome/sunfinch-dev-modules`) и регистрируют пакетом `chrome://sunfinchdev/` в `chrome/utils/chrome.manifest`.
