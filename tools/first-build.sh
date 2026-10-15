@@ -2,7 +2,7 @@
 # Full build after `surfer download`. Run inside the MozillaBuild shell:
 #   tools\mozshell.cmd "bash tools/first-build.sh"            all steps
 #   tools\mozshell.cmd "bash tools/first-build.sh build"      only some steps
-# Steps: bootstrap brand import sync build mach. Logs go to .surfer/logs/<step>.log.
+# Steps: bootstrap brand import sync build mach ru. Logs go to .surfer/logs/<step>.log.
 set -o pipefail
 cd "$(dirname "$0")/.."
 mkdir -p .surfer/logs
@@ -48,6 +48,10 @@ for s in "${steps[@]}"; do
     # and mach can then sit silently waiting for an answer.
     # Without AI_AGENT/CLAUDECODE: under an AI agent mach hides error details.
     mach) step mach bash -c "cd engine && env -u AI_AGENT -u CLAUDECODE PYTHONUNBUFFERED=1 ./mach --no-interactive build </dev/null" ;;
+    # Russian: our strings from l10n/ru go over the firefox-l10n checkout,
+    # then the build is packaged with en-US and ru (chrome-ru puts the
+    # Russian files into dist/bin too).
+    ru) step ru bash -c 'l10n="$(cygpath -u "$MOZBUILD_STATE_PATH")/l10n/ru" && cp -r l10n/ru/. "$l10n/" && cd engine && env -u AI_AGENT -u CLAUDECODE PYTHONUNBUFFERED=1 ./mach --no-interactive package-multi-locale --locales en-US ru </dev/null' ;;
     *) echo "unknown step: $s"; exit 2 ;;
   esac
 done

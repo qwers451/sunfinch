@@ -48,6 +48,7 @@
       await notesAfterRestart();
       return;
     }
+    await defaults().catch(e => check("defaults: exception", false, String(e)));
     await buttons();
     await spacesSetup();
     await notesSetup();
@@ -163,6 +164,20 @@
     const labels = await doc.l10n.formatValues([{ id: "sunfinch-prefs-title" }]);
     check("settings: strings are localized", labels[0] == "SunFinch");
     gBrowser.removeTab(tab);
+  }
+
+  // Defaults decided for phase 1: Google search, no Firefox AI chatbot.
+  async function defaults() {
+    // Firefox 153 has no Services.search: the service is a module.
+    const { SearchService } = ChromeUtils.importESModule(
+      "moz-src:///toolkit/components/search/SearchService.sys.mjs"
+    );
+    await SearchService.init();
+    const engine = SearchService.defaultEngine;
+    check("defaults: search engine is Google", engine?.name == "Google", engine?.name);
+    check("defaults: Firefox AI chatbot is off", !Services.prefs.getBoolPref("browser.ml.chat.enabled", true));
+    check("defaults: UI is in Russian", Services.locale.appLocaleAsBCP47.startsWith("ru"),
+      `${Services.prefs.getCharPref("intl.locale.requested", "")} -> ${Services.locale.appLocaleAsBCP47}`);
   }
 
   async function buttons() {
