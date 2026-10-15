@@ -71,6 +71,9 @@ pref("signon.firefoxRelay.feature", "disabled");
 pref("browser.discovery.enabled", false);
 pref("extensions.htmlaboutaddons.recommendations.enabled", false);
 
+// Firefox's web AI chatbot sidebar is hidden: SunFinch has its own Claude panel.
+pref("browser.ml.chat.enabled", false);
+
 // No sponsored content on the new tab page.
 pref("browser.newtabpage.activity-stream.showSponsored", false);
 pref("browser.newtabpage.activity-stream.showSponsoredTopSites", false);
