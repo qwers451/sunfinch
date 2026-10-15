@@ -201,9 +201,16 @@
     check("spaces: main tabs come first",
       visibleA.findIndex(t => S.kindOf(t) == "temp") > visibleA.findIndex(t => S.kindOf(t) == "main"),
       visibleA.map(t => S.kindOf(t)).join(","));
-    const divided = gBrowser.tabs.filter(t => t.hasAttribute("sunfinch-first-temp"));
-    check("spaces: one divider above the first additional tab",
-      divided.length == 1 && S.kindOf(divided[0]) == "temp");
+    const headed = kind => gBrowser.tabs.filter(t => t.getAttribute("sunfinch-section") == kind);
+    const [mainHead, tempHead] = [headed("main"), headed("temp")];
+    check("spaces: section headers above the first main and additional tab",
+      mainHead.length == 1 && S.kindOf(mainHead[0]) == "main" &&
+      tempHead.length == 1 && S.kindOf(tempHead[0]) == "temp",
+      `${mainHead.length} ${tempHead.length}`);
+    check("spaces: section headers count the tabs",
+      mainHead[0]?.getAttribute("sunfinch-section-count") ==
+        String(visibleA.filter(t => S.kindOf(t) == "main").length).padStart(2, "0"),
+      mainHead[0]?.getAttribute("sunfinch-section-count"));
 
     const second = lazy.SpacesStore.add("Second").id;
     S.switchTo(second);
@@ -441,7 +448,10 @@
     button?.doCommand();
     check("claude: panel opens on the right",
       (await waitFor(() => P.isOpen && P.chat)) &&
-      document.getElementById("tabbrowser-tabbox").compareDocumentPosition(P.box) & Node.DOCUMENT_POSITION_FOLLOWING);
+      P.box.getBoundingClientRect().left >=
+        document.getElementById("tabbrowser-tabbox").getBoundingClientRect().right - 1,
+      JSON.stringify([P.box?.getBoundingClientRect().left,
+        document.getElementById("tabbrowser-tabbox").getBoundingClientRect().right]));
     const chat = P.chat;
     if (!chat) {
       return;
@@ -470,7 +480,8 @@
 
     const first = await ask("q1");
     const args = parseArgs(first);
-    check("claude: answer streams into the chat", first.includes("STDIN="), first.slice(0, 200));
+    check("claude: answer streams into the chat", first.includes("STDIN="),
+      first.slice(0, 200) || doc.querySelector(".error")?.textContent);
     check("claude: CLI runs without tools", args.includes("--tools=") && !args.includes("--tools"), JSON.stringify(args));
     check("claude: no MCP, no permission prompts",
       args.includes("--strict-mcp-config") && args[args.indexOf("--permission-mode") + 1] == "dontAsk");

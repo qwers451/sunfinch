@@ -63,8 +63,14 @@
 
     open() {
       this.create();
+      // The sidebar code gives every child of #browser an explicit order;
+      // ours take the page's, so they follow it (DOM order breaks the tie).
+      const splitter = document.getElementById(SPLITTER_ID);
+      const order = getComputedStyle(document.getElementById("tabbrowser-tabbox")).order;
+      splitter.style.order = order;
+      this.box.style.order = order;
       this.box.hidden = false;
-      document.getElementById(SPLITTER_ID).hidden = false;
+      splitter.hidden = false;
       document.getElementById(WIDGET_ID)?.setAttribute("checked", "true");
       this.chat?.focusInput();
     },

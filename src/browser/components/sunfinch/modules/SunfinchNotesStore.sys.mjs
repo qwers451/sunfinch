@@ -4,7 +4,8 @@
 
 // Quick notes: one text shared by all spaces and windows. Stored as JSON in
 // the profile, not in prefs: notes can be large and prefs.js is rewritten on
-// every pref change. Windows listen to "sunfinch-notes-changed".
+// every pref change. Windows listen to "sunfinch-notes-changed" and, for the
+// "Saved" mark, "sunfinch-notes-saved".
 
 const lazy = {};
 ChromeUtils.defineESModuleGetters(lazy, {
@@ -53,6 +54,7 @@ class Store {
       { version: 1, text: this.#text, updated: Date.now() },
       { tmpPath: this.path + ".tmp" }
     );
+    Services.obs.notifyObservers(null, "sunfinch-notes-saved");
   }
 
   get text() {

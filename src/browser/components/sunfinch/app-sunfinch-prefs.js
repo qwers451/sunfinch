@@ -70,6 +70,8 @@ pref("browser.contentblocking.report.monitor.enabled", false);
 pref("signon.firefoxRelay.feature", "disabled");
 pref("browser.discovery.enabled", false);
 pref("extensions.htmlaboutaddons.recommendations.enabled", false);
+// "Drag important tabs here" card above the tab list, with the Firefox fox.
+pref("sidebar.verticalTabs.dragToPinPromo.dismissed", true);
 
 // Firefox's web AI chatbot sidebar is hidden: SunFinch has its own Claude panel.
 pref("browser.ml.chat.enabled", false);

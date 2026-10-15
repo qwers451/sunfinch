@@ -28,6 +28,7 @@ user_pref("termsofuse.bypassNotification", true);
 // SunFinch defaults (keep in sync with the fork's prefs).
 user_pref("sidebar.revamp", true);
 user_pref("sidebar.verticalTabs", true);
+user_pref("sidebar.verticalTabs.dragToPinPromo.dismissed", true);
 // Main tabs of spaces survive restarts through session restore.
 user_pref("browser.startup.page", 3);
 

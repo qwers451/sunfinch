@@ -43,12 +43,15 @@ sunfinch-notes-button =
 sunfinch-notes-title = Заметки
 sunfinch-notes-text =
     .placeholder = Пишите что угодно…
+sunfinch-notes-saved = Сохранено
+sunfinch-notes-hint = Одна заметка на все пространства
 
 ## Glance
 
 sunfinch-glance-expand = Открыть вкладкой
-sunfinch-glance-close = Закрыть
+sunfinch-glance-close =
     .title = Закрыть (Esc)
+    .aria-label = Закрыть
 
 ## Claude side panel
 
@@ -65,6 +68,14 @@ sunfinch-claude-stop = Остановить
 sunfinch-claude-stopped = Остановлено.
 sunfinch-claude-not-found = Claude Code не найден. Установите его или укажите путь к claude.exe в about:config: sunfinch.claude.path
 sunfinch-claude-error = Claude не ответил: { $message }
+sunfinch-claude-empty-title = Спросите об этой странице
+sunfinch-claude-empty-text = Claude прочитает текст страницы — или только выделенный фрагмент. Уточняющие вопросы продолжают тот же разговор.
+sunfinch-claude-suggestions = Подсказки
+sunfinch-claude-suggest-summary = Кратко перескажи
+sunfinch-claude-suggest-facts = Найди даты и цифры
+sunfinch-claude-suggest-simple = Объясни простыми словами
+sunfinch-claude-suggest-quiz = Составь вопросы для самопроверки
+sunfinch-claude-hint = Enter — отправить · Shift+Enter — строка
 
 ## SunFinch section in Settings
 
@@ -101,3 +112,54 @@ sunfinch-bookmarks-folder = { -brand-short-name }
 sunfinch-bookmarks-project = { -brand-short-name } на GitHub
 sunfinch-bookmarks-releases = Выпуски и изменения
 sunfinch-bookmarks-issues = Сообщить о проблеме
+
+## Пространства: заголовки разделов списка вкладок (показываются заглавными), цвет и значок
+
+sunfinch-section-main = Основные
+sunfinch-section-additional = Дополнительные
+sunfinch-space-color =
+    .label = Цвет
+sunfinch-space-color-orange =
+    .label = Оранжевый
+sunfinch-space-color-indigo =
+    .label = Индиго
+sunfinch-space-color-teal =
+    .label = Бирюзовый
+sunfinch-space-color-amber =
+    .label = Янтарный
+sunfinch-space-color-pink =
+    .label = Розовый
+sunfinch-space-color-green =
+    .label = Зелёный
+sunfinch-space-color-sky =
+    .label = Голубой
+sunfinch-space-color-slate =
+    .label = Серый
+sunfinch-space-icon =
+    .label = Значок
+sunfinch-space-icon-space =
+    .label = Простой
+sunfinch-space-icon-work =
+    .label = Работа
+sunfinch-space-icon-study =
+    .label = Учёба
+sunfinch-space-icon-home =
+    .label = Дом
+sunfinch-space-icon-book =
+    .label = Книга
+sunfinch-space-icon-code =
+    .label = Код
+sunfinch-space-icon-flask =
+    .label = Наука
+sunfinch-space-icon-globe =
+    .label = Глобус
+sunfinch-space-icon-heart =
+    .label = Сердце
+sunfinch-space-icon-music =
+    .label = Музыка
+sunfinch-space-icon-plane =
+    .label = Путешествия
+sunfinch-space-icon-star =
+    .label = Звезда
+sunfinch-space-icon-cart =
+    .label = Покупки

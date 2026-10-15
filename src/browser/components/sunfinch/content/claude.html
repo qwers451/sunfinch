@@ -16,6 +16,7 @@
   </head>
   <body>
     <header>
+      <img class="icon" src="chrome://browser/content/sunfinch/icons/claude.svg" alt="" />
       <h1 data-l10n-id="sunfinch-claude-title"></h1>
       <button id="new-chat" data-l10n-id="sunfinch-claude-new-chat"></button>
     </header>
@@ -24,10 +25,22 @@
       <span data-l10n-id="sunfinch-claude-use-page"></span>
       <span id="page-title"></span>
     </label>
-    <main id="messages" aria-live="polite"></main>
+    <main id="messages" aria-live="polite">
+      <section id="empty">
+        <img class="icon" src="chrome://browser/content/sunfinch/icons/claude.svg" alt="" />
+        <h2 data-l10n-id="sunfinch-claude-empty-title"></h2>
+        <p data-l10n-id="sunfinch-claude-empty-text"></p>
+        <h3 data-l10n-id="sunfinch-claude-suggestions"></h3>
+        <button class="suggestion" data-l10n-id="sunfinch-claude-suggest-summary"></button>
+        <button class="suggestion" data-l10n-id="sunfinch-claude-suggest-facts"></button>
+        <button class="suggestion" data-l10n-id="sunfinch-claude-suggest-simple"></button>
+        <button class="suggestion" data-l10n-id="sunfinch-claude-suggest-quiz"></button>
+      </section>
+    </main>
     <footer>
       <textarea id="input" rows="3" data-l10n-id="sunfinch-claude-input"></textarea>
       <div class="buttons">
+        <span class="hint" data-l10n-id="sunfinch-claude-hint"></span>
         <button id="stop" hidden data-l10n-id="sunfinch-claude-stop"></button>
         <button id="send" class="primary" data-l10n-id="sunfinch-claude-send"></button>
       </div>

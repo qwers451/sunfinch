@@ -7,7 +7,7 @@
 // quits).
 
 {
-  const { SpacesStore, SpacesSession, defaultName } = ChromeUtils.importESModule(
+  const { SpacesStore, SpacesSession, defaultName, COLORS, ICONS } = ChromeUtils.importESModule(
     "chrome://browser/content/sunfinch/modules/SunfinchSpacesStore.sys.mjs"
   );
   const lazy = {};
@@ -18,7 +18,10 @@
 
   const SPACE_ATTR = "sunfinch-space";
   const KIND_ATTR = "sunfinch-kind";
-  const FIRST_TEMP_ATTR = "sunfinch-first-temp";
+  // Section header above the first main and the first additional tab.
+  const SECTION_ATTR = "sunfinch-section";
+  const SECTION_LABEL_ATTR = "sunfinch-section-label";
+  const SECTION_COUNT_ATTR = "sunfinch-section-count";
   const ACTIVE_SPACE_KEY = "sunfinch-active-space";
   const MAIN = "main";
   const TEMP = "temp";
@@ -26,6 +29,11 @@
   // Tabs of a space you left are unloaded after this many minutes (0: never).
   const UNLOAD_PREF = "sunfinch.spaces.unloadAfterMinutes";
   const HTML_NS = "http://www.w3.org/1999/xhtml";
+
+  function spaceIconURL(icon) {
+    const file = icon == "space" ? "space" : `sp-${icon}`;
+    return `chrome://browser/content/sunfinch/icons/${file}.svg`;
+  }
 
   // Temporary tabs of the previous run are closed once per app run, in all
   // restored windows, before any window applies its spaces.
@@ -88,6 +96,7 @@
       this.buildContextMenu();
       this.ready = true;
       this.apply();
+      this.loadSectionLabels();
     },
 
     // --- Tab state --------------------------------------------------------
@@ -158,7 +167,7 @@
         }
       }
       lazy.SessionStore.setCustomWindowValue(window, ACTIVE_SPACE_KEY, this.activeId);
-      this.updateDivider();
+      this.updateSections();
       this.renderSwitcher();
       window.dispatchEvent(
         new CustomEvent("SunfinchSpaceChanged", { detail: { spaceId: this.activeId } })
@@ -221,20 +230,40 @@
       }
     },
 
-    /** Marks the first additional tab after the main ones (divider in CSS). */
-    updateDivider() {
-      let seenMain = false;
-      let marked = false;
+    // Labels of the section headers, in the UI language.
+    sectionLabels: { [MAIN]: "", [TEMP]: "" },
+
+    async loadSectionLabels() {
+      const [main, temp] = await document.l10n.formatValues([
+        "sunfinch-section-main",
+        "sunfinch-section-additional",
+      ]);
+      this.sectionLabels = { [MAIN]: main, [TEMP]: temp };
+      this.updateSections();
+    },
+
+    /**
+     * Marks the first main and the first additional tab of the active space;
+     * CSS draws the section header (label, line, number of tabs) above them.
+     */
+    updateSections() {
+      const first = {};
+      const count = { [MAIN]: 0, [TEMP]: 0 };
       for (const tab of gBrowser.tabs) {
-        tab.removeAttribute(FIRST_TEMP_ATTR);
+        tab.removeAttribute(SECTION_ATTR);
         if (!this.isManaged(tab) || tab.hidden) {
           continue;
         }
-        if (this.kindOf(tab) == MAIN) {
-          seenMain = true;
-        } else if (seenMain && !marked) {
-          tab.setAttribute(FIRST_TEMP_ATTR, "true");
-          marked = true;
+        const kind = this.kindOf(tab);
+        first[kind] ??= tab;
+        count[kind]++;
+      }
+      for (const kind of [MAIN, TEMP]) {
+        const tab = first[kind];
+        if (tab) {
+          tab.setAttribute(SECTION_ATTR, kind);
+          tab.setAttribute(SECTION_LABEL_ATTR, this.sectionLabels[kind]);
+          tab.setAttribute(SECTION_COUNT_ATTR, String(count[kind]).padStart(2, "0"));
         }
       }
     },
@@ -254,7 +283,7 @@
       } else if (lastMain && tab._tPos < lastMain._tPos) {
         gBrowser.moveTabAfter(tab, lastMain);
       }
-      this.updateDivider();
+      this.updateSections();
     },
 
     setKind(tab, kind) {
@@ -308,7 +337,14 @@
           this.lastTabBySpace.set(this.spaceOf(tab), tab);
           break;
         case "TabClose": {
-          if (!this.isManaged(tab) || this.spaceOf(tab) != this.activeId) {
+          // The closing tab is already marked "closing", which isManaged()
+          // excludes; check the rest by hand.
+          if (
+            tab.pinned ||
+            tab == FirefoxViewHandler.tab ||
+            window.SunfinchGlance?.isGlanceTab(tab) ||
+            this.spaceOf(tab) != this.activeId
+          ) {
             return;
           }
           const others = this.tabsOf(this.activeId).filter(t => t != tab);
@@ -317,7 +353,7 @@
             const newTab = gBrowser.addTrustedTab(BROWSER_NEW_TAB_URL, { skipAnimation: true });
             this.setTabState(newTab, this.activeId, TEMP);
           }
-          Promise.resolve().then(() => this.updateDivider());
+          Promise.resolve().then(() => this.updateSections());
           break;
         }
         case "popupshowing":
@@ -354,23 +390,37 @@
         return;
       }
       item.replaceChildren();
-      for (const space of SpacesStore.spaces) {
+      SpacesStore.spaces.forEach((space, index) => {
         const button = document.createElementNS(HTML_NS, "button");
         button.className = "sunfinch-space-button";
-        button.textContent = space.name;
         button.dataset.spaceId = space.id;
-        button.style.setProperty("--sunfinch-space-color", space.color);
-        button.toggleAttribute("selected", space.id == this.activeId);
+        button.dataset.color = space.color;
+        button.title = space.name;
+        const selected = space.id == this.activeId;
+        button.toggleAttribute("selected", selected);
+        button.setAttribute("aria-pressed", selected);
+
+        const icon = document.createElementNS(HTML_NS, "img");
+        icon.className = "sunfinch-space-icon";
+        icon.src = spaceIconURL(space.icon);
+        icon.alt = "";
+        const number = document.createElementNS(HTML_NS, "span");
+        number.className = "sunfinch-space-number";
+        number.textContent = String(index + 1).padStart(2, "0");
+        const name = document.createElementNS(HTML_NS, "span");
+        name.className = "sunfinch-space-name";
+        name.textContent = space.name;
+        button.append(icon, number, name);
+
         button.addEventListener("click", () => this.switchTo(space.id));
         button.addEventListener("contextmenu", event => {
           event.preventDefault();
           this.spaceMenu(space, event);
         });
         item.append(button);
-      }
+      });
       const add = document.createElementNS(HTML_NS, "button");
       add.className = "sunfinch-space-add";
-      add.textContent = "+";
       document.l10n.setAttributes(add, "sunfinch-space-add");
       add.addEventListener("click", () => this.promptNewSpace());
       item.append(add);
@@ -413,10 +463,47 @@
           SpacesStore.rename(space.id, name.value.trim());
         }
       });
+      popup.append(
+        this.choiceMenu("sunfinch-space-color", COLORS, space.color, color => {
+          const item = document.createXULElement("menuitem");
+          item.className = "menuitem-iconic sunfinch-space-choice";
+          item.dataset.color = color;
+          item.setAttribute("image", spaceIconURL(space.icon));
+          document.l10n.setAttributes(item, `sunfinch-space-color-${color}`);
+          item.addEventListener("command", () => SpacesStore.restyle(space.id, { color }));
+          return item;
+        }),
+        this.choiceMenu("sunfinch-space-icon", ICONS, space.icon, icon => {
+          const item = document.createXULElement("menuitem");
+          item.className = "menuitem-iconic sunfinch-space-choice";
+          item.dataset.color = space.color;
+          item.setAttribute("image", spaceIconURL(icon));
+          document.l10n.setAttributes(item, `sunfinch-space-icon-${icon}`);
+          item.addEventListener("command", () => SpacesStore.restyle(space.id, { icon }));
+          return item;
+        })
+      );
+      popup.append(document.createXULElement("menuseparator"));
       add("sunfinch-space-delete", () => {
         SpacesStore.remove(space.id);
       }, SpacesStore.spaces.length < 2);
       popup.openPopupAtScreen(event.screenX, event.screenY, true);
+    },
+
+    /** Submenu with one item per value; the current value is checked. */
+    choiceMenu(l10nId, values, current, makeItem) {
+      const menu = document.createXULElement("menu");
+      document.l10n.setAttributes(menu, l10nId);
+      const popup = document.createXULElement("menupopup");
+      for (const value of values) {
+        const item = makeItem(value);
+        if (value == current) {
+          item.setAttribute("selected", "true");
+        }
+        popup.append(item);
+      }
+      menu.append(popup);
+      return menu;
     },
 
     // --- Tab context menu -------------------------------------------------

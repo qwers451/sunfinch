@@ -12,7 +12,31 @@ ChromeUtils.defineESModuleGetters(lazy, {
 
 const FILE_NAME = "sunfinch-spaces.json";
 const SAVE_DELAY_MS = 500;
-const COLORS = ["#ff5f00", "#4433e0", "#00ada0", "#ffb300", "#e0338a", "#5b8c00"];
+// Space colors and icons are names: the colors are --sf-space-<name> design
+// tokens, the icons content/icons/sp-<name>.svg ("space" is the plain one).
+export const COLORS = ["orange", "indigo", "teal", "amber", "pink", "green", "sky", "slate"];
+export const ICONS = [
+  "space", "work", "study", "home", "book", "code", "flask",
+  "globe", "heart", "music", "plane", "star", "cart",
+];
+// Colors of the first versions, stored as hex.
+const OLD_COLORS = {
+  "#ff5f00": "orange",
+  "#4433e0": "indigo",
+  "#00ada0": "teal",
+  "#ffb300": "amber",
+  "#e0338a": "pink",
+  "#5b8c00": "green",
+};
+
+function normalize(space, index) {
+  let color = OLD_COLORS[space.color] ?? space.color;
+  if (!COLORS.includes(color)) {
+    color = COLORS[index % COLORS.length];
+  }
+  const icon = ICONS.includes(space.icon) ? space.icon : "space";
+  return { ...space, color, icon };
+}
 
 /** "Space N" in the UI language. */
 export function defaultName(number) {
@@ -47,7 +71,9 @@ class Store {
     try {
       const data = await IOUtils.readJSON(this.path);
       if (Array.isArray(data?.spaces)) {
-        this.#spaces = data.spaces.filter(s => s?.id && typeof s.name == "string");
+        this.#spaces = data.spaces
+          .filter(s => s?.id && typeof s.name == "string")
+          .map(normalize);
       }
     } catch (e) {
       if (e.name != "NotFoundError") {
@@ -56,7 +82,12 @@ class Store {
     }
     this.#saveTask = new lazy.DeferredTask(() => this.#save(), SAVE_DELAY_MS);
     if (!this.#spaces.length) {
-      this.#spaces.push({ id: newId(), name: await defaultName(1), color: COLORS[0] });
+      this.#spaces.push({
+        id: newId(),
+        name: await defaultName(1),
+        color: COLORS[0],
+        icon: "space",
+      });
       this.#scheduleSave();
     }
     // Flush pending writes before the profile goes away.
@@ -95,12 +126,11 @@ class Store {
     return { ...this.#spaces[0] };
   }
 
-  add(name) {
-    const space = {
-      id: newId(),
-      name,
-      color: COLORS[this.#spaces.length % COLORS.length],
-    };
+  add(name, { color, icon } = {}) {
+    const space = normalize(
+      { id: newId(), name, color, icon },
+      this.#spaces.length
+    );
     this.#spaces.push(space);
     this.#changed();
     return { ...space };
@@ -112,6 +142,21 @@ class Store {
       space.name = name;
       this.#changed();
     }
+  }
+
+  /** Changes the color and/or icon; unknown names are ignored. */
+  restyle(id, { color, icon }) {
+    const space = this.#spaces.find(s => s.id == id);
+    if (!space) {
+      return;
+    }
+    if (COLORS.includes(color)) {
+      space.color = color;
+    }
+    if (ICONS.includes(icon)) {
+      space.icon = icon;
+    }
+    this.#changed();
   }
 
   /** The last space cannot be removed. */

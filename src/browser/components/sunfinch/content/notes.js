@@ -51,20 +51,34 @@
       panel.setAttribute("orient", "vertical");
       panel.setAttribute("aria-labelledby", "sunfinch-notes-title");
 
+      const header = document.createXULElement("hbox");
+      header.className = "sunfinch-notes-header";
+      header.setAttribute("align", "center");
       const title = document.createXULElement("label");
       title.id = "sunfinch-notes-title";
       title.className = "sunfinch-notes-title";
       document.l10n.setAttributes(title, "sunfinch-notes-title");
+      const saved = document.createElementNS(HTML_NS, "span");
+      saved.id = "sunfinch-notes-saved";
+      saved.setAttribute("role", "status");
+      saved.hidden = true;
+      document.l10n.setAttributes(saved, "sunfinch-notes-saved");
+      header.append(title, saved);
 
       const text = document.createElementNS(HTML_NS, "textarea");
       text.id = TEXT_ID;
       text.setAttribute("spellcheck", "true");
       document.l10n.setAttributes(text, "sunfinch-notes-text");
       text.addEventListener("input", () => {
+        saved.hidden = true;
         NotesStore.text = text.value;
       });
 
-      panel.append(title, text);
+      const footer = document.createXULElement("label");
+      footer.className = "sunfinch-notes-footer";
+      document.l10n.setAttributes(footer, "sunfinch-notes-hint");
+
+      panel.append(header, text, footer);
       panel.addEventListener("popuphiding", event => {
         if (event.target == panel && !this.allowHide) {
           event.preventDefault();
@@ -121,12 +135,20 @@
           text.value = NotesStore.text;
         }
       };
+      const savedObserver = () => {
+        const mark = document.getElementById("sunfinch-notes-saved");
+        if (mark) {
+          mark.hidden = false;
+        }
+      };
       Services.obs.addObserver(observer, "sunfinch-notes-changed");
+      Services.obs.addObserver(savedObserver, "sunfinch-notes-saved");
       window.addEventListener(
         "unload",
         () => {
           this.allowHide = true;
           Services.obs.removeObserver(observer, "sunfinch-notes-changed");
+          Services.obs.removeObserver(savedObserver, "sunfinch-notes-saved");
         },
         { once: true }
       );

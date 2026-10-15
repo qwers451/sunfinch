@@ -24,6 +24,13 @@ const Chat = {
     $("send").addEventListener("click", () => this.send());
     $("stop").addEventListener("click", () => this.stop());
     $("new-chat").addEventListener("click", () => this.newChat());
+    // A suggestion asks its own text.
+    for (const button of document.querySelectorAll(".suggestion")) {
+      button.addEventListener("click", () => {
+        $("input").value = button.textContent;
+        this.send();
+      });
+    }
     $("input").addEventListener("keydown", event => {
       if (event.key == "Enter" && !event.shiftKey && !event.isComposing) {
         event.preventDefault();
@@ -63,7 +70,8 @@ const Chat = {
     this.stop();
     this.sessionId = null;
     this.sentPageKey = null;
-    $("messages").replaceChildren();
+    // Back to the empty state with suggestions.
+    $("messages").replaceChildren($("empty"));
     this.focusInput();
   },
 

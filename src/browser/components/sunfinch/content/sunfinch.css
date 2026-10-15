@@ -2,148 +2,391 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* SunFinch window styles. Theme colors come from the logo. */
+/* SunFinch window styles, design A2 "Instrument mono": tokens in
+   sunfinch-tokens.css, UI font JetBrains Mono, small radii, logo colors. */
 
+@import url("chrome://browser/content/sunfinch/sunfinch-tokens.css");
+
+/* --- Window colors -------------------------------------------------------
+   Only with the default theme: a theme the user picks keeps its colors. */
+
+:root:not([lwtheme]) {
+  --toolbox-background-color: var(--sf-bg);
+  --toolbox-background-color-inactive: var(--sf-bg);
+  --toolbox-text-color: var(--sf-text);
+  --toolbox-text-color-inactive: var(--sf-text-3);
+  --toolbar-background-color: var(--sf-bg);
+  --toolbar-text-color: var(--sf-text);
+  --toolbar-field-background-color: var(--sf-bg-sunken);
+  --toolbar-field-background-color-focus: var(--sf-bg-sunken);
+  --toolbar-field-text-color: var(--sf-text);
+  --toolbar-field-text-color-focus: var(--sf-text);
+  --toolbar-field-border-color: var(--sf-line-strong);
+  --sidebar-background-color: var(--sf-bg);
+  --sidebar-text-color: var(--sf-text);
+  --sidebar-border-color: var(--sf-line);
+  --chrome-content-separator-color: var(--sf-line);
+  --toolbarbutton-icon-fill: var(--sf-text-2);
+  --toolbarbutton-background-color-hover: var(--sf-fill-hover);
+  --toolbarbutton-background-color-active: var(--sf-fill-pressed);
+  --toolbarbutton-icon-fill-attention: var(--sf-accent);
+  --tab-background-color-hover: var(--sf-fill-hover);
+  --tab-background-color-selected: var(--sf-fill-selected);
+  --tab-selected-textcolor: var(--sf-text);
+  --tab-selected-shadow: none;
+  --tab-loading-fill: var(--sf-accent);
+  --focus-outline-color: var(--sf-focus);
+}
+
+/* --- Shape and font ------------------------------------------------------ */
 
 :root {
-  --sunfinch-yellow: #ffb300;
-  --sunfinch-orange: #ff5f00;
-  --sunfinch-indigo: #4433e0;
-  --sunfinch-navy: #11132f;
-  --sunfinch-teal: #00ada0;
-
-  --sunfinch-accent: var(--sunfinch-orange);
-  --focus-outline-color: var(--sunfinch-indigo);
-  --toolbarbutton-icon-fill-attention: var(--sunfinch-orange);
+  --toolbarbutton-border-radius: var(--sf-radius-1);
+  --tab-border-radius: var(--sf-radius-1);
+  --tab-min-height: var(--sf-tab-h);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --sunfinch-accent: var(--sunfinch-yellow);
-    --focus-outline-color: #8f86ff;
-    --toolbarbutton-icon-fill-attention: var(--sunfinch-yellow);
-  }
+#navigator-toolbox,
+#sidebar-main,
+#vertical-tabs,
+#tabbrowser-tabs,
+#sunfinch-notes-panel,
+#sunfinch-glance-bar {
+  font-family: var(--sf-font-ui);
+  font-size: var(--sf-text-md);
 }
 
-/* Selected tab: accent stripe on the leading edge (vertical) or top (horizontal). */
-#tabbrowser-tabs[orient="vertical"] .tabbrowser-tab[selected] .tab-background {
-  box-shadow: inset 3px 0 0 var(--sunfinch-accent);
-}
-
-#tabbrowser-tabs[orient="horizontal"] .tabbrowser-tab[selected] .tab-background {
-  box-shadow: inset 0 2px 0 var(--sunfinch-accent);
-}
-
-/* Toggle buttons that are on (mobile view) use the accent. */
-#sunfinch-mobile-view-button[checked] > .toolbarbutton-icon {
-  fill: var(--sunfinch-accent);
-}
-
-
-#sunfinch-mobile-view-button {
-  list-style-image: url("chrome://devtools/skin/images/command-responsivemode.svg");
-}
-
-#sunfinch-screenshot-button {
-  list-style-image: url("chrome://browser/skin/screenshot.svg");
-}
-
-#sunfinch-mobile-view-button[checked] > .toolbarbutton-icon {
-  background-color: var(--toolbarbutton-active-background);
-}
-
+/* --- Space switcher (top left) ------------------------------------------ */
 
 #sunfinch-spaces-switcher {
   display: flex;
-  align-items: center;
-  gap: 2px;
-  padding-inline: 4px;
+  align-items: stretch;
+  align-self: stretch;
+  gap: 0;
+  padding-inline: 0 var(--sf-gap-2);
 }
 
-.sunfinch-space-button,
-.sunfinch-space-add {
+.sunfinch-space-button {
   appearance: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sf-gap-4);
+  max-width: 16em;
+  margin: 0;
+  padding: 0 14px;
   border: none;
-  border-radius: var(--toolbarbutton-border-radius, 4px);
+  border-radius: 0;
   background: transparent;
-  color: inherit;
+  color: var(--sf-text-3);
   font: inherit;
-  padding: 4px 8px;
-  max-width: 14em;
+  white-space: nowrap;
+  transition: background-color var(--sf-dur-1) var(--sf-ease);
+
+  &:hover {
+    background-color: var(--sf-fill-hover);
+  }
+
+  &:hover:active {
+    background-color: var(--sf-fill-pressed);
+  }
+
+  &:focus-visible {
+    outline: var(--sf-focus-w) solid var(--sf-focus);
+    outline-offset: -2px;
+  }
+
+  &[selected] {
+    background-color: var(--sf-fill-selected);
+    color: var(--sf-text);
+    font-weight: var(--sf-weight-bold);
+
+    /* Marker in the space's color along the bottom edge. */
+    &::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: var(--sf-marker-w);
+      background: var(--sf-space);
+      box-shadow: var(--sf-glow-space);
+    }
+
+    > .sunfinch-space-icon {
+      filter: var(--sf-glow-icon);
+    }
+
+    > .sunfinch-space-number {
+      color: var(--sf-text-3);
+      font-weight: var(--sf-weight-medium);
+    }
+  }
+}
+
+.sunfinch-space-icon {
+  flex: none;
+  width: var(--sf-icon);
+  height: var(--sf-icon);
+  -moz-context-properties: fill;
+  fill: var(--sf-space);
+}
+
+.sunfinch-space-number {
+  font-size: var(--sf-text-xs);
+  font-weight: var(--sf-weight-regular);
+  letter-spacing: 0.04em;
+  color: var(--sf-text-4);
+}
+
+.sunfinch-space-name {
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.sunfinch-space-button:hover,
-.sunfinch-space-add:hover {
-  background-color: var(--toolbarbutton-hover-background);
+.sunfinch-space-add {
+  appearance: none;
+  align-self: center;
+  width: var(--sf-button);
+  height: var(--sf-button);
+  margin: 0 0 0 var(--sf-gap-2);
+  padding: 0;
+  border: none;
+  border-radius: var(--sf-radius-1);
+  background: url("chrome://browser/content/sunfinch/icons/space-add.svg") center no-repeat;
+  -moz-context-properties: fill;
+  fill: var(--sf-text-2);
+
+  &:hover {
+    background-color: var(--sf-fill-hover);
+  }
+
+  &:hover:active {
+    background-color: var(--sf-fill-pressed);
+  }
+
+  &:focus-visible {
+    outline: var(--sf-focus-w) solid var(--sf-focus);
+    outline-offset: -2px;
+  }
 }
 
-.sunfinch-space-button[selected] {
-  background-color: var(--toolbarbutton-active-background);
-  box-shadow: inset 0 -2px 0 var(--sunfinch-space-color);
-  font-weight: 600;
+/* Space colors: one token per name, matched to both themes. */
+:is(.sunfinch-space-button, .sunfinch-space-choice) {
+  &[data-color="orange"] { --sf-space: var(--sf-space-orange); }
+  &[data-color="amber"] { --sf-space: var(--sf-space-amber); }
+  &[data-color="pink"] { --sf-space: var(--sf-space-pink); }
+  &[data-color="green"] { --sf-space: var(--sf-space-green); }
+  &[data-color="teal"] { --sf-space: var(--sf-space-teal); }
+  &[data-color="sky"] { --sf-space: var(--sf-space-sky); }
+  &[data-color="indigo"] { --sf-space: var(--sf-space-indigo); }
+  &[data-color="slate"] { --sf-space: var(--sf-space-slate); }
 }
 
-/* Divider above the first additional tab. */
-.tabbrowser-tab[sunfinch-first-temp] {
-  margin-top: 6px;
+/* Space menu: icons and colors in the space's color. */
+.sunfinch-space-choice > .menu-icon {
+  -moz-context-properties: fill;
+  fill: var(--sf-space);
+}
+
+/* --- Tab list ------------------------------------------------------------ */
+
+#tabbrowser-tabs[orient="vertical"] {
+  .tabbrowser-tab[selected] .tab-label {
+    font-weight: var(--sf-weight-bold);
+  }
+
+  /* Selected tab: a short marker on the leading edge. */
+  .tab-background {
+    position: relative;
+
+    &[selected]::before {
+      content: "";
+      position: absolute;
+      inset-block: 8px;
+      inset-inline-start: 0;
+      width: var(--sf-marker-w);
+      background: var(--sf-accent);
+      box-shadow: var(--sf-glow-accent);
+    }
+  }
+}
+
+#tabbrowser-tabs[orient="horizontal"] .tab-background[selected] {
+  box-shadow: inset 0 var(--sf-marker-w) 0 var(--sf-accent);
+}
+
+/* Section headers of a space: "MAIN ──── 02" above the first main tab and
+   "ADDITIONAL ──── 04" above the first additional one. spaces.js sets the
+   label and the number of tabs as attributes. */
+#tabbrowser-tabs[orient="vertical"][expanded] .tabbrowser-tab[sunfinch-section] {
   position: relative;
+  padding-top: 24px;
+
+  /* Label; its background covers the start of the line. */
+  &::before {
+    content: attr(sunfinch-section-label);
+    position: absolute;
+    top: 0;
+    inset-inline-start: calc(var(--tab-overflow-clip-margin) + 10px);
+    z-index: 1;
+    height: 24px;
+    padding-inline-end: var(--sf-gap-4);
+    line-height: 24px;
+    background: var(--sf-bg);
+    font-family: var(--sf-font-ui);
+    font-size: var(--sf-text-xs);
+    font-weight: var(--sf-weight-medium);
+    letter-spacing: var(--sf-tracking-label);
+    text-transform: uppercase;
+    color: var(--sf-text-4);
+  }
+
+  /* Line and the number of tabs. */
+  &::after {
+    content: attr(sunfinch-section-count);
+    position: absolute;
+    top: 0;
+    inset-inline: calc(var(--tab-overflow-clip-margin) + 10px) calc(var(--tab-overflow-clip-margin) + 2px);
+    height: 24px;
+    line-height: 24px;
+    text-align: end;
+    font-family: var(--sf-font-ui);
+    font-size: var(--sf-text-xs);
+    color: var(--sf-text-4);
+    background: linear-gradient(var(--sf-line), var(--sf-line)) no-repeat left center / calc(100% - 2ch - var(--sf-gap-4)) 1px;
+  }
+
+  &:-moz-locale-dir(rtl)::after {
+    background-position: right center;
+  }
 }
 
-.tabbrowser-tab[sunfinch-first-temp]::before {
-  content: "";
-  position: absolute;
-  inset-inline: 8px;
-  top: -4px;
-  border-top: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+/* Gap between the two sections. */
+#tabbrowser-tabs[orient="vertical"][expanded] .tabbrowser-tab[sunfinch-section="main"] ~ .tabbrowser-tab[sunfinch-section="temp"] {
+  margin-top: var(--sf-gap-6);
 }
 
+/* Collapsed tab list: a plain divider above the additional tabs. */
+#tabbrowser-tabs[orient="vertical"]:not([expanded]) .tabbrowser-tab[sunfinch-section="main"] ~ .tabbrowser-tab[sunfinch-section="temp"] {
+  position: relative;
+  margin-top: var(--sf-gap-3);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset-inline: var(--sf-gap-4);
+    top: calc(-1 * var(--sf-gap-2));
+    border-top: var(--sf-line-w) solid var(--sf-line);
+  }
+}
+
+/* --- Toolbar buttons ----------------------------------------------------- */
 
 #sunfinch-notes-button {
-  list-style-image: url("chrome://global/skin/icons/edit-outline.svg");
+  list-style-image: url("chrome://browser/content/sunfinch/icons/notes.svg");
 }
 
-#sunfinch-notes-button[checked] > .toolbarbutton-icon {
-  background-color: var(--toolbarbutton-active-background);
+#sunfinch-claude-button {
+  list-style-image: url("chrome://browser/content/sunfinch/icons/claude.svg");
 }
+
+#sunfinch-screenshot-button {
+  list-style-image: url("chrome://browser/content/sunfinch/icons/screenshot.svg");
+}
+
+#sunfinch-mobile-view-button {
+  list-style-image: url("chrome://browser/content/sunfinch/icons/mobile-view.svg");
+}
+
+/* A button that is on (open notes, Claude panel, mobile view): selected
+   fill and the icon in the accent color. */
+:is(#sunfinch-notes-button, #sunfinch-claude-button, #sunfinch-mobile-view-button)[checked] > .toolbarbutton-icon {
+  background-color: var(--sf-fill-selected);
+  fill: var(--sf-accent);
+}
+
+/* --- Notes window (top right) ------------------------------------------- */
 
 #sunfinch-notes-panel {
-  --panel-padding: 8px;
-  width: 26em;
+  --panel-background-color: var(--sf-bg-raised);
+  --panel-text-color: var(--sf-text);
+  --panel-border-color: var(--sf-line-strong);
+  --panel-border-radius: var(--sf-radius-2);
+  --panel-padding: 0;
+  --panel-width: 340px;
 }
 
 .sunfinch-notes-header {
-  padding: 2px 4px 6px;
+  height: 44px;
+  box-sizing: border-box;
+  padding-inline: 14px;
+  border-bottom: var(--sf-line-w) solid var(--sf-line);
 }
 
 .sunfinch-notes-title {
-  font-weight: 600;
+  flex: 1;
   margin: 0;
+  font-size: var(--sf-text-lg);
+  font-weight: var(--sf-weight-bold);
+}
+
+#sunfinch-notes-saved {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: var(--sf-text-sm);
+  color: var(--sf-success);
+
+  &[hidden] {
+    display: none;
+  }
+
+  &::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: currentColor;
+  }
 }
 
 #sunfinch-notes-text {
+  display: block;
   box-sizing: border-box;
   width: 100%;
-  min-height: 18em;
+  height: 340px;
+  min-height: 8em;
   margin: 0;
-  padding: 8px;
+  padding: var(--sf-gap-6) 14px;
   resize: vertical;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  background: var(--sf-bg-sunken);
+  color: var(--sf-text);
   font: inherit;
-  color: inherit;
-  background: transparent;
-  border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
-  border-radius: 4px;
+  line-height: 1.5;
+
+  &::placeholder {
+    color: var(--sf-text-4);
+    opacity: 1;
+  }
+
+  &::selection {
+    background: var(--sf-selection);
+  }
 }
 
-#sunfinch-notes-text:focus-visible {
-  outline: 2px solid var(--focus-outline-color);
-  outline-offset: -1px;
+.sunfinch-notes-footer {
+  height: 32px;
+  box-sizing: border-box;
+  margin: 0;
+  padding-inline: 14px;
+  line-height: 32px;
+  border-top: var(--sf-line-w) solid var(--sf-line);
+  font-size: var(--sf-text-sm);
+  color: var(--sf-text-4);
 }
 
-
-/* Glance: the Glance tab's panel over the current page. */
+/* --- Glance: the Glance tab's panel over the current page --------------- */
 
 #tabbrowser-tabpanels > .sunfinch-glance-panel {
   -moz-subtree-hidden-only-visually: 0 !important;
@@ -151,57 +394,154 @@
   position: absolute;
   inset: 4% 8%;
   z-index: 3;
-  border-radius: 8px;
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+  border-radius: var(--sf-radius-2);
   overflow: clip;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--sf-shadow-popup);
 }
 
 #sunfinch-glance-backdrop {
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: rgba(0, 0, 0, 0.45);
+  background: var(--sf-scrim);
 }
 
+/* Header of the Glance window: title, address, "Open as tab", close. */
 #sunfinch-glance-bar {
-  position: absolute;
-  top: 8px;
-  inset-inline-end: 8px;
-  z-index: 4;
+  position: relative;
+  flex: none;
+  /* The address must not widen the page: its full length would become the
+     min-content width of the whole browser container. */
+  contain: inline-size;
+  height: 40px;
+  box-sizing: border-box;
   display: flex;
-  gap: 4px;
+  align-items: center;
+  gap: var(--sf-gap-4);
+  padding-inline: var(--sf-gap-6) var(--sf-gap-3);
+  background: var(--sf-bg);
+  color: var(--sf-text);
+  border-bottom: var(--sf-line-w) solid var(--sf-line);
+
+  > button {
+    appearance: none;
+    height: 28px;
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    color: var(--sf-text);
+    background-color: transparent;
+    border: none;
+    border-radius: var(--sf-radius-1);
+    -moz-context-properties: fill;
+    fill: currentColor;
+
+    &:hover {
+      background-color: var(--sf-fill-hover);
+    }
+
+    &:hover:active {
+      background-color: var(--sf-fill-pressed);
+    }
+
+    &:focus-visible {
+      outline: var(--sf-focus-w) solid var(--sf-focus);
+      outline-offset: -2px;
+    }
+  }
 }
 
-#sunfinch-glance-bar > button {
-  appearance: none;
+#sunfinch-glance-title {
+  flex: none;
+  max-width: 340px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-weight: var(--sf-weight-bold);
+}
+
+#sunfinch-glance-url {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: var(--sf-text-sm);
+  color: var(--sf-text-3);
+}
+
+#sunfinch-glance-bar > #sunfinch-glance-expand {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--sf-gap-4);
+  padding-inline: var(--sf-gap-5);
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+
+  &::before {
+    content: "";
+    width: var(--sf-icon);
+    height: var(--sf-icon);
+    background: url("chrome://browser/content/sunfinch/icons/glance-open-tab.svg") center no-repeat;
+  }
+}
+
+#sunfinch-glance-bar > #sunfinch-glance-close {
+  flex: none;
+  width: 28px;
   border: none;
-  border-radius: 4px;
-  padding: 4px 10px;
-  font: menu;
-  color: var(--toolbar-color);
-  background: var(--toolbar-bgcolor);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  color: var(--sf-text-2);
+  background-image: url("chrome://global/skin/icons/close.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 14px;
 }
 
-#sunfinch-glance-bar > button:hover {
-  background: var(--toolbarbutton-hover-background);
+/* Loading: a moving accent line along the bottom edge. */
+#sunfinch-glance-progress {
+  position: absolute;
+  inset-inline: 0;
+  bottom: -1px;
+  height: var(--sf-marker-w);
+  overflow: hidden;
+  visibility: hidden;
+
+  #sunfinch-glance-bar[busy] > & {
+    visibility: visible;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    width: 40%;
+    background: var(--sf-accent);
+    box-shadow: var(--sf-glow-accent);
+    animation: sunfinch-glance-loading 1.2s var(--sf-ease) infinite;
+  }
 }
 
-/* Claude side panel on the right of the page. */
-
-#sunfinch-claude-button {
-  list-style-image: url("chrome://browser/content/sunfinch/icons/claude.svg");
+@keyframes sunfinch-glance-loading {
+  from { inset-inline-start: -40%; }
+  to { inset-inline-start: 100%; }
 }
 
-#sunfinch-claude-button[checked] > .toolbarbutton-icon {
-  background-color: var(--toolbarbutton-active-background);
+@media (prefers-reduced-motion: reduce) {
+  #sunfinch-glance-progress::before {
+    animation: none;
+    width: 100%;
+    inset-inline-start: 0;
+  }
 }
+
+/* --- Claude side panel on the right of the page ------------------------- */
 
 #sunfinch-claude-box {
-  width: 380px;
+  width: var(--sf-claude-w);
   min-width: 260px;
   max-width: 60vw;
-  border-inline-start: 1px solid var(--chrome-content-separator-color);
+  border-inline-start: var(--sf-line-w) solid var(--sf-line);
 
   > iframe {
     flex: 1;

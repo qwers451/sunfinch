@@ -69,17 +69,21 @@
       tab.linkedBrowser.docShellIsActive = true;
       tab.linkedBrowser.renderLayers = true;
 
-      this.buildChrome(panel);
+      this.buildChrome(panel, url);
       gBrowser.tabpanels.setAttribute("sunfinch-glance-open", "true");
       tab.linkedBrowser.focus();
 
       gBrowser.tabContainer.addEventListener("TabSelect", this);
       gBrowser.tabContainer.addEventListener("TabClose", this);
+      gBrowser.tabContainer.addEventListener("TabAttrModified", this);
       window.addEventListener("keydown", this, true);
     },
 
-    /** Backdrop over the current page and the buttons of the Glance window. */
-    buildChrome(panel) {
+    /**
+     * Backdrop over the current page, and the header of the Glance window:
+     * page title and address, "Open as tab", close, loading line.
+     */
+    buildChrome(panel, url) {
       const backdrop = document.createElementNS(HTML_NS, "div");
       backdrop.id = "sunfinch-glance-backdrop";
       backdrop.addEventListener("click", () => this.close());
@@ -87,6 +91,11 @@
 
       const bar = document.createElementNS(HTML_NS, "div");
       bar.id = "sunfinch-glance-bar";
+      const title = document.createElementNS(HTML_NS, "span");
+      title.id = "sunfinch-glance-title";
+      const address = document.createElementNS(HTML_NS, "span");
+      address.id = "sunfinch-glance-url";
+      address.textContent = url;
       const expand = document.createElementNS(HTML_NS, "button");
       expand.id = "sunfinch-glance-expand";
       document.l10n.setAttributes(expand, "sunfinch-glance-expand");
@@ -95,13 +104,32 @@
       close.id = "sunfinch-glance-close";
       document.l10n.setAttributes(close, "sunfinch-glance-close");
       close.addEventListener("click", () => this.close());
-      bar.append(expand, close);
-      panel.querySelector(".browserStack").append(bar);
+      const progress = document.createElementNS(HTML_NS, "span");
+      progress.id = "sunfinch-glance-progress";
+      bar.append(title, address, expand, close, progress);
+      panel.querySelector(".browserContainer").prepend(bar);
+      this.updateBar();
+    },
+
+    /** Title, address and loading state of the Glance page. */
+    updateBar() {
+      const bar = document.getElementById("sunfinch-glance-bar");
+      const tab = this.tab;
+      if (!bar || !tab) {
+        return;
+      }
+      document.getElementById("sunfinch-glance-title").textContent = tab.label;
+      const uri = tab.linkedBrowser.currentURI;
+      if (uri && uri.spec != "about:blank") {
+        document.getElementById("sunfinch-glance-url").textContent = uri.displaySpec;
+      }
+      bar.toggleAttribute("busy", tab.hasAttribute("busy"));
     },
 
     teardown() {
       gBrowser.tabContainer.removeEventListener("TabSelect", this);
       gBrowser.tabContainer.removeEventListener("TabClose", this);
+      gBrowser.tabContainer.removeEventListener("TabAttrModified", this);
       window.removeEventListener("keydown", this, true);
       document.getElementById("sunfinch-glance-backdrop")?.remove();
       document.getElementById("sunfinch-glance-bar")?.remove();
@@ -145,6 +173,11 @@
         case "TabClose":
           if (event.target == this.tab) {
             this.teardown();
+          }
+          break;
+        case "TabAttrModified":
+          if (event.target == this.tab) {
+            this.updateBar();
           }
           break;
         case "keydown":

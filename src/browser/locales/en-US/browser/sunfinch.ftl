@@ -45,12 +45,15 @@ sunfinch-notes-button =
 sunfinch-notes-title = Notes
 sunfinch-notes-text =
     .placeholder = Write anything…
+sunfinch-notes-saved = Saved
+sunfinch-notes-hint = One note for all spaces
 
 ## Glance
 
 sunfinch-glance-expand = Open as tab
-sunfinch-glance-close = Close
+sunfinch-glance-close =
     .title = Close (Esc)
+    .aria-label = Close
 
 ## Claude side panel
 
@@ -69,6 +72,14 @@ sunfinch-claude-not-found = Claude Code is not found. Install it, or set the pat
 # Variables:
 #   $message (String) - error text from Claude Code
 sunfinch-claude-error = Claude did not answer: { $message }
+sunfinch-claude-empty-title = Ask about this page
+sunfinch-claude-empty-text = Claude reads the text of the page, or only the selected part. Follow-up questions continue the same conversation.
+sunfinch-claude-suggestions = Suggestions
+sunfinch-claude-suggest-summary = Summarize briefly
+sunfinch-claude-suggest-facts = Find dates and numbers
+sunfinch-claude-suggest-simple = Explain in simple words
+sunfinch-claude-suggest-quiz = Make questions to test myself
+sunfinch-claude-hint = Enter to send · Shift+Enter for a new line
 
 ## SunFinch section in Settings
 
@@ -105,3 +116,54 @@ sunfinch-bookmarks-folder = { -brand-short-name }
 sunfinch-bookmarks-project = { -brand-short-name } on GitHub
 sunfinch-bookmarks-releases = Releases and changes
 sunfinch-bookmarks-issues = Report a problem
+
+## Spaces: section headers of the tab list (shown in capitals), color and icon of a space
+
+sunfinch-section-main = Main
+sunfinch-section-additional = Additional
+sunfinch-space-color =
+    .label = Color
+sunfinch-space-color-orange =
+    .label = Orange
+sunfinch-space-color-indigo =
+    .label = Indigo
+sunfinch-space-color-teal =
+    .label = Teal
+sunfinch-space-color-amber =
+    .label = Amber
+sunfinch-space-color-pink =
+    .label = Pink
+sunfinch-space-color-green =
+    .label = Green
+sunfinch-space-color-sky =
+    .label = Sky blue
+sunfinch-space-color-slate =
+    .label = Slate
+sunfinch-space-icon =
+    .label = Icon
+sunfinch-space-icon-space =
+    .label = Plain
+sunfinch-space-icon-work =
+    .label = Work
+sunfinch-space-icon-study =
+    .label = Study
+sunfinch-space-icon-home =
+    .label = Home
+sunfinch-space-icon-book =
+    .label = Book
+sunfinch-space-icon-code =
+    .label = Code
+sunfinch-space-icon-flask =
+    .label = Science
+sunfinch-space-icon-globe =
+    .label = Globe
+sunfinch-space-icon-heart =
+    .label = Heart
+sunfinch-space-icon-music =
+    .label = Music
+sunfinch-space-icon-plane =
+    .label = Travel
+sunfinch-space-icon-star =
+    .label = Star
+sunfinch-space-icon-cart =
+    .label = Shopping
