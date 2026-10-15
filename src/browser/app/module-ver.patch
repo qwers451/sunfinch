@@ -1,0 +1,17 @@
+diff --git a/browser/app/module.ver b/browser/app/module.ver
+index 5ef8d2a02aefd70f40f5828bdeca0aef77da0288..c2c16f1d6b32128432cc0b2b8b73d7eb0dfbcfba 100644
+--- a/browser/app/module.ver
++++ b/browser/app/module.ver
+@@ -1,8 +1,8 @@
+-WIN32_MODULE_COMPANYNAME=Mozilla Corporation
+-WIN32_MODULE_COPYRIGHT=�Firefox and Mozilla Developers; available under the MPL 2 license.
++WIN32_MODULE_COMPANYNAME=SunFinch
++WIN32_MODULE_COPYRIGHT=�SunFinch developers and Mozilla contributors; available under the MPL 2 license.
+ WIN32_MODULE_PRODUCTVERSION=@MOZ_APP_WINVERSION@
+-WIN32_MODULE_PRODUCTVERSION_STRING=@MOZ_APP_VERSION@
+-WIN32_MODULE_TRADEMARKS=Firefox is a Trademark of The Mozilla Foundation.
++WIN32_MODULE_PRODUCTVERSION_STRING=@MOZ_APP_VERSION_DISPLAY@
++WIN32_MODULE_TRADEMARKS=SunFinch
+ WIN32_MODULE_DESCRIPTION=@MOZ_APP_DISPLAYNAME@
+ WIN32_MODULE_PRODUCTNAME=@MOZ_APP_DISPLAYNAME@
+ WIN32_MODULE_NAME=@MOZ_APP_DISPLAYNAME@

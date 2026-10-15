@@ -2,7 +2,7 @@
 # Full build after `surfer download`. Run inside the MozillaBuild shell:
 #   tools\mozshell.cmd "bash tools/first-build.sh"            all steps
 #   tools\mozshell.cmd "bash tools/first-build.sh build"      only some steps
-# Steps: bootstrap brand import build mach. Logs go to .surfer/logs/<step>.log.
+# Steps: bootstrap brand import sync build mach. Logs go to .surfer/logs/<step>.log.
 set -o pipefail
 cd "$(dirname "$0")/.."
 mkdir -p .surfer/logs
@@ -36,6 +36,9 @@ for s in "${steps[@]}"; do
     bootstrap) step bootstrap bash -c "cd engine && ./mach --no-interactive bootstrap --application-choice browser" ;;
     brand) step brand npx surfer set brand release ;;
     import) step import npx surfer import ;;
+    # Copy changed files from src/ to engine/ (not the hook patches, which are
+    # already applied): quicker than a full import after editing our code.
+    sync) step sync bash -c 'cd src && find . -type f ! -name "*.patch" | while read -r f; do mkdir -p "../engine/$(dirname "$f")"; cmp -s "$f" "../engine/$f" || { cp "$f" "../engine/$f" && echo "synced $f"; }; done' ;;
     # surfer writes mozconfig and the version files; mach (next step) builds.
     # --skip-patch-check: hooks exported with `surfer export` count as
     # "not imported", and the check then waits for a y/N answer.
