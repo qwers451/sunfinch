@@ -170,7 +170,7 @@
 }
 
 /* Space colors: one token per name, matched to both themes. */
-:is(.sunfinch-space-button, .sunfinch-space-choice) {
+:is(.sunfinch-space-button, #sunfinch-space-dialog, .sunfinch-space-dialog-color) {
   &[data-color="orange"] { --sf-space: var(--sf-space-orange); }
   &[data-color="amber"] { --sf-space: var(--sf-space-amber); }
   &[data-color="pink"] { --sf-space: var(--sf-space-pink); }
@@ -179,12 +179,6 @@
   &[data-color="sky"] { --sf-space: var(--sf-space-sky); }
   &[data-color="indigo"] { --sf-space: var(--sf-space-indigo); }
   &[data-color="slate"] { --sf-space: var(--sf-space-slate); }
-}
-
-/* Space menu: icons and colors in the space's color. */
-.sunfinch-space-choice > .menu-icon {
-  -moz-context-properties: fill;
-  fill: var(--sf-space);
 }
 
 /* --- Tab list ------------------------------------------------------------ */
@@ -548,4 +542,252 @@
     border: none;
     width: 100%;
   }
+}
+
+/* --- "New space" / "Edit space" dialog ---------------------------------- */
+
+#sunfinch-space-dialog {
+  width: 480px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 32px);
+  box-sizing: border-box;
+  padding: 0;
+  overflow: auto;
+  color: var(--sf-text);
+  background: var(--sf-bg-raised);
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+  border-radius: var(--sf-radius-2);
+  box-shadow: var(--sf-shadow-popup);
+  font-family: var(--sf-font-ui);
+  font-size: var(--sf-text-md);
+  line-height: var(--sf-leading-ui);
+
+  &::backdrop {
+    background: var(--sf-scrim);
+  }
+
+  > form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 14px 6px 24px;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: var(--sf-text-xl);
+    font-weight: var(--sf-weight-bold);
+  }
+
+  fieldset {
+    margin: 0;
+    padding: 0;
+    border: none;
+    min-width: 0;
+  }
+
+  legend,
+  label,
+  .sunfinch-space-dialog-label {
+    padding: 0;
+    margin-bottom: var(--sf-gap-4);
+    font-size: var(--sf-text-sm);
+    color: var(--sf-text-3);
+  }
+
+  input[type="text"] {
+    height: 36px;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0 var(--sf-gap-5);
+    font: inherit;
+    color: var(--sf-text);
+    background: var(--sf-bg-sunken);
+    border: var(--sf-line-w) solid var(--sf-line-strong);
+    border-radius: var(--sf-radius-1);
+
+    &::placeholder {
+      color: var(--sf-text-4);
+      opacity: 1;
+    }
+
+    &:focus-visible {
+      border-color: var(--sf-focus);
+      outline: var(--sf-focus-w) solid var(--sf-focus);
+      outline-offset: -2px;
+    }
+  }
+
+  button {
+    appearance: none;
+    margin: 0;
+    font: inherit;
+    color: var(--sf-text);
+    background-color: transparent;
+    border: var(--sf-line-w) solid var(--sf-line-strong);
+    border-radius: var(--sf-radius-1);
+    transition: background-color var(--sf-dur-1) var(--sf-ease);
+
+    &:hover {
+      background-color: var(--sf-fill-hover);
+    }
+
+    &:hover:active {
+      background-color: var(--sf-fill-pressed);
+    }
+
+    &:focus-visible {
+      outline: var(--sf-focus-w) solid var(--sf-focus);
+      outline-offset: -2px;
+    }
+  }
+
+  footer {
+    display: flex;
+    align-items: center;
+    gap: var(--sf-gap-4);
+    padding: 14px 24px;
+    border-top: var(--sf-line-w) solid var(--sf-line);
+
+    > .sunfinch-space-dialog-hint {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+}
+
+#sunfinch-space-dialog .sunfinch-space-dialog-close {
+  width: var(--sf-button);
+  height: var(--sf-button);
+  padding: 0;
+  border: none;
+  background-image: url("chrome://global/skin/icons/close.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 14px;
+  -moz-context-properties: fill;
+  fill: var(--sf-text-2);
+}
+
+.sunfinch-space-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sf-gap-10);
+  padding: 14px 24px 18px;
+}
+
+.sunfinch-space-dialog-field {
+  display: flex;
+  flex-direction: column;
+
+  > label,
+  > .sunfinch-space-dialog-label {
+    margin-bottom: var(--sf-gap-4);
+  }
+
+  > .sunfinch-space-dialog-hint {
+    margin-top: var(--sf-gap-4);
+  }
+}
+
+.sunfinch-space-dialog-hint {
+  font-size: var(--sf-text-sm);
+  color: var(--sf-text-4);
+}
+
+/* Colors: a square of the color; the chosen one gets a frame. */
+.sunfinch-space-dialog-colors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sf-gap-3);
+}
+
+#sunfinch-space-dialog .sunfinch-space-dialog-color {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-color: transparent;
+
+  > span {
+    width: 20px;
+    height: 20px;
+    background: var(--sf-space);
+  }
+
+  &[aria-pressed="true"] {
+    border-color: var(--sf-text);
+  }
+}
+
+/* Icons: in the chosen color when picked. */
+.sunfinch-space-dialog-icons {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--sf-gap-3);
+}
+
+#sunfinch-space-dialog .sunfinch-space-dialog-icon {
+  height: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-color: var(--sf-line);
+  -moz-context-properties: fill;
+  fill: var(--sf-text-2);
+
+  > img {
+    width: var(--sf-icon);
+    height: var(--sf-icon);
+  }
+
+  &[aria-pressed="true"] {
+    background-color: var(--sf-fill-selected);
+    border-color: var(--sf-text);
+    fill: var(--sf-space);
+  }
+}
+
+/* Preview: the switcher button on a strip of the toolbar. */
+.sunfinch-space-dialog-preview {
+  display: flex;
+  align-items: stretch;
+  height: 44px;
+  box-sizing: border-box;
+  background: var(--sf-bg);
+  border: var(--sf-line-w) solid var(--sf-line);
+
+  > .sunfinch-space-button {
+    cursor: default;
+  }
+}
+
+#sunfinch-space-dialog .sunfinch-space-dialog-ok {
+  height: var(--sf-button);
+  padding-inline: var(--sf-gap-8);
+  font-weight: var(--sf-weight-bold);
+  color: var(--sf-on-primary);
+  background-color: var(--sf-primary);
+  border-color: transparent;
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--sf-primary) 88%, var(--sf-on-primary));
+  }
+
+  &:hover:active {
+    background-color: color-mix(in srgb, var(--sf-primary) 78%, var(--sf-on-primary));
+  }
+}
+
+#sunfinch-space-dialog .sunfinch-space-dialog-cancel {
+  height: var(--sf-button);
+  padding-inline: 14px;
 }

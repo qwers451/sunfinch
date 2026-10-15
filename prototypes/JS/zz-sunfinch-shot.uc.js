@@ -172,6 +172,19 @@
           await shoot(`claude-${theme}`);
           break;
         }
+        case "dialog": {
+          const D = window.SunfinchSpaceDialog;
+          window.SunfinchSpaces.promptNewSpace();
+          await waitFor(() => D.isOpen);
+          D.dialog.querySelector('.sunfinch-space-dialog-color[data-color="pink"]').click();
+          D.dialog.querySelector('.sunfinch-space-dialog-icon[data-icon="code"]').click();
+          const name = D.dialog.querySelector("#sunfinch-space-dialog-name");
+          name.value = "Проекты";
+          name.dispatchEvent(new Event("input"));
+          await shoot(`dialog-${theme}`);
+          D.dialog.close("");
+          break;
+        }
         case "menu": {
           const S = window.SunfinchSpaces;
           const button = document.querySelector(".sunfinch-space-button[selected]");

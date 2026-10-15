@@ -7,7 +7,7 @@
 // quits).
 
 {
-  const { SpacesStore, SpacesSession, defaultName, COLORS, ICONS } = ChromeUtils.importESModule(
+  const { SpacesStore, SpacesSession, defaultName, spaceIconURL } = ChromeUtils.importESModule(
     "chrome://browser/content/sunfinch/modules/SunfinchSpacesStore.sys.mjs"
   );
   const lazy = {};
@@ -29,11 +29,6 @@
   // Tabs of a space you left are unloaded after this many minutes (0: never).
   const UNLOAD_PREF = "sunfinch.spaces.unloadAfterMinutes";
   const HTML_NS = "http://www.w3.org/1999/xhtml";
-
-  function spaceIconURL(icon) {
-    const file = icon == "space" ? "space" : `sp-${icon}`;
-    return `chrome://browser/content/sunfinch/icons/${file}.svg`;
-  }
 
   // Temporary tabs of the previous run are closed once per app run, in all
   // restored windows, before any window applies its spaces.
@@ -427,14 +422,18 @@
     },
 
     async promptNewSpace() {
-      const [title, label] = await document.l10n.formatValues([
-        "sunfinch-space-new-title",
-        "sunfinch-space-name-label",
-      ]);
-      const name = { value: await defaultName(SpacesStore.spaces.length + 1) };
-      if (Services.prompt.prompt(window, title, label, name, null, {}) && name.value.trim()) {
-        const space = SpacesStore.add(name.value.trim());
+      const result = await window.SunfinchSpaceDialog.open();
+      if (result) {
+        const space = SpacesStore.add(result.name, result);
         this.switchTo(space.id);
+      }
+    },
+
+    async editSpace(space) {
+      const result = await window.SunfinchSpaceDialog.open(space);
+      if (result) {
+        SpacesStore.rename(space.id, result.name);
+        SpacesStore.restyle(space.id, result);
       }
     },
 
@@ -453,57 +452,12 @@
         item.addEventListener("command", handler);
         popup.append(item);
       };
-      add("sunfinch-space-rename", async () => {
-        const [title, label] = await document.l10n.formatValues([
-          "sunfinch-space-rename-title",
-          "sunfinch-space-name-label",
-        ]);
-        const name = { value: space.name };
-        if (Services.prompt.prompt(window, title, label, name, null, {})) {
-          SpacesStore.rename(space.id, name.value.trim());
-        }
-      });
-      popup.append(
-        this.choiceMenu("sunfinch-space-color", COLORS, space.color, color => {
-          const item = document.createXULElement("menuitem");
-          item.className = "menuitem-iconic sunfinch-space-choice";
-          item.dataset.color = color;
-          item.setAttribute("image", spaceIconURL(space.icon));
-          document.l10n.setAttributes(item, `sunfinch-space-color-${color}`);
-          item.addEventListener("command", () => SpacesStore.restyle(space.id, { color }));
-          return item;
-        }),
-        this.choiceMenu("sunfinch-space-icon", ICONS, space.icon, icon => {
-          const item = document.createXULElement("menuitem");
-          item.className = "menuitem-iconic sunfinch-space-choice";
-          item.dataset.color = space.color;
-          item.setAttribute("image", spaceIconURL(icon));
-          document.l10n.setAttributes(item, `sunfinch-space-icon-${icon}`);
-          item.addEventListener("command", () => SpacesStore.restyle(space.id, { icon }));
-          return item;
-        })
-      );
+      add("sunfinch-space-edit", () => this.editSpace(space));
       popup.append(document.createXULElement("menuseparator"));
       add("sunfinch-space-delete", () => {
         SpacesStore.remove(space.id);
       }, SpacesStore.spaces.length < 2);
       popup.openPopupAtScreen(event.screenX, event.screenY, true);
-    },
-
-    /** Submenu with one item per value; the current value is checked. */
-    choiceMenu(l10nId, values, current, makeItem) {
-      const menu = document.createXULElement("menu");
-      document.l10n.setAttributes(menu, l10nId);
-      const popup = document.createXULElement("menupopup");
-      for (const value of values) {
-        const item = makeItem(value);
-        if (value == current) {
-          item.setAttribute("selected", "true");
-        }
-        popup.append(item);
-      }
-      menu.append(popup);
-      return menu;
     },
 
     // --- Tab context menu -------------------------------------------------

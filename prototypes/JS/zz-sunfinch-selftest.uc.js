@@ -54,6 +54,85 @@
     await glance();
     await claude();
     await settings();
+    await spaceDialog();
+  }
+
+  // "New space" / "Edit space" dialog. Leaves the spaces as it found them
+  // (phase 2 checks them).
+  async function spaceDialog() {
+    const S = window.SunfinchSpaces;
+    const D = window.SunfinchSpaceDialog;
+    const Store = lazy.SpacesStore;
+    const before = Store.spaces.length;
+    const active = S.activeId;
+    const dialog = () => D.dialog;
+    const press = (selector) => dialog().querySelector(selector).click();
+    // Trusted key presses to the focused element, as EventUtils sends them.
+    const key = (name, keyCode) => {
+      const tip = Cc["@mozilla.org/text-input-processor;1"].createInstance(Ci.nsITextInputProcessor);
+      tip.beginInputTransactionForTests(window);
+      const event = new KeyboardEvent("", { key: name, code: name, keyCode });
+      tip.keydown(event);
+      tip.keyup(event);
+    };
+
+    // Cancel with Escape: nothing changes.
+    S.promptNewSpace();
+    check("space dialog: opens", await waitFor(() => D.isOpen));
+    check("space dialog: modal", dialog()?.matches(":modal"));
+    key("Escape", KeyboardEvent.DOM_VK_ESCAPE);
+    check("space dialog: Escape cancels",
+      (await waitFor(() => !D.isOpen)) && Store.spaces.length == before);
+
+    // Create: name, color and icon from the dialog; Enter confirms.
+    S.promptNewSpace();
+    await waitFor(() => D.isOpen);
+    check("space dialog: name field has focus",
+      document.activeElement?.id == "sunfinch-space-dialog-name");
+    check("space dialog: 8 colors and 12 icons",
+      dialog().querySelectorAll(".sunfinch-space-dialog-color").length == 8 &&
+      dialog().querySelectorAll(".sunfinch-space-dialog-icon").length == 12);
+    press('.sunfinch-space-dialog-color[data-color="pink"]');
+    press('.sunfinch-space-dialog-icon[data-icon="code"]');
+    const name = dialog().querySelector("#sunfinch-space-dialog-name");
+    name.value = "Проекты";
+    name.dispatchEvent(new Event("input"));
+    check("space dialog: preview follows the choice",
+      dialog().querySelector(".sunfinch-space-dialog-preview .sunfinch-space-name").textContent == "Проекты" &&
+      dialog().querySelector(".sunfinch-space-dialog-preview .sunfinch-space-button").dataset.color == "pink");
+    name.focus();
+    key("Enter", KeyboardEvent.DOM_VK_RETURN);
+    await waitFor(() => !D.isOpen && Store.spaces.length == before + 1);
+    const created = Store.spaces.at(-1);
+    check("space dialog: creates the space",
+      created?.name == "Проекты" && created.color == "pink" && created.icon == "code",
+      JSON.stringify(created));
+    check("space dialog: switches to the new space", S.activeId == created?.id);
+
+    // Edit: same dialog, filled in.
+    S.editSpace(Store.get(created.id));
+    await waitFor(() => D.isOpen);
+    check("space dialog: edit is filled in",
+      dialog().querySelector("#sunfinch-space-dialog-name").value == "Проекты" &&
+      dialog().querySelector('.sunfinch-space-dialog-color[aria-pressed="true"]')?.dataset.color == "pink");
+    press('.sunfinch-space-dialog-color[data-color="sky"]');
+    press(".sunfinch-space-dialog-ok");
+    check("space dialog: edit saves",
+      await waitFor(() => !D.isOpen && Store.get(created.id)?.color == "sky"),
+      JSON.stringify(Store.get(created.id)));
+
+    // Empty name: the default one.
+    S.promptNewSpace();
+    await waitFor(() => D.isOpen);
+    press(".sunfinch-space-dialog-ok");
+    await waitFor(() => !D.isOpen && Store.spaces.length == before + 2);
+    const unnamed = Store.spaces.at(-1);
+    check("space dialog: empty name gets the default", /\d/.test(unnamed?.name ?? ""), unnamed?.name);
+
+    S.switchTo(active);
+    Store.remove(unnamed.id);
+    Store.remove(created.id);
+    await Store.flush();
   }
 
   async function settings() {

@@ -16,9 +16,21 @@ const SAVE_DELAY_MS = 500;
 // tokens, the icons content/icons/sp-<name>.svg ("space" is the plain one).
 export const COLORS = ["orange", "indigo", "teal", "amber", "pink", "green", "sky", "slate"];
 export const ICONS = [
-  "space", "work", "study", "home", "book", "code", "flask",
-  "globe", "heart", "music", "plane", "star", "cart",
+  "space", "work", "study", "home", "code", "book", "flask",
+  "music", "cart", "plane", "globe", "heart", "star",
 ];
+// Order of the color swatches in the dialog (around the color wheel);
+// COLORS is the order new spaces take them in, neighbours apart.
+export const COLOR_SWATCHES = ["orange", "amber", "pink", "green", "teal", "sky", "indigo", "slate"];
+// Icons offered when creating or editing a space; "space" is the plain icon
+// of the first space.
+export const PICKABLE_ICONS = ICONS.filter(icon => icon != "space");
+
+export function spaceIconURL(icon) {
+  const file = icon == "space" ? "space" : `sp-${icon}`;
+  return `chrome://browser/content/sunfinch/icons/${file}.svg`;
+}
+
 // Colors of the first versions, stored as hex.
 const OLD_COLORS = {
   "#ff5f00": "orange",

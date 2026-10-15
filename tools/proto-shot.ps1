@@ -4,13 +4,13 @@
 # <scene>-<theme>.png and quits; this script copies them to -Out.
 #
 # Usage: powershell -File tools\proto-shot.ps1 -Out <dir> [-Theme dark|light|both]
-#        [-Scenes main,notes,glance,claude,menu] [-Headed]
+#        [-Scenes main,notes,glance,claude,dialog,menu] [-Headed]
 # -Headed: a visible window for a few seconds; pictures come from the screen
 # and include popups (notes window, menus), which the headless snapshot misses.
 param(
   [Parameter(Mandatory)] [string]$Out,
   [ValidateSet('dark', 'light', 'both')] [string]$Theme = 'both',
-  [string]$Scenes = 'main,notes,glance,claude,menu',
+  [string]$Scenes = 'main,notes,glance,claude,dialog,menu',
   [switch]$Headed
 )
 
