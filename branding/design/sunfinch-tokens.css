@@ -1,0 +1,154 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   SunFinch · дизайн-токены · направление A2 «Прибор-моно»
+   ───────────────────────────────────────────────────────────────────────
+   Цвета заданы через light-dark(<светлая>, <тёмная>): тема следует системе
+   через color-scheme. Принудительно: <html data-sf-theme="dark|light">.
+   Нецветовые значения, зависящие от темы (сила свечения), — в блоках ниже.
+   Шрифты (OFL, с кириллицей): JetBrains Mono — интерфейс;
+   Segoe UI Variable (системный) или Golos Text — длинный текст.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  color-scheme: light dark;
+
+  /* ── Поверхности ─────────────────────────────────────────────────────── */
+  --sf-bg:             light-dark(#F6F1E7, #11132F); /* панель инструментов, вкладки, панель Claude */
+  --sf-bg-sunken:      light-dark(#FFFCF5, #0B0D24); /* адресная строка, поля ввода, блоки кода     */
+  --sf-bg-raised:      light-dark(#FFFCF5, #181B3D); /* заметки, меню, диалоги                       */
+  --sf-bg-code:        light-dark(#EFE8DA, #0B0D24); /* код в ответах Claude                         */
+  --sf-scrim:          light-dark(rgba(17, 19, 47, .35), rgba(6, 7, 20, .55)); /* под Glance и диалогом */
+
+  /* ── Заливки состояний (кладутся поверх любой поверхности) ───────────── */
+  --sf-fill-hover:     light-dark(rgba(17, 19, 47, .06),  rgba(236, 234, 245, .07));
+  --sf-fill-pressed:   light-dark(rgba(17, 19, 47, .11),  rgba(236, 234, 245, .13));
+  --sf-fill-selected:  light-dark(rgba(17, 19, 47, .07),  rgba(236, 234, 245, .075)); /* выбранная вкладка, активное пространство, «нажатая» кнопка */
+  --sf-fill-bubble:    light-dark(rgba(17, 19, 47, .06),  rgba(236, 234, 245, .08));  /* вопрос в чате Claude */
+
+  /* ── Линии ───────────────────────────────────────────────────────────── */
+  --sf-line:           light-dark(rgba(17, 19, 47, .12),  rgba(214, 218, 255, .12)); /* разделители 1 px */
+  --sf-line-strong:    light-dark(rgba(17, 19, 47, .24),  rgba(214, 218, 255, .24)); /* рамки полей, всплывающих окон */
+
+  /* ── Текст и иконки ──────────────────────────────────────────────────── */
+  --sf-text:           light-dark(#11132F, #ECEAF5); /* основной, выбранное             */
+  --sf-text-2:         light-dark(#2C2F55, #C9CAE0); /* названия вкладок, иконки          */
+  --sf-text-3:         light-dark(#4F5278, #A3A6C4); /* вторичный                         */
+  --sf-text-4:         light-dark(#61648A, #8A8EB2); /* метки «ОСНОВНЫЕ», счётчики (≥4.5:1) */
+
+  /* ── Акценты из логотипа ─────────────────────────────────────────────── */
+  --sf-accent:         light-dark(#E65300, #FFB300); /* маркер вкладки, иконка «нажатой» кнопки, загрузка */
+  --sf-primary:        light-dark(#11132F, #FFB300); /* основная кнопка: «Отправить», «Создать» */
+  --sf-on-primary:     light-dark(#FFFFFF, #11132F);
+  --sf-focus:          light-dark(#4433E0, #7B6CFF); /* кольцо фокуса 2 px, всегда видно */
+  --sf-selection:      light-dark(rgba(68, 51, 224, .18), rgba(123, 108, 255, .30));
+  --sf-success:        light-dark(#007A70, #1FC2B4); /* «Сохранено» */
+  --sf-danger:         light-dark(#C8321E, #FF6F61); /* ошибки Claude */
+  --sf-danger-bg:      light-dark(rgba(200, 50, 30, .07), rgba(255, 111, 97, .10));
+
+  /* ── Цвета пространств (8) ───────────────────────────────────────────── */
+  /* Один оттенок, подобранный под каждый фон: ≥3:1 к фону в обеих темах.  */
+  --sf-space-orange:   light-dark(#D95300, #FF7A1F); /* «Работа» по умолчанию */
+  --sf-space-amber:    light-dark(#A87000, #FFC233);
+  --sf-space-pink:     light-dark(#C42273, #FF5FAA);
+  --sf-space-green:    light-dark(#4F7A00, #8CC63F);
+  --sf-space-teal:     light-dark(#00877C, #1FC2B4); /* «Личное» */
+  --sf-space-sky:      light-dark(#1F6FD1, #4DA8FF);
+  --sf-space-indigo:   light-dark(#4433E0, #8C7DFF); /* «Учёба» */
+  --sf-space-slate:    light-dark(#55587D, #A3A6C4); /* нейтральный */
+  /* Элемент пространства получает свой цвет так:
+     .sf-space[data-color="indigo"] { --sf-space: var(--sf-space-indigo); } */
+  --sf-space:          var(--sf-accent);
+
+  /* ── Свет и тень ─────────────────────────────────────────────────────── */
+  --sf-glow-strength:  70%;                          /* в светлой теме — 30 % (ниже) */
+  --sf-glow-accent:    0 0 8px color-mix(in srgb, var(--sf-accent) var(--sf-glow-strength), transparent);
+  --sf-glow-space:     0 0 8px color-mix(in srgb, var(--sf-space)  var(--sf-glow-strength), transparent);
+  --sf-glow-icon:      drop-shadow(0 0 4px color-mix(in srgb, var(--sf-space) var(--sf-glow-strength), transparent));
+  --sf-shadow-popup:   0 16px 40px -14px light-dark(rgba(17, 19, 47, .28), rgba(0, 0, 0, .60));
+  /* Других теней нет: глубина — тоном фона и линией 1 px. */
+
+  /* ── Типографика ─────────────────────────────────────────────────────── */
+  --sf-font-ui:        "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --sf-font-read:      "Segoe UI Variable Text", "Segoe UI", "Golos Text", system-ui, sans-serif;
+  --sf-text-xs:        10px;    /* метки ЗАГЛАВНЫМИ: ОСНОВНЫЕ, ДОПОЛНИТЕЛЬНЫЕ          */
+  --sf-text-sm:        11.5px;  /* подсказки, клавиши, номера, «Сохранено»             */
+  --sf-text-md:        12.5px;  /* базовый текст интерфейса                            */
+  --sf-text-lg:        14px;    /* заголовки панелей и окон: «Заметки», «Claude»       */
+  --sf-text-xl:        18px;    /* заголовок диалога                                   */
+  --sf-text-read:      13.5px;  /* ответы Claude (шрифт --sf-font-read)                */
+  --sf-leading-ui:     1.3;
+  --sf-leading-read:   1.55;
+  --sf-tracking-label: .12em;   /* для меток ЗАГЛАВНЫМИ */
+  --sf-weight-regular: 400;
+  --sf-weight-medium:  500;
+  --sf-weight-bold:    700;     /* активное пространство, выбранная вкладка */
+
+  /* ── Форма ───────────────────────────────────────────────────────────── */
+  --sf-radius-0:       0;       /* окно, панели, списки               */
+  --sf-radius-1:       2px;     /* кнопки, вкладки, поля              */
+  --sf-radius-2:       4px;     /* всплывающие окна, меню, Glance     */
+  --sf-line-w:         1px;     /* все разделители и рамки            */
+  --sf-marker-w:       2px;     /* маркер вкладки и пространства      */
+  --sf-focus-w:        2px;     /* кольцо фокуса                      */
+
+  /* ── Отступы: шаг 2 px, --sf-gap-N = N × 2 px ────────────────────────── */
+  --sf-gap-1:  2px;  --sf-gap-2:  4px;  --sf-gap-3:  6px;  --sf-gap-4:  8px;
+  --sf-gap-5: 10px;  --sf-gap-6: 12px;  --sf-gap-8: 16px;  --sf-gap-10: 20px;
+  --sf-gap-12: 24px; --sf-gap-16: 32px;
+
+  /* ── Размеры ─────────────────────────────────────────────────────────── */
+  --sf-toolbar-h:      44px;
+  --sf-button:         32px;    /* кнопки панели инструментов */
+  --sf-icon:           16px;
+  --sf-tab-h:          32px;
+  --sf-sidebar-w:      280px;   /* моноширинный шрифт шире — 280, не 264 */
+  --sf-sidebar-collapsed-w: 52px;
+  --sf-claude-w:       380px;   /* тянется от 260px до 60 % окна */
+  --sf-notes-w:        26em;
+  --sf-menu-item-h:    28px;
+
+  /* ── Движение ────────────────────────────────────────────────────────── */
+  --sf-dur-1:          120ms;   /* наведение, нажатие            */
+  --sf-dur-2:          200ms;   /* всплывающие окна, Glance      */
+  --sf-ease:           cubic-bezier(.2, .7, .2, 1);
+}
+
+/* ── Светлая тема: нецветовые значения ──────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  :root:not([data-sf-theme="dark"]) { --sf-glow-strength: 30%; }
+}
+:root[data-sf-theme="light"] { color-scheme: light; --sf-glow-strength: 30%; }
+:root[data-sf-theme="dark"]  { color-scheme: dark;  --sf-glow-strength: 70%; }
+
+/* ── Меньше движения ───────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  :root { --sf-dur-1: 0ms; --sf-dur-2: 0ms; }
+}
+
+/* ── Режим высокой контрастности Windows ───────────────────────────────── */
+@media (forced-colors: active) {
+  :root {
+    --sf-bg: Canvas; --sf-bg-sunken: Field; --sf-bg-raised: Canvas; --sf-bg-code: Canvas;
+    --sf-text: CanvasText; --sf-text-2: CanvasText; --sf-text-3: CanvasText; --sf-text-4: GrayText;
+    --sf-line: CanvasText; --sf-line-strong: CanvasText;
+    --sf-fill-hover: transparent; --sf-fill-pressed: transparent;
+    --sf-fill-selected: SelectedItem; --sf-fill-bubble: transparent;
+    --sf-accent: Highlight; --sf-focus: Highlight; --sf-primary: ButtonText; --sf-on-primary: ButtonFace;
+    --sf-success: CanvasText; --sf-danger: CanvasText; --sf-danger-bg: transparent;
+    --sf-glow-strength: 0%; --sf-shadow-popup: none;
+  }
+}
+
+/* ── Пример применения ─────────────────────────────────────────────────────
+.tab[selected] {
+  background: var(--sf-fill-selected);
+  color: var(--sf-text);
+  font-weight: var(--sf-weight-bold);
+  box-shadow: inset var(--sf-marker-w) 0 0 var(--sf-accent);   маркер слева
+}
+.tab[selected]::before { box-shadow: var(--sf-glow-accent); }    свечение маркера
+.sf-space[aria-current="true"] {
+  background: var(--sf-fill-selected);
+  border-block-end: var(--sf-marker-w) solid var(--sf-space);
+}
+:focus-visible { outline: var(--sf-focus-w) solid var(--sf-focus); outline-offset: -2px; }
+───────────────────────────────────────────────────────────────────────── */
