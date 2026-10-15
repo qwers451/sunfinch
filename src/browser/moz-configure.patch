@@ -1,0 +1,13 @@
+diff --git a/browser/moz.configure b/browser/moz.configure
+index 3ea3d88b93604f09067acbc4d26be5e8d4fda91b..dab6efcc5060d1b0688bdc2752880028e88cb838 100644
+--- a/browser/moz.configure
++++ b/browser/moz.configure
+@@ -11,7 +11,7 @@ imply_option("MOZ_NORMANDY", True)
+ imply_option("MOZ_PROFILE_MIGRATOR", True)
+ 
+ 
+-imply_option("MOZ_APP_VENDOR", "Mozilla")
++imply_option("MOZ_APP_VENDOR", "SunFinch")
+ imply_option("MOZ_APP_ID", "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}")
+ # Include the DevTools client, not just the server (which is the default)
+ imply_option("MOZ_DEVTOOLS", "all")
