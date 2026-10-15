@@ -18,3 +18,10 @@ ac_add_options --enable-bootstrap
 # Localizations (firefox-l10n checkout with ru/), for package-multi-locale.
 # surfer leaves unknown ${...} alone, so the shell expands it.
 ac_add_options --with-l10n-base=${MOZBUILD_STATE_PATH}/l10n
+
+# Google Safe Browsing (phishing and malware protection). The key file lives
+# outside the repository; without it the browser builds, but Safe Browsing
+# lists don't update.
+if test -f "$MOZBUILD_STATE_PATH/keys/safebrowsing.key"; then
+  ac_add_options --with-google-safebrowsing-api-keyfile="$MOZBUILD_STATE_PATH/keys/safebrowsing.key"
+fi
