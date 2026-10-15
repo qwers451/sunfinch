@@ -1,0 +1,91 @@
+# SunFinch: names of built-in features without the Firefox brand. Copied
+# over the firefox-l10n checkout by `tools/first-build.sh ru`.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+
+## The following feature names must be treated as a brand.
+##
+## They cannot be:
+## - Transliterated.
+## - Translated.
+##
+## Declension should be avoided where possible, leaving the original
+## brand unaltered in prominent UI positions.
+##
+## For further details, consult:
+## https://mozilla-l10n.github.io/styleguides/mozilla_general/#brands-copyright-and-trademark
+
+-facebook-container-brand-name = Facebook Container
+-monitor-brand-name = Firefox Monitor
+-monitor-brand-short-name = Monitor
+-mozmonitor-brand-name = Mozilla Monitor
+-pocket-brand-name = Pocket
+-send-brand-name = Firefox Send
+-screenshots-brand-name = Скриншоты
+-mozilla-vpn-brand-name = Mozilla VPN
+-profiler-brand-name = Профайлер
+-translations-brand-name = Переводчик
+-focus-brand-name = Firefox Focus
+-relay-brand-name = Firefox Relay
+-relay-brand-short-name = Relay
+-fakespot-brand-name = Fakespot
+-solo-ai-brand-name = Solo
+-thunderbird-brand-name = Mozilla Thunderbird
+-thunderbird-brand-short-name = Thunderbird
+-mdn-brand-name = MDN Web Docs
+-yelp-brand-name = Yelp
+
+##
+
+# Note the name of the website is capitalized.
+-fakespot-website-name = Fakespot.com
+# The particle "by" can be localized, "Fakespot" and "Mozilla" should not be localized or transliterated.
+-fakespot-brand-full-name = Fakespot от Mozilla
+# “Suggest” can be localized, “Firefox” must be treated as a brand
+# and kept in English.
+-firefox-suggest-brand-name = Подсказки
+# ”Home" can be localized, “Firefox” must be treated as a brand
+# and kept in English.
+-firefox-home-brand-name =
+    { $case ->
+        [nominative_uppercase] Домашняя страница SunFinch
+        [genitive] домашней страницы SunFinch
+        [dative] домашнюю страницу SunFinch
+        [accusative] домашнюю страницу SunFinch
+        [instrumental] домашней страницей SunFinch
+        [prepositional] домашней странице SunFinch
+       *[nominative] домашняя страница SunFinch
+    }
+# View" can be localized, “Firefox” must be treated as a brand
+# and kept in English.
+-firefoxview-brand-name = Обзор вкладок
+# Firefox Labs is the name for a page in Settings to allow users to learn about
+# experimental and in-development features, and turn those features on and off.
+# The "Labs" portion can be localized, “Firefox” must be treated as a brand
+# and kept in English.
+-firefoxlabs-brand-name = Экспериментальные функции
+-smart-window-brand-name =
+    { $plural-form ->
+        [true]
+            { $case ->
+                [nominative_uppercase] Умные окна
+                [genitive] Умных окон
+                [dative] Умным окнам
+                [accusative] Умные окна
+                [instrumental] Умными окнами
+                [prepositional] Умных окнах
+               *[nominative] Умные окна
+            }
+       *[false]
+            { $case ->
+                [nominative_uppercase] Умное окно
+                [genitive] Умного окна
+                [dative] Умному окну
+                [accusative] Умное окно
+                [instrumental] Умным окном
+                [prepositional] Умном окне
+               *[nominative] Умное окно
+            }
+    }
