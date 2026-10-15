@@ -65,3 +65,30 @@ sunfinch-claude-stop = Остановить
 sunfinch-claude-stopped = Остановлено.
 sunfinch-claude-not-found = Claude Code не найден. Установите его или укажите путь к claude.exe в about:config: sunfinch.claude.path
 sunfinch-claude-error = Claude не ответил: { $message }
+
+## SunFinch section in Settings
+
+sunfinch-prefs-title = SunFinch
+sunfinch-prefs-glance-enabled = Открывать ссылки в Glance по клику с клавишей
+sunfinch-prefs-glance-modifier = Клавиша для Glance:
+sunfinch-prefs-modifier-alt = Alt
+sunfinch-prefs-modifier-shift = Shift
+sunfinch-prefs-modifier-ctrl = Ctrl
+sunfinch-prefs-modifier-meta = Windows
+sunfinch-prefs-unload = Выгружать вкладки покинутого пространства через:
+sunfinch-prefs-unload-0 = Никогда
+sunfinch-prefs-unload-5 = 5 минут
+sunfinch-prefs-unload-15 = 15 минут
+sunfinch-prefs-unload-30 = 30 минут
+sunfinch-prefs-unload-60 = 1 час
+sunfinch-prefs-unload-120 = 2 часа
+sunfinch-prefs-screenshot = Кнопка «Скриншот»:
+sunfinch-prefs-screenshot-both = Сохранять в «Загрузки» и копировать
+sunfinch-prefs-screenshot-file = Сохранять в «Загрузки»
+sunfinch-prefs-screenshot-clipboard = Копировать в буфер обмена
+sunfinch-prefs-claude-path = Путь к Claude Code:
+sunfinch-prefs-claude-path-input =
+    .placeholder = Определяется автоматически
+sunfinch-prefs-claude-model = Модель Claude:
+sunfinch-prefs-claude-model-input =
+    .placeholder = По умолчанию Claude Code

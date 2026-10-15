@@ -53,6 +53,37 @@
     await notesSetup();
     await glance();
     await claude();
+    await settings();
+  }
+
+  async function settings() {
+    const tab = gBrowser.addTab("about:preferences", { triggeringPrincipal: system });
+    gBrowser.selectedTab = tab;
+    let doc = null;
+    await waitFor(() => (doc = tab.linkedBrowser.contentDocument)?.getElementById("sunfinchGroup"));
+    const group = doc?.getElementById("sunfinchGroup");
+    check("settings: SunFinch group in General", group?.getAttribute("data-category") == "paneGeneral");
+    check("settings: shown on the General pane", group && (await waitFor(() => !group.hidden)));
+    if (!group) {
+      return;
+    }
+    const modifier = doc.getElementById("sunfinchGlanceModifier");
+    check("settings: shows current values",
+      modifier?.value == "alt" && doc.getElementById("sunfinchUnloadMinutes")?.value == "30" &&
+      doc.getElementById("sunfinchScreenshotTarget")?.value == "both");
+    modifier.value = "shift";
+    modifier.dispatchEvent(new Event("change"));
+    check("settings: changing a value sets the pref",
+      Services.prefs.getStringPref("sunfinch.glance.modifier") == "shift");
+    Services.prefs.clearUserPref("sunfinch.glance.modifier");
+    const unload = doc.getElementById("sunfinchUnloadMinutes");
+    unload.value = "0";
+    unload.dispatchEvent(new Event("change"));
+    check("settings: unload can be turned off", Services.prefs.getIntPref("sunfinch.spaces.unloadAfterMinutes") == 0);
+    Services.prefs.clearUserPref("sunfinch.spaces.unloadAfterMinutes");
+    const labels = await doc.l10n.formatValues([{ id: "sunfinch-prefs-title" }]);
+    check("settings: strings are localized", labels[0] == "SunFinch");
+    gBrowser.removeTab(tab);
   }
 
   async function buttons() {

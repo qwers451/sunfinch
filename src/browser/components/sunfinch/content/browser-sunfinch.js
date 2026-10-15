@@ -12,7 +12,7 @@ var SUNFINCH_ACTOR_MODULES =
   window.SUNFINCH_ACTOR_MODULES ?? "chrome://browser/content/sunfinch/modules";
 
 {
-  const SUNFINCH_SCRIPTS = ["spaces.js", "notes.js", "glance.js", "claude.js", "mobile-view.js", "screenshot.js"];
+  const SUNFINCH_SCRIPTS = ["spaces.js", "notes.js", "glance.js", "claude.js", "preferences.js", "mobile-view.js", "screenshot.js"];
 
   delayedStartupPromise.then(() => {
     for (const name of SUNFINCH_SCRIPTS) {
