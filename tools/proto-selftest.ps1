@@ -96,6 +96,6 @@ user_pref("browser.download.dir", "$($downloads -replace '\\', '\\')");
 if ($Build) {
   # fx-autoconfig turns off the autoconfig sandbox and runs chrome scripts from
   # the profile: never leave it in a browser that is used for real.
-  Remove-Item (Join-Path $bin 'config.js'), (Join-Path $bin 'defaultsprefconfig-prefs.js') -ErrorAction SilentlyContinue
+  Remove-Item (Join-Path $bin 'config.js'), (Join-Path $bin 'defaults\pref\config-prefs.js') -ErrorAction SilentlyContinue
 }
 if ($failed) { exit 1 }
