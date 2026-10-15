@@ -93,7 +93,7 @@
         el("button", {
           type: "button",
           class: "sunfinch-space-dialog-color",
-          "data-color": color,
+          "data-sf-color": color,
           l10n: `sunfinch-space-color-${color}`,
         }, [el("span", { "aria-hidden": "true" })])
       );
@@ -108,10 +108,10 @@
 
       const update = () => {
         for (const node of [dialog, preview]) {
-          node.dataset.color = state.color;
+          node.dataset.sfColor = state.color;
         }
         for (const button of colorButtons) {
-          button.setAttribute("aria-pressed", button.dataset.color == state.color);
+          button.setAttribute("aria-pressed", button.dataset.sfColor == state.color);
         }
         for (const button of iconButtons) {
           button.setAttribute("aria-pressed", button.dataset.icon == state.icon);
@@ -121,7 +121,7 @@
       };
       for (const button of colorButtons) {
         button.addEventListener("click", () => {
-          state.color = button.dataset.color;
+          state.color = button.dataset.sfColor;
           update();
         });
       }

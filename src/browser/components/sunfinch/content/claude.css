@@ -305,10 +305,10 @@ button.primary {
   border-color: transparent;
 
   &:hover {
-    background: color-mix(in srgb, var(--sf-primary) 88%, var(--sf-on-primary));
+    background: var(--sf-primary-hover);
   }
 
   &:hover:active {
-    background: color-mix(in srgb, var(--sf-primary) 78%, var(--sf-on-primary));
+    background: var(--sf-primary-pressed);
   }
 }

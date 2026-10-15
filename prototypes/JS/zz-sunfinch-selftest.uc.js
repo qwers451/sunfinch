@@ -92,14 +92,14 @@
     check("space dialog: 8 colors and 12 icons",
       dialog().querySelectorAll(".sunfinch-space-dialog-color").length == 8 &&
       dialog().querySelectorAll(".sunfinch-space-dialog-icon").length == 12);
-    press('.sunfinch-space-dialog-color[data-color="pink"]');
+    press('.sunfinch-space-dialog-color[data-sf-color="pink"]');
     press('.sunfinch-space-dialog-icon[data-icon="code"]');
     const name = dialog().querySelector("#sunfinch-space-dialog-name");
     name.value = "Проекты";
     name.dispatchEvent(new Event("input"));
     check("space dialog: preview follows the choice",
       dialog().querySelector(".sunfinch-space-dialog-preview .sunfinch-space-name").textContent == "Проекты" &&
-      dialog().querySelector(".sunfinch-space-dialog-preview .sunfinch-space-button").dataset.color == "pink");
+      dialog().querySelector(".sunfinch-space-dialog-preview .sunfinch-space-button").dataset.sfColor == "pink");
     name.focus();
     key("Enter", KeyboardEvent.DOM_VK_RETURN);
     await waitFor(() => !D.isOpen && Store.spaces.length == before + 1);
@@ -114,8 +114,8 @@
     await waitFor(() => D.isOpen);
     check("space dialog: edit is filled in",
       dialog().querySelector("#sunfinch-space-dialog-name").value == "Проекты" &&
-      dialog().querySelector('.sunfinch-space-dialog-color[aria-pressed="true"]')?.dataset.color == "pink");
-    press('.sunfinch-space-dialog-color[data-color="sky"]');
+      dialog().querySelector('.sunfinch-space-dialog-color[aria-pressed="true"]')?.dataset.sfColor == "pink");
+    press('.sunfinch-space-dialog-color[data-sf-color="sky"]');
     press(".sunfinch-space-dialog-ok");
     check("space dialog: edit saves",
       await waitFor(() => !D.isOpen && Store.get(created.id)?.color == "sky"),

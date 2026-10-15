@@ -169,18 +169,6 @@
   }
 }
 
-/* Space colors: one token per name, matched to both themes. */
-:is(.sunfinch-space-button, #sunfinch-space-dialog, .sunfinch-space-dialog-color) {
-  &[data-color="orange"] { --sf-space: var(--sf-space-orange); }
-  &[data-color="amber"] { --sf-space: var(--sf-space-amber); }
-  &[data-color="pink"] { --sf-space: var(--sf-space-pink); }
-  &[data-color="green"] { --sf-space: var(--sf-space-green); }
-  &[data-color="teal"] { --sf-space: var(--sf-space-teal); }
-  &[data-color="sky"] { --sf-space: var(--sf-space-sky); }
-  &[data-color="indigo"] { --sf-space: var(--sf-space-indigo); }
-  &[data-color="slate"] { --sf-space: var(--sf-space-slate); }
-}
-
 /* --- Tab list ------------------------------------------------------------ */
 
 #tabbrowser-tabs[orient="vertical"] {
@@ -779,11 +767,11 @@
   border-color: transparent;
 
   &:hover {
-    background-color: color-mix(in srgb, var(--sf-primary) 88%, var(--sf-on-primary));
+    background-color: var(--sf-primary-hover);
   }
 
   &:hover:active {
-    background-color: color-mix(in srgb, var(--sf-primary) 78%, var(--sf-on-primary));
+    background-color: var(--sf-primary-pressed);
   }
 }
 

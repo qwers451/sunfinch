@@ -389,7 +389,7 @@
         const button = document.createElementNS(HTML_NS, "button");
         button.className = "sunfinch-space-button";
         button.dataset.spaceId = space.id;
-        button.dataset.color = space.color;
+        button.dataset.sfColor = space.color;
         button.title = space.name;
         const selected = space.id == this.activeId;
         button.toggleAttribute("selected", selected);

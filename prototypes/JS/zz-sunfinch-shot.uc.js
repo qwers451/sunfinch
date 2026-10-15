@@ -176,7 +176,7 @@
           const D = window.SunfinchSpaceDialog;
           window.SunfinchSpaces.promptNewSpace();
           await waitFor(() => D.isOpen);
-          D.dialog.querySelector('.sunfinch-space-dialog-color[data-color="pink"]').click();
+          D.dialog.querySelector('.sunfinch-space-dialog-color[data-sf-color="pink"]').click();
           D.dialog.querySelector('.sunfinch-space-dialog-icon[data-icon="code"]').click();
           const name = D.dialog.querySelector("#sunfinch-space-dialog-name");
           name.value = "Проекты";

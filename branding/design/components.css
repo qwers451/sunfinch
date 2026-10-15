@@ -1,0 +1,1331 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   SunFinch · components.css · A2 «Прибор-моно»
+   ───────────────────────────────────────────────────────────────────────
+   Чистый CSS, без JS и фреймворков. Подключать после sunfinch-tokens.css.
+   Цвета, шрифты, радиусы, линии, тени и длительности — только --sf-*.
+   Числа в px — внутренняя геометрия компонентов (высоты строк, отступы).
+
+   Состояния — атрибутами, как в chrome:
+     [selected] [busy] [pending] [soundplaying] [muted] [multiselected]
+     [checked] [open] [disabled] [_moz-menuactive] [aria-current="true"]
+     [aria-pressed="true"] [compact] [collapsed] [narrow] [private]
+   Классы .sf-* — для демо и своих страниц. Соответствие штатным
+   селекторам — в README.md, раздел «Куда это ложится».
+   ═══════════════════════════════════════════════════════════════════════ */
+
+
+/* ── 0. База ─────────────────────────────────────────────────────────── */
+
+.sf-ui {
+  font-family: var(--sf-font-ui);
+  font-size: var(--sf-text-md);
+  line-height: var(--sf-leading-ui);
+  color: var(--sf-text);
+  background: var(--sf-bg);
+  -moz-context-properties: fill, fill-opacity, stroke;
+}
+.sf-ui ::selection { background: var(--sf-selection); }
+
+/* Фокус виден всегда: 2 px, внутрь строки, чтобы не обрезался списком. */
+.sf-ui :focus-visible {
+  outline: var(--sf-focus-w) solid var(--sf-focus);
+  outline-offset: calc(-1 * var(--sf-focus-w));
+}
+
+/* Значки 16 × 16: файлы из icons/ с fill="context-fill". */
+.sf-icon {
+  width: var(--sf-icon);
+  height: var(--sf-icon);
+  flex: none;
+  fill: currentColor;
+  -moz-context-properties: fill, fill-opacity;
+}
+
+/* Прокрутка в окне и своих страницах. */
+.sf-ui, .sf-ui * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--sf-text-4) transparent;
+}
+
+/* Метка ЗАГЛАВНЫМИ: ОСНОВНЫЕ, ПОДСКАЗКИ, GLANCE… */
+.sf-caps {
+  font-size: var(--sf-text-xs);
+  font-weight: var(--sf-weight-medium);
+  letter-spacing: var(--sf-tracking-label);
+  text-transform: uppercase;
+  color: var(--sf-text-4);
+}
+
+@keyframes sf-spin { to { transform: rotate(1turn); } }
+
+
+/* ── 1. Кнопки ───────────────────────────────────────────────────────── */
+
+.sf-btn {
+  appearance: none;
+  margin: 0;
+  height: 32px;
+  padding: 0 var(--sf-gap-6);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sf-gap-4);
+  font: inherit;
+  white-space: nowrap;
+  color: var(--sf-text);
+  background: transparent;
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+  border-radius: var(--sf-radius-1);
+  transition: background-color var(--sf-dur-1) var(--sf-ease);
+}
+.sf-btn:hover { background: var(--sf-fill-hover); }
+.sf-btn:active { background: var(--sf-fill-pressed); }
+.sf-btn:focus-visible { border-color: var(--sf-focus); }
+.sf-btn:disabled, .sf-btn[disabled] { opacity: .38; pointer-events: none; }
+.sf-btn--sm { height: 28px; padding: 0 var(--sf-gap-5); }
+
+.sf-btn--primary {
+  color: var(--sf-on-primary);
+  background: var(--sf-primary);
+  border-color: transparent;
+  font-weight: var(--sf-weight-bold);
+}
+.sf-btn--primary:hover { background: var(--sf-primary-hover); }
+.sf-btn--primary:active { background: var(--sf-primary-pressed); }
+/* На заливке кольцо выносим наружу — так оно контрастно и к кнопке, и к фону. */
+.sf-btn--primary:focus-visible { outline-offset: 2px; border-color: transparent; }
+
+.sf-btn--danger {
+  color: var(--sf-on-danger);
+  background: var(--sf-danger);
+  border-color: transparent;
+  font-weight: var(--sf-weight-bold);
+}
+.sf-btn--danger:hover { background: color-mix(in srgb, var(--sf-danger) 88%, var(--sf-text)); }
+.sf-btn--danger:focus-visible { outline-offset: 2px; }
+
+/* Без рамки: «Открыть about:config», «Удалить пространство…» */
+.sf-btn--quiet { border-color: transparent; color: var(--sf-text-2); padding: 0 var(--sf-gap-3); }
+.sf-btn--quiet.is-danger { color: var(--sf-danger); }
+.sf-btn--link {
+  border-color: transparent;
+  color: var(--sf-text-2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.sf-link {
+  color: var(--sf-link);
+  text-decoration: underline;
+  text-decoration-thickness: var(--sf-line-w);
+  text-underline-offset: 3px;
+}
+.sf-link:hover { text-decoration-thickness: 2px; }
+
+
+/* ── 2. Поля, флажки, переключатели ──────────────────────────────────── */
+
+.sf-field {
+  height: 32px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 var(--sf-gap-5);
+  font: inherit;
+  color: var(--sf-text);
+  background: var(--sf-bg-sunken);
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+  border-radius: var(--sf-radius-1);
+}
+.sf-field::placeholder { color: var(--sf-text-4); opacity: 1; }
+.sf-field:focus-visible, .sf-field:focus {
+  border-color: var(--sf-focus);
+  outline: var(--sf-focus-w) solid var(--sf-focus);
+  outline-offset: calc(-1 * var(--sf-focus-w));
+}
+.sf-field:disabled { opacity: .38; }
+.sf-field--lg { height: 36px; }
+textarea.sf-field { height: auto; padding: 9px var(--sf-gap-5); line-height: 1.5; resize: none; }
+select.sf-field { height: 30px; padding: 0 var(--sf-gap-4); }
+
+/* Поле со значком внутри: поиск в истории, настройках, новой вкладке. */
+.sf-search {
+  height: 32px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--sf-gap-5);
+  padding: 0 var(--sf-gap-5);
+  background: var(--sf-bg-sunken);
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+  border-radius: var(--sf-radius-1);
+  color: var(--sf-text-3);
+}
+.sf-search:focus-within {
+  border-color: var(--sf-focus);
+  outline: var(--sf-focus-w) solid var(--sf-focus);
+  outline-offset: calc(-1 * var(--sf-focus-w));
+}
+.sf-search > input {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  font: inherit;
+  color: var(--sf-text);
+  background: transparent;
+}
+.sf-search > input::placeholder { color: var(--sf-text-4); opacity: 1; }
+
+/* Флажок и переключатель «вкл.» — цвет основной кнопки. */
+.sf-check {
+  appearance: none;
+  margin: 0;
+  width: 14px;
+  height: 14px;
+  flex: none;
+  display: inline-grid;
+  place-content: center;
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+  border-radius: var(--sf-radius-1);
+  background: var(--sf-bg-sunken);
+}
+.sf-check:checked { background: var(--sf-primary); border-color: transparent; }
+.sf-check:checked::after {
+  content: "";
+  width: 8px;
+  height: 4px;
+  margin-top: -2px;
+  border-inline-start: 2px solid var(--sf-on-primary);
+  border-block-end: 2px solid var(--sf-on-primary);
+  transform: rotate(-45deg);
+}
+.sf-check[type="radio"] { border-radius: 50%; }
+.sf-check[type="radio"]:checked::after {
+  width: 6px; height: 6px; margin: 0; border: 0;
+  border-radius: 50%; background: var(--sf-on-primary); transform: none;
+}
+.sf-check:focus-visible { outline-offset: 2px; }
+.sf-check:disabled { opacity: .5; }
+
+.sf-switch {
+  appearance: none;
+  margin: 0;
+  position: relative;
+  width: 28px;
+  height: 16px;
+  flex: none;
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+  border-radius: var(--sf-radius-1);
+  background: var(--sf-bg-sunken);
+}
+.sf-switch::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 1px;
+  inset-inline-start: 1px;
+  width: 12px;
+  height: 12px;
+  border-radius: 1px;
+  background: var(--sf-text-3);
+  transition: translate var(--sf-dur-1) var(--sf-ease);
+}
+.sf-switch:checked { background: var(--sf-primary); border-color: transparent; }
+.sf-switch:checked::after { background: var(--sf-on-primary); translate: 12px 0; }
+.sf-switch:focus-visible { outline-offset: 2px; }
+
+.sf-kbd {
+  font-family: inherit;
+  font-size: 10.5px;
+  line-height: 1;
+  padding: 3px 5px;
+  color: var(--sf-text-4);
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+  border-radius: var(--sf-radius-1);
+}
+
+/* Статус с квадратной точкой 6 px: «Сохранено», «Claude Code найден». */
+.sf-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sf-gap-3);
+  font-size: var(--sf-text-sm);
+  color: var(--sf-text-3);
+}
+.sf-status::before { content: ""; width: 6px; height: 6px; background: currentColor; }
+.sf-status[data-state="ok"]     { color: var(--sf-success); }
+.sf-status[data-state="error"]  { color: var(--sf-danger); }
+.sf-status[data-state="saving"] { color: var(--sf-text-4); }
+.sf-status[data-state="saving"]::before { background: transparent; box-shadow: inset 0 0 0 1px currentColor; }
+
+.sf-badge {
+  font-size: var(--sf-text-xs);
+  letter-spacing: var(--sf-tracking-label);
+  padding: 2px 6px;
+  color: var(--sf-text-3);
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+}
+
+
+/* ── 3. Индикаторы, подсказка, уведомление ───────────────────────────── */
+
+.sf-spinner {
+  width: 12px;
+  height: 12px;
+  margin: 2px;
+  flex: none;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 1.5px solid var(--sf-track);
+  border-block-start-color: var(--sf-accent);
+  animation: sf-spin 1s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sf-spinner { animation: none; border-inline-end-color: var(--sf-accent); }
+}
+
+/* Полоса загрузки 2 px под шапкой (Glance, загрузки). Ширина — --sf-progress. */
+.sf-progress {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-end: -1px;
+  width: var(--sf-progress, 0%);
+  height: 2px;
+  background: var(--sf-accent);
+  box-shadow: var(--sf-glow-accent);
+  transition: width var(--sf-dur-2) var(--sf-ease);
+}
+
+.sf-tooltip {
+  padding: 4px var(--sf-gap-4);
+  font-size: var(--sf-text-sm);
+  color: var(--sf-text);
+  background: var(--sf-bg-raised);
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+  border-radius: var(--sf-radius-1);
+  box-shadow: var(--sf-shadow-popup);
+  white-space: nowrap;
+}
+.sf-tooltip__sub { display: block; margin-top: 3px; color: var(--sf-text-3); }
+
+/* Скриншот: вспышка и подтверждение (живёт --sf-toast-time, при наведении не исчезает). */
+.sf-shot-flash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--sf-flash);
+  box-shadow: inset 0 0 0 2px var(--sf-accent);
+  animation: sf-flash var(--sf-dur-1) var(--sf-ease) forwards;
+}
+@keyframes sf-flash { from { opacity: 1; } to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .sf-shot-flash { display: none; } }
+
+.sf-toast {
+  width: 270px;
+  box-sizing: border-box;
+  padding: var(--sf-gap-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sf-gap-4);
+  color: var(--sf-text);
+  background: var(--sf-bg-raised);
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+  border-radius: var(--sf-radius-2);
+  box-shadow: var(--sf-shadow-popup);
+}
+.sf-toast__thumb { height: 110px; border: var(--sf-line-w) solid var(--sf-line); object-fit: cover; object-position: top; }
+.sf-toast__title { font-weight: var(--sf-weight-bold); }
+.sf-toast__meta  { font-size: 11px; color: var(--sf-text-3); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.sf-toast__actions { display: flex; gap: var(--sf-gap-3); }
+.sf-toast__actions > .sf-btn { flex: 1; height: 28px; font-size: var(--sf-text-sm); }
+
+
+/* ── 4. Панель инструментов ──────────────────────────────────────────── */
+
+.sf-toolbar {
+  position: relative;
+  height: var(--sf-toolbar-h);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--sf-gap-2);
+  padding-inline-start: var(--sf-gap-3);
+  background: var(--sf-bg);
+  border-block-end: var(--sf-line-w) solid var(--sf-line);
+}
+/* Приватное окно: свой фон и полоса 2 px сверху; пространств нет. */
+.sf-toolbar[private] { background: var(--sf-private-bg); }
+.sf-toolbar[private]::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  height: var(--sf-marker-w);
+  background: var(--sf-private);
+}
+.sf-private-label {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--sf-gap-5);
+  padding: 0 var(--sf-gap-8) 0 var(--sf-gap-6);
+  font-weight: var(--sf-weight-bold);
+}
+.sf-private-label > .sf-icon { fill: var(--sf-private); }
+
+.sf-toolbar__sep { width: var(--sf-line-w); height: 20px; margin: 0 var(--sf-gap-4); background: var(--sf-line); flex: none; }
+
+/* Кнопка панели 32 × 32. В chrome: toolbarbutton > .toolbarbutton-icon */
+.sf-tbtn {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  width: var(--sf-button);
+  height: var(--sf-button);
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sf-text-2);
+  background: transparent;
+  border: 0;
+  border-radius: var(--sf-radius-1);
+  transition: background-color var(--sf-dur-1) var(--sf-ease);
+}
+.sf-tbtn:hover { background: var(--sf-fill-hover); color: var(--sf-text); }
+.sf-tbtn:active, .sf-tbtn[open] { background: var(--sf-fill-pressed); color: var(--sf-text); }
+/* «Нажата»: заметки, Claude, мобильный вид, история открыты. */
+.sf-tbtn:is([checked], [aria-pressed="true"]) { background: var(--sf-fill-selected); color: var(--sf-accent); }
+.sf-tbtn:is([checked], [aria-pressed="true"]):hover { background: var(--sf-fill-hover); }
+.sf-tbtn:is(:disabled, [disabled]) { opacity: .38; pointer-events: none; }
+/* Скриншот при зажатом Shift: значок «вся страница» (screenshot-full.svg). */
+.sf-tbtn[data-shift] { color: var(--sf-accent); }
+
+/* Адресная строка в покое. Открытый список подсказок — штатный, см. Native. */
+.sf-urlbar {
+  flex: 1;
+  min-width: 0;
+  height: 30px;
+  box-sizing: border-box;
+  margin: 0 var(--sf-gap-5);
+  padding: 0 var(--sf-gap-5);
+  display: flex;
+  align-items: center;
+  gap: var(--sf-gap-5);
+  color: var(--sf-text);
+  background: var(--sf-bg-sunken);
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+  border-radius: var(--sf-radius-1);
+}
+.sf-urlbar:focus-within { box-shadow: inset 0 0 0 var(--sf-focus-w) var(--sf-focus); border-color: var(--sf-focus); }
+.sf-urlbar > .sf-icon { fill: var(--sf-text-3); }
+
+
+/* ── 5. Переключатель пространств ────────────────────────────────────── */
+
+/* Не шире 40 % панели. Активное — всегда целиком; неактивные при нехватке
+   места получают [compact] (только значок); остаток — в «+N». */
+.sf-spaces { display: flex; align-items: stretch; height: calc(var(--sf-toolbar-h) - var(--sf-line-w)); max-width: 40%; }
+
+/* Цвет — атрибутом data-sf-color="indigo" (см. токены). */
+.sf-space {
+  appearance: none;
+  margin: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sf-gap-4);
+  padding: 0 14px;
+  font: inherit;
+  white-space: nowrap;
+  color: var(--sf-text-3);
+  background: transparent;
+  border: 0;
+  transition: background-color var(--sf-dur-1) var(--sf-ease);
+}
+.sf-space > .sf-icon { fill: var(--sf-space); }
+.sf-space__num { font-size: var(--sf-text-xs); letter-spacing: .04em; color: var(--sf-text-4); }
+.sf-space__name { max-width: 14em; overflow: hidden; text-overflow: ellipsis; }
+
+.sf-space:hover { background: var(--sf-fill-hover); color: var(--sf-text-2); }
+.sf-space[aria-current="true"] {
+  color: var(--sf-text);
+  font-weight: var(--sf-weight-bold);
+  background: var(--sf-fill-selected);
+}
+.sf-space[aria-current="true"] > .sf-icon { filter: var(--sf-glow-icon); }
+.sf-space[aria-current="true"] .sf-space__num { color: var(--sf-text-3); font-weight: var(--sf-weight-medium); }
+.sf-space[aria-current="true"]::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  height: var(--sf-marker-w);
+  background: var(--sf-space);
+  box-shadow: var(--sf-glow-space);
+}
+.sf-space[compact] { padding: 0 12px; }
+.sf-space[compact] :is(.sf-space__num, .sf-space__name) { display: none; }
+/* Меню пространства открыто (правый клик). */
+.sf-space[open] { background: var(--sf-fill-hover); box-shadow: inset 0 0 0 var(--sf-line-w) var(--sf-line-strong); }
+
+/* Перетаскивание: поднятое пространство и метка места 2 px. */
+.sf-space[dragging] {
+  height: 36px;
+  align-self: center;
+  color: var(--sf-text);
+  font-weight: var(--sf-weight-bold);
+  background: var(--sf-bg-raised);
+  box-shadow: inset 0 0 0 var(--sf-line-w) var(--sf-line-strong), var(--sf-shadow-popup);
+  border-radius: var(--sf-radius-1);
+  translate: 0 -4px;
+}
+.sf-space:is([dropbefore], [dropafter])::before {
+  content: "";
+  position: absolute;
+  inset-block: 8px;
+  width: var(--sf-marker-w);
+  background: var(--sf-accent);
+  box-shadow: var(--sf-glow-accent);
+}
+.sf-space[dropbefore]::before { inset-inline-start: -1px; }
+.sf-space[dropafter]::before  { inset-inline-end: -1px; }
+/* Вкладку тянут на пространство: подсветка его цветом, через 600 мс — переход. */
+.sf-space[droptarget] { background: color-mix(in srgb, var(--sf-space) 12%, transparent); color: var(--sf-text); }
+
+.sf-space-more {
+  appearance: none;
+  margin: 0;
+  padding: 0 var(--sf-gap-5);
+  display: flex;
+  align-items: center;
+  gap: var(--sf-gap-3);
+  font: inherit;
+  font-size: var(--sf-text-sm);
+  color: var(--sf-text-3);
+  background: transparent;
+  border: 0;
+}
+.sf-space-more:hover, .sf-space-more[open] { background: var(--sf-fill-hover); color: var(--sf-text); }
+
+
+/* ── 6. Список вкладок ───────────────────────────────────────────────── */
+
+.sf-tabs {
+  width: var(--sf-sidebar-w);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background: var(--sf-bg);
+  border-inline-end: var(--sf-line-w) solid var(--sf-line);
+}
+.sf-tabs__list { flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: var(--sf-gap-1); padding: var(--sf-gap-5) var(--sf-gap-4); }
+.sf-tabs__foot { flex: none; display: flex; flex-wrap: wrap; gap: var(--sf-gap-1); padding: var(--sf-gap-3) var(--sf-gap-4); border-block-start: var(--sf-line-w) solid var(--sf-line); }
+
+/* Заголовок раздела: ОСНОВНЫЕ ──── 02 */
+.sf-section {
+  height: var(--sf-section-h);
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--sf-gap-4);
+  padding: 0 2px 0 var(--sf-gap-5);
+}
+.sf-section + .sf-tab, .sf-section + .sf-section-hint { margin-block-start: 0; }
+.sf-tab + .sf-section, .sf-section-hint + .sf-section { margin-block-start: var(--sf-gap-6); }
+.sf-section__label { font-size: var(--sf-text-xs); font-weight: var(--sf-weight-medium); letter-spacing: var(--sf-tracking-label); color: var(--sf-text-4); }
+.sf-section__rule  { flex: 1; height: var(--sf-line-w); background: var(--sf-line); }
+.sf-section__count { font-size: var(--sf-text-xs); color: var(--sf-text-4); }
+.sf-section__anchor { display: none; width: 12px; height: 12px; fill: var(--sf-text-4); }
+/* Граница-приёмник при перетаскивании через разделитель. */
+.sf-section[dropzone] .sf-section__rule { height: var(--sf-marker-w); background: var(--sf-accent); box-shadow: var(--sf-glow-accent); }
+.sf-section[dropzone] .sf-section__label { color: var(--sf-accent); }
+
+/* Подсказка в пустых «основных» (новый профиль). */
+.sf-section-hint {
+  margin: 2px 2px var(--sf-gap-2);
+  padding: var(--sf-gap-5);
+  font-size: var(--sf-text-sm);
+  line-height: 1.5;
+  color: var(--sf-text-3);
+  border: var(--sf-line-w) solid var(--sf-line);
+  border-radius: var(--sf-radius-1);
+}
+
+/* Строка вкладки 32 px. В chrome: .tabbrowser-tab в вертикальном списке. */
+.sf-tab {
+  position: relative;
+  height: var(--sf-tab-h);
+  flex: none;
+  display: flex;
+  align-items: center;
+  color: var(--sf-text-2);
+  border-radius: var(--sf-radius-1);
+  transition: background-color var(--sf-dur-1) var(--sf-ease);
+}
+.sf-tab__main {
+  appearance: none;
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--sf-gap-5);
+  padding: 0 0 0 var(--sf-gap-5);
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  background: transparent;
+  border: 0;
+}
+.sf-tab__favicon { width: 16px; height: 16px; flex: none; }
+.sf-tab__label { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.sf-tab__audio, .sf-tab__close {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sf-text-3);
+  background: transparent;
+  border: 0;
+  border-radius: var(--sf-radius-1);
+}
+.sf-tab__close { margin-inline-end: 5px; opacity: 0; }
+.sf-tab__audio:hover, .sf-tab__close:hover { background: var(--sf-fill-pressed); color: var(--sf-text); }
+.sf-tab__audio > .sf-icon, .sf-tab__close > .sf-icon { width: 12px; height: 12px; }
+
+.sf-tab:hover { background: var(--sf-fill-hover); }
+.sf-tab:is(:hover, :focus-within, [selected]) .sf-tab__close { opacity: 1; }
+
+.sf-tab[selected] {
+  color: var(--sf-text);
+  font-weight: var(--sf-weight-bold);
+  background: var(--sf-fill-selected);
+}
+.sf-tab[selected]::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block: 8px;
+  width: var(--sf-marker-w);
+  background: var(--sf-accent);
+  box-shadow: var(--sf-glow-accent);
+}
+.sf-tab[selected] .sf-tab__close { color: var(--sf-text-2); }
+.sf-tab[multiselected]:not([selected]) { background: var(--sf-fill-selected); box-shadow: inset 0 0 0 var(--sf-line-w) var(--sf-line-strong); }
+
+/* Загрузка: дуга вместо фавиконки (.sf-spinner в слоте значка). */
+.sf-tab[busy] .sf-tab__favicon { display: none; }
+.sf-tab:not([busy]) .sf-spinner { display: none; }
+/* Не загружена после перезапуска: 55 %. */
+.sf-tab[pending] :is(.sf-tab__favicon, .sf-tab__label) { opacity: .55; }
+/* Звук: значок справа, тихий. Без звука — тот же слот, перечёркнутый динамик. */
+.sf-tab:not([soundplaying], [muted]) .sf-tab__audio { display: none; }
+
+/* Пара Split View: две строки в общей рамке, верхняя — активная половина. */
+.sf-tab[data-split="start"] {
+  border-radius: var(--sf-radius-1) var(--sf-radius-1) 0 0;
+  box-shadow: inset 1px 1px 0 var(--sf-line-strong), inset -1px 0 0 var(--sf-line-strong);
+}
+.sf-tab[data-split="end"] {
+  border-radius: 0 0 var(--sf-radius-1) var(--sf-radius-1);
+  box-shadow: inset 1px -1px 0 var(--sf-line-strong), inset -1px 0 0 var(--sf-line-strong), inset 0 1px 0 var(--sf-line);
+}
+.sf-tab[data-split="start"] + .sf-tab[data-split="end"] { margin-block-start: calc(-1 * var(--sf-gap-1)); }
+
+/* Перетаскивание вкладки: призрак и метка места 2 px. */
+.sf-tab[dragging] { background: var(--sf-bg-raised); box-shadow: inset 0 0 0 var(--sf-line-w) var(--sf-line-strong), var(--sf-shadow-popup); color: var(--sf-text); }
+.sf-tab[dragsource] { opacity: .4; }
+.sf-tab:is([dropbefore], [dropafter])::after {
+  content: "";
+  position: absolute;
+  inset-inline: var(--sf-gap-2);
+  height: var(--sf-marker-w);
+  background: var(--sf-accent);
+  box-shadow: var(--sf-glow-accent);
+}
+.sf-tab[dropbefore]::after { inset-block-start: -2px; }
+.sf-tab[dropafter]::after  { inset-block-end: -2px; }
+
+.sf-tab-new {
+  appearance: none;
+  margin: var(--sf-gap-3) 0 0;
+  height: var(--sf-tab-h);
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--sf-gap-5);
+  padding: 0 var(--sf-gap-5);
+  font: inherit;
+  color: var(--sf-text-3);
+  text-align: start;
+  background: transparent;
+  border: 0;
+  border-radius: var(--sf-radius-1);
+}
+.sf-tab-new:hover { background: var(--sf-fill-hover); color: var(--sf-text-2); }
+
+/* Свёрнутый список 52 px: только значки, разделы — значок булавки и черта. */
+.sf-tabs[collapsed] { width: var(--sf-sidebar-collapsed-w); }
+.sf-tabs[collapsed] :is(.sf-tab__label, .sf-tab__close, .sf-tab__audio, .sf-section__label, .sf-section__count, .sf-section-hint, .sf-tab-new > span) { display: none; }
+.sf-tabs[collapsed] .sf-tab__main, .sf-tabs[collapsed] .sf-tab-new { justify-content: center; padding: 0; }
+.sf-tabs[collapsed] .sf-section { justify-content: center; padding: 0; }
+.sf-tabs[collapsed] .sf-section__rule { flex: none; width: 20px; background: var(--sf-line-strong); }
+.sf-tabs[collapsed] .sf-section[anchor] .sf-section__rule { display: none; }
+.sf-tabs[collapsed] .sf-section[anchor] .sf-section__anchor { display: block; }
+/* Звук в свёрнутом виде — точка в углу фавиконки. */
+.sf-tabs[collapsed] .sf-tab[soundplaying] .sf-tab__main::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 6px;
+  inset-inline-end: 10px;
+  width: 5px;
+  height: 5px;
+  background: var(--sf-accent);
+}
+
+
+/* ── 7. Меню ─────────────────────────────────────────────────────────── */
+/* В chrome: menupopup / menuitem / menu / menuseparator. */
+
+.sf-menu {
+  min-width: 220px;
+  box-sizing: border-box;
+  padding: var(--sf-gap-2);
+  display: flex;
+  flex-direction: column;
+  color: var(--sf-text);
+  background: var(--sf-bg-raised);
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+  border-radius: var(--sf-radius-2);
+  box-shadow: var(--sf-shadow-popup);
+}
+.sf-menuitem {
+  appearance: none;
+  margin: 0;
+  height: var(--sf-menu-item-h);
+  display: flex;
+  align-items: center;
+  gap: var(--sf-gap-5);
+  padding: 0 var(--sf-gap-6) 0 var(--sf-gap-4);
+  font: inherit;
+  color: var(--sf-text);
+  text-align: start;
+  white-space: nowrap;
+  background: transparent;
+  border: 0;
+  border-radius: var(--sf-radius-1);
+}
+.sf-menuitem__icon  { width: 16px; height: 16px; flex: none; fill: var(--sf-text-2); }
+.sf-menuitem__icon:empty { visibility: hidden; } /* выравнивание пунктов без значка */
+.sf-menuitem__label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.sf-menuitem__note  { color: var(--sf-text-3); }  /* «(останется после перезапуска)» */
+.sf-menuitem__key   { font-size: var(--sf-text-sm); color: var(--sf-text-4); }
+.sf-menuitem__arrow { width: 10px; height: 10px; flex: none; fill: var(--sf-text-2); }
+.sf-menuitem:is(:hover, [_moz-menuactive], [open]) { background: var(--sf-fill-hover); }
+.sf-menuitem:is(:disabled, [disabled]) { opacity: .38; pointer-events: none; }
+.sf-menuitem.is-danger { color: var(--sf-danger); }
+.sf-menuitem.is-danger .sf-menuitem__icon { fill: var(--sf-danger); }
+.sf-menuseparator { height: var(--sf-line-w); margin: var(--sf-gap-2) var(--sf-gap-4); background: var(--sf-line); border: 0; }
+
+
+/* ── 8. Заметки ──────────────────────────────────────────────────────── */
+/* Панель под кнопкой «Заметки», со стрелкой. Ширина 26em, тянется за угол. */
+
+.sf-notes {
+  position: relative;
+  width: var(--sf-notes-w);
+  height: 456px;
+  min-width: 240px;
+  min-height: 200px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  color: var(--sf-text);
+  background: var(--sf-bg-raised);
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+  border-radius: var(--sf-radius-2);
+  box-shadow: var(--sf-shadow-popup);
+  /* Размер меняется за уголок .sf-notes__grip (в chrome — <resizer>), не через resize:
+     иначе пришлось бы обрезать стрелку. Размер запоминается. */
+}
+.sf-notes__arrow {
+  position: absolute;
+  inset-block-start: -6px;
+  inset-inline-end: 22px;
+  width: 11px;
+  height: 11px;
+  background: var(--sf-bg-raised);
+  border-inline-start: var(--sf-line-w) solid var(--sf-line-strong);
+  border-block-start: var(--sf-line-w) solid var(--sf-line-strong);
+  transform: rotate(45deg);
+}
+.sf-notes__head {
+  flex: none;
+  height: 44px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  border-block-end: var(--sf-line-w) solid var(--sf-line);
+}
+.sf-notes__title { margin: 0; font-size: var(--sf-text-lg); font-weight: var(--sf-weight-bold); }
+.sf-notes__text {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: var(--sf-gap-6) 14px;
+  font: inherit;
+  line-height: 1.5;
+  color: var(--sf-text);
+  background: var(--sf-bg-sunken);
+  border: 0;
+  outline: none;
+  resize: none;
+}
+.sf-notes__text::placeholder { color: var(--sf-text-4); opacity: 1; }
+.sf-notes__text:focus-visible { box-shadow: inset 0 0 0 var(--sf-focus-w) var(--sf-focus); }
+.sf-notes__foot {
+  flex: none;
+  height: 32px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--sf-gap-3) 0 14px;
+  font-size: var(--sf-text-sm);
+  color: var(--sf-text-4);
+  border-block-start: var(--sf-line-w) solid var(--sf-line);
+}
+.sf-notes__grip { width: 12px; height: 12px; fill: var(--sf-text-4); cursor: nwse-resize; }
+
+
+/* ── 9. Glance ───────────────────────────────────────────────────────── */
+/* Поверх области страницы: затемнение + окно с отступами 4 % / 8 %.
+   [narrow] — окно уже 1100 px: отступ 12 px, кнопка «Открыть вкладкой» — значком. */
+
+.sf-glance-scrim { position: absolute; inset: 0; background: var(--sf-scrim); }
+.sf-glance {
+  position: absolute;
+  inset: var(--sf-glance-inset-block) var(--sf-glance-inset-inline);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--sf-text);
+  background: var(--sf-bg-raised);
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+  border-radius: var(--sf-radius-2);
+  box-shadow: var(--sf-shadow-popup);
+  animation: sf-rise var(--sf-dur-2) var(--sf-ease);
+}
+.sf-glance[narrow] { inset: var(--sf-glance-inset-narrow); }
+@keyframes sf-rise { from { opacity: 0; translate: 0 8px; } }
+
+.sf-glance__bar {
+  position: relative;
+  flex: none;
+  height: var(--sf-panel-head-h);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--sf-gap-4);
+  padding: 0 var(--sf-gap-3);
+  background: var(--sf-bg);
+  border-block-end: var(--sf-line-w) solid var(--sf-line);
+}
+.sf-glance__bar .sf-tbtn { width: 28px; height: 28px; }
+.sf-glance__title { flex: none; max-width: 340px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: var(--sf-weight-bold); }
+.sf-glance__url { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: var(--sf-text-sm); color: var(--sf-text-3); }
+.sf-glance__open { height: 28px; padding: 0 var(--sf-gap-5); }
+.sf-glance[narrow] .sf-glance__url { display: none; }
+.sf-glance[narrow] .sf-glance__title { flex: 1; max-width: none; }
+.sf-glance[narrow] .sf-glance__open { width: 28px; padding: 0; }
+.sf-glance[narrow] .sf-glance__open > span { display: none; }
+.sf-glance__body { flex: 1; min-height: 0; position: relative; background: var(--sf-bg-page); }
+/* Загрузка: дуга вместо фавиконки, полоса --sf-progress, страница пустая. */
+.sf-glance:not([busy]) .sf-glance__bar .sf-spinner { display: none; }
+.sf-glance[busy] .sf-glance__favicon { display: none; }
+.sf-glance:not([busy]) .sf-progress { display: none; }
+
+/* Ошибка страницы внутри Glance и на вкладке (about:neterror). */
+.sf-error {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sf-gap-16);
+  background: var(--sf-bg-page);
+  color: var(--sf-text);
+}
+.sf-error__box { max-width: 440px; display: flex; flex-direction: column; gap: 14px; }
+.sf-error__icon { width: 40px; height: 40px; fill: var(--sf-text-3); }
+.sf-error__title { margin: 0; font-size: var(--sf-text-xl); font-weight: var(--sf-weight-bold); }
+.sf-error__text { margin: 0; color: var(--sf-text-3); line-height: var(--sf-leading-read); }
+.sf-error__actions { display: flex; gap: var(--sf-gap-4); margin-block-start: var(--sf-gap-3); }
+
+
+/* ── 10. Панель Claude ───────────────────────────────────────────────── */
+
+.sf-claude {
+  width: var(--sf-claude-w);
+  min-width: 260px;
+  max-width: 60vw;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  color: var(--sf-text);
+  background: var(--sf-bg);
+  border-inline-start: var(--sf-line-w) solid var(--sf-line);
+}
+.sf-claude__head {
+  flex: none;
+  height: var(--sf-panel-head-h);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--sf-gap-4);
+  padding: 0 var(--sf-gap-4) 0 var(--sf-gap-8);
+  border-block-end: var(--sf-line-w) solid var(--sf-line);
+}
+.sf-claude__head > .sf-icon { fill: var(--sf-accent); }
+.sf-claude__title { flex: 1; margin: 0; font-size: var(--sf-text-lg); font-weight: var(--sf-weight-bold); }
+/* «Учитывать страницу: [x] заголовок» */
+.sf-claude__ctx {
+  flex: none;
+  height: 38px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--sf-gap-4);
+  padding: 0 var(--sf-gap-8);
+  font-size: var(--sf-text-sm);
+  color: var(--sf-text-3);
+  border-block-end: var(--sf-line-w) solid var(--sf-line);
+}
+.sf-claude__ctx > label { display: flex; align-items: center; gap: var(--sf-gap-4); flex: none; color: var(--sf-text-2); }
+.sf-claude__ctx-title { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.sf-claude__ctx:has(.sf-check:not(:checked)) .sf-claude__ctx-title { text-decoration: line-through; color: var(--sf-text-4); }
+
+.sf-claude__log { flex: 1; min-height: 0; overflow: auto; padding: var(--sf-gap-10) var(--sf-gap-8); display: flex; flex-direction: column; gap: var(--sf-gap-8); }
+
+/* Пусто: значок со свечением, заголовок, подсказки-кнопки. */
+.sf-claude-empty { display: flex; flex-direction: column; gap: 14px; padding-block-start: 28px; }
+.sf-claude-empty__icon { width: 28px; height: 28px; fill: var(--sf-accent); filter: drop-shadow(0 0 5px color-mix(in srgb, var(--sf-accent) var(--sf-glow-strength), transparent)); }
+.sf-claude-empty__title { margin: 0; font-size: var(--sf-text-lg); font-weight: var(--sf-weight-bold); }
+.sf-claude-empty__text { margin: 0; color: var(--sf-text-3); line-height: var(--sf-leading-read); }
+.sf-suggest {
+  appearance: none;
+  margin: 0;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sf-gap-5);
+  padding: 0 var(--sf-gap-6);
+  font: inherit;
+  color: var(--sf-text);
+  text-align: start;
+  background: transparent;
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+  border-radius: var(--sf-radius-1);
+}
+.sf-suggest::after { content: "→"; color: var(--sf-accent); }
+.sf-suggest:hover { background: var(--sf-fill-hover); }
+.sf-suggest:active { background: var(--sf-fill-pressed); }
+
+/* Вопрос — пузырь справа; ответ — текстом для чтения, без пузыря. */
+.sf-msg-user {
+  align-self: flex-end;
+  max-width: 85%;
+  padding: var(--sf-gap-4) var(--sf-gap-6);
+  background: var(--sf-fill-bubble);
+  border-radius: var(--sf-radius-1);
+}
+.sf-msg-answer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sf-gap-4);
+  font-family: var(--sf-font-read);
+  font-size: var(--sf-text-read);
+  line-height: var(--sf-leading-read);
+}
+.sf-msg-answer p { margin: 0; text-wrap: pretty; }
+.sf-msg-answer b, .sf-msg-answer strong { font-weight: 600; }
+.sf-msg-answer ol { margin: 0; padding: 0; list-style: none; counter-reset: sf-li; display: flex; flex-direction: column; gap: var(--sf-gap-3); }
+.sf-msg-answer ol > li { display: flex; gap: var(--sf-gap-5); counter-increment: sf-li; }
+.sf-msg-answer ol > li::before { content: counter(sf-li) "."; flex: none; padding-top: 2px; font-family: var(--sf-font-ui); font-size: 12px; color: var(--sf-accent); }
+.sf-msg-answer code { font-family: var(--sf-font-ui); font-size: .9em; padding: 1px 4px; background: var(--sf-bg-code); border-radius: var(--sf-radius-1); }
+
+/* Курсор потока: блок акцента со свечением, мигает. */
+.sf-caret {
+  display: inline-block;
+  width: 7px;
+  height: 13px;
+  vertical-align: -2px;
+  background: var(--sf-accent);
+  box-shadow: var(--sf-glow-accent);
+  animation: sf-blink 1s steps(1) infinite;
+}
+@keyframes sf-blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .sf-caret { animation: none; } }
+
+/* Блок кода с шапкой: язык ЗАГЛАВНЫМИ + «Копировать» → «Скопировано» 2 с. */
+.sf-code {
+  margin: 0;
+  font-family: var(--sf-font-ui);
+  background: var(--sf-bg-code);
+  border: var(--sf-line-w) solid var(--sf-line);
+  border-radius: var(--sf-radius-1);
+}
+.sf-code__head {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--sf-gap-3) 0 var(--sf-gap-5);
+  border-block-end: var(--sf-line-w) solid var(--sf-line);
+  font-size: var(--sf-text-xs);
+  letter-spacing: var(--sf-tracking-label);
+  text-transform: uppercase;
+  color: var(--sf-text-4);
+}
+.sf-code__copy {
+  appearance: none;
+  margin: 0;
+  height: 22px;
+  padding: 0 var(--sf-gap-4);
+  font: inherit;
+  font-size: var(--sf-text-sm);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--sf-text-3);
+  background: transparent;
+  border: 0;
+  border-radius: var(--sf-radius-1);
+}
+.sf-code__copy:hover { background: var(--sf-fill-hover); color: var(--sf-text); }
+.sf-code__copy[data-copied] { color: var(--sf-success); }
+.sf-code pre {
+  margin: 0;
+  padding: var(--sf-gap-5) var(--sf-gap-5) var(--sf-gap-6);
+  font: inherit;
+  font-size: var(--sf-text-sm);
+  line-height: 1.6;
+  color: var(--sf-text-2);
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* Ошибка: цвет danger, значок-треугольник, «Повторить» + ссылка. */
+.sf-claude-error { display: flex; gap: var(--sf-gap-5); color: var(--sf-danger); line-height: 1.5; }
+.sf-claude-error > .sf-icon { fill: var(--sf-danger); margin-top: 1px; }
+.sf-claude-error__body { display: flex; flex-direction: column; gap: var(--sf-gap-5); }
+.sf-claude-error code { font-family: inherit; padding: 1px 4px; background: var(--sf-danger-bg); }
+.sf-claude-error .sf-btn { color: var(--sf-text); }
+
+/* Поле ввода и действия. */
+.sf-claude__composer { flex: none; display: flex; flex-direction: column; gap: var(--sf-gap-5); padding: var(--sf-gap-6) var(--sf-gap-8) var(--sf-gap-8); border-block-start: var(--sf-line-w) solid var(--sf-line); }
+.sf-claude__input { height: 76px; }
+.sf-claude__row { display: flex; align-items: center; gap: var(--sf-gap-5); }
+.sf-claude__hint { flex: 1; min-width: 0; font-size: var(--sf-text-sm); color: var(--sf-text-4); }
+.sf-claude__send { height: 30px; }
+.sf-claude__stop { height: 30px; font-weight: var(--sf-weight-bold); }
+.sf-claude__stop::before { content: ""; width: 8px; height: 8px; background: currentColor; }
+/* Пока идёт ответ — «Остановить» вместо «Отправить». */
+.sf-claude:not([busy]) .sf-claude__stop, .sf-claude[busy] .sf-claude__send { display: none; }
+
+
+/* ── 11. Диалоги ─────────────────────────────────────────────────────── */
+
+.sf-dialog-scrim { position: fixed; inset: 0; display: grid; place-items: center; background: var(--sf-scrim); }
+.sf-dialog {
+  width: var(--sf-dialog-w);
+  max-height: calc(100vh - 64px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  color: var(--sf-text);
+  background: var(--sf-bg-raised);
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+  border-radius: var(--sf-radius-2);
+  box-shadow: var(--sf-shadow-popup);
+  animation: sf-rise var(--sf-dur-2) var(--sf-ease);
+}
+.sf-dialog--confirm { width: var(--sf-confirm-w); }
+.sf-dialog__head { flex: none; display: flex; align-items: center; justify-content: space-between; padding: 18px 14px 6px var(--sf-gap-12); }
+.sf-dialog__title { margin: 0; font-size: var(--sf-text-xl); font-weight: var(--sf-weight-bold); }
+.sf-dialog__body { flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: var(--sf-gap-10); padding: 14px var(--sf-gap-12) 18px; }
+.sf-dialog__text { margin: 0; color: var(--sf-text-2); line-height: var(--sf-leading-read); }
+.sf-dialog__foot { flex: none; display: flex; align-items: center; gap: var(--sf-gap-4); padding: 14px var(--sf-gap-12); border-block-start: var(--sf-line-w) solid var(--sf-line); }
+.sf-dialog__hint { flex: 1; min-width: 0; font-size: var(--sf-text-sm); color: var(--sf-text-4); }
+
+.sf-formrow { display: flex; flex-direction: column; gap: var(--sf-gap-4); }
+.sf-formrow > label, .sf-formrow > legend { padding: 0; font-size: var(--sf-text-sm); color: var(--sf-text-3); }
+.sf-formrow__hint { font-size: var(--sf-text-sm); color: var(--sf-text-4); }
+fieldset.sf-formrow { margin: 0; padding: 0; border: 0; }
+
+/* Цвет пространства: 8 квадратов; выбранный — рамка цвета текста. */
+.sf-swatches { display: flex; gap: var(--sf-gap-3); }
+.sf-swatch {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: var(--sf-line-w) solid transparent;
+  border-radius: var(--sf-radius-1);
+}
+.sf-swatch::before { content: ""; width: 20px; height: 20px; background: var(--sf-space); }
+.sf-swatch:hover { border-color: var(--sf-line-strong); }
+.sf-swatch[aria-pressed="true"] { border-color: var(--sf-text); }
+
+/* Значок пространства: сетка 6 × 2. */
+.sf-iconpick { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--sf-gap-3); }
+.sf-iconpick > button {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  color: var(--sf-text-2);
+  background: transparent;
+  border: var(--sf-line-w) solid var(--sf-line);
+  border-radius: var(--sf-radius-1);
+}
+.sf-iconpick > button:hover { background: var(--sf-fill-hover); }
+.sf-iconpick > button[aria-pressed="true"] { color: var(--sf-space); background: var(--sf-fill-selected); border-color: var(--sf-text); }
+
+/* «Так будет в панели» — живое превью кнопки пространства. */
+.sf-preview { height: var(--sf-toolbar-h); box-sizing: border-box; display: flex; background: var(--sf-bg); border: var(--sf-line-w) solid var(--sf-line); }
+
+
+/* ── 12. Настройки: группа SunFinch ──────────────────────────────────── */
+/* Внутри штатной about:preferences → «Основные». Легко: только цвет и шрифт. */
+
+.sf-prefs-group { display: flex; flex-direction: column; gap: var(--sf-gap-8); padding-block-start: 22px; border-block-start: var(--sf-line-w) solid var(--sf-line); }
+.sf-prefs-group__head { display: flex; align-items: center; gap: var(--sf-gap-5); }
+.sf-prefs-group__mark { width: 18px; height: 18px; }
+.sf-prefs-group__title { margin: 0; font-size: var(--sf-text-lg); font-weight: var(--sf-weight-bold); }
+.sf-prefs-group__note { font-size: var(--sf-text-sm); color: var(--sf-text-4); }
+.sf-prefs-sub { display: flex; flex-direction: column; gap: var(--sf-gap-5); margin: 0; padding: 0; border: 0; }
+.sf-prefs-sub > :is(.sf-caps, legend) { margin-block-end: 0; padding: 0; font-size: var(--sf-text-xs); font-weight: var(--sf-weight-medium); letter-spacing: var(--sf-tracking-label); color: var(--sf-text-4); }
+.sf-prefs-row { display: flex; align-items: center; flex-wrap: wrap; gap: var(--sf-gap-5); color: var(--sf-text-2); }
+.sf-prefs-row > label { display: flex; align-items: center; gap: var(--sf-gap-5); }
+.sf-prefs-row--grow > :first-child { flex: 1; }
+.sf-prefs-desc { font-size: var(--sf-text-sm); line-height: 1.5; color: var(--sf-text-4); }
+/* Флажок выключен — зависимые поля приглушены. */
+.sf-prefs-row:has(> .sf-check:not(:checked)) select { opacity: .38; pointer-events: none; }
+
+/* Штатная навигация настроек: выбранный раздел как выбранная вкладка. */
+.sf-prefs-nav a {
+  position: relative;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  gap: var(--sf-gap-6);
+  padding: 0 var(--sf-gap-6);
+  color: var(--sf-text-2);
+  text-decoration: none;
+  border-radius: var(--sf-radius-1);
+}
+.sf-prefs-nav a:hover { background: var(--sf-fill-hover); }
+.sf-prefs-nav a[aria-current="page"] { color: var(--sf-text); font-weight: var(--sf-weight-bold); background: var(--sf-fill-selected); }
+.sf-prefs-nav a[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block: 10px;
+  width: var(--sf-marker-w);
+  background: var(--sf-accent);
+  box-shadow: var(--sf-glow-accent);
+}
+
+
+/* ── 13. Новая вкладка (about:newtab / about:home) ───────────────────── */
+
+.sf-newtab {
+  min-height: 100%;
+  box-sizing: border-box;
+  color: var(--sf-text);
+  background: var(--sf-bg-page);
+  font-family: var(--sf-font-ui);
+  font-size: var(--sf-text-md);
+  line-height: var(--sf-leading-ui);
+}
+.sf-newtab__inner { max-width: var(--sf-newtab-max); margin: 0 auto; padding: 88px 40px 48px; display: flex; flex-direction: column; gap: 28px; }
+@media (max-height: 800px) { .sf-newtab__inner { padding-block-start: 48px; } }
+.sf-newtab__space { display: flex; align-items: center; gap: var(--sf-gap-6); }
+.sf-newtab__space-name { display: flex; align-items: center; gap: var(--sf-gap-4); font-weight: var(--sf-weight-bold); }
+.sf-newtab__space-name > .sf-icon { fill: var(--sf-space); }
+.sf-newtab__search { height: 48px; padding: 0 14px 0 var(--sf-gap-8); gap: var(--sf-gap-6); }
+.sf-newtab__search > input { font-size: var(--sf-text-lg); }
+.sf-newtab__grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: var(--sf-gap-16); align-items: start; }
+.sf-newtab__col { display: flex; flex-direction: column; gap: 14px; }
+@media (max-width: 860px) { .sf-newtab__grid { grid-template-columns: minmax(0, 1fr); } }
+
+.sf-newtab-head { display: flex; align-items: center; gap: var(--sf-gap-4); }
+.sf-newtab-head > .sf-caps { flex: none; }
+.sf-newtab-head::after { content: ""; order: 1; flex: 1; height: var(--sf-line-w); background: var(--sf-line); }
+.sf-newtab-head > .sf-section__count { order: 2; }
+
+/* Основные вкладки пространства — ссылки-строки 44 px. */
+.sf-quicklink {
+  height: 44px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--sf-gap-6);
+  padding: 0 var(--sf-gap-6);
+  color: var(--sf-text);
+  text-decoration: none;
+  border: var(--sf-line-w) solid var(--sf-line);
+  border-radius: var(--sf-radius-1);
+}
+.sf-quicklink__title { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.sf-quicklink__host { flex: none; font-size: var(--sf-text-sm); color: var(--sf-text-3); }
+.sf-quicklink::after { content: "→"; flex: none; font-size: var(--sf-text-sm); color: var(--sf-accent); }
+.sf-quicklink:hover { background: var(--sf-fill-hover); border-color: var(--sf-line-strong); }
+
+/* Часто посещаемые: плитки 4 в ряд, 92 px. «⋯» — при наведении и фокусе. */
+.sf-topsites { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sf-gap-5); }
+.sf-topsite {
+  position: relative;
+  min-width: 0;
+  height: 92px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sf-gap-5);
+  padding: 0 var(--sf-gap-4);
+  color: var(--sf-text-2);
+  text-decoration: none;
+  border: var(--sf-line-w) solid var(--sf-line);
+  border-radius: var(--sf-radius-1);
+}
+.sf-topsite__tile { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 3px; overflow: hidden; }
+.sf-topsite__host { max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: var(--sf-text-sm); }
+.sf-topsite__menu {
+  position: absolute;
+  inset-block-start: 4px;
+  inset-inline-end: 4px;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  color: var(--sf-text-3);
+  background: transparent;
+  border: 0;
+  border-radius: var(--sf-radius-1);
+  opacity: 0;
+}
+.sf-topsite:hover { background: var(--sf-fill-hover); border-color: var(--sf-line-strong); }
+.sf-topsite:is(:hover, :focus-within) .sf-topsite__menu { opacity: 1; }
+
+/* Карточки справа: заметка и Claude. */
+.sf-ntcard { display: flex; flex-direction: column; background: var(--sf-bg); border: var(--sf-line-w) solid var(--sf-line); border-radius: var(--sf-radius-1); }
+.sf-ntcard__head { height: 36px; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; gap: var(--sf-gap-4); padding: 0 var(--sf-gap-5) 0 var(--sf-gap-6); border-block-end: var(--sf-line-w) solid var(--sf-line); }
+.sf-ntcard__head > .sf-icon { fill: var(--sf-text-3); }
+.sf-ntcard__body { margin: 0; padding: var(--sf-gap-6); font-size: 12px; line-height: 1.55; color: var(--sf-text-2); white-space: pre-line; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+.sf-ntcard__foot { padding: 0 var(--sf-gap-6) var(--sf-gap-6); }
+.sf-ntcard__foot > .sf-btn { width: 100%; }
+.sf-ntcard--claude { gap: var(--sf-gap-5); padding: var(--sf-gap-6); }
+.sf-ntcard--claude .sf-icon { fill: var(--sf-accent); }
+.sf-ntask {
+  appearance: none;
+  margin: 0;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--sf-gap-5);
+  font: inherit;
+  color: var(--sf-text-3);
+  text-align: start;
+  background: var(--sf-bg-sunken);
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+  border-radius: var(--sf-radius-1);
+}
+.sf-ntask::after { content: "→"; color: var(--sf-accent); }
+.sf-ntask:hover { color: var(--sf-text); }
+
+/* Пустые состояния (новый профиль). */
+.sf-empty {
+  display: flex;
+  gap: var(--sf-gap-6);
+  padding: 14px 14px var(--sf-gap-8);
+  color: var(--sf-text-3);
+  line-height: var(--sf-leading-read);
+  border: var(--sf-line-w) solid var(--sf-line);
+  border-radius: var(--sf-radius-1);
+}
+.sf-empty--center { min-height: 92px; box-sizing: border-box; align-items: center; justify-content: center; text-align: center; padding: 0 var(--sf-gap-12); }
+.sf-empty > .sf-icon { fill: var(--sf-text-4); margin-top: 2px; }
+
+
+/* ── 14. Дополнительно: Split View, строка истории ───────────────────── */
+
+.sf-split { display: flex; height: 100%; }
+.sf-split__half { position: relative; flex: 1 1 0; min-width: 240px; }
+/* Активная половина — полоса акцента 2 px сверху. */
+.sf-split__half[active]::before { content: ""; position: absolute; inset-inline: 0; inset-block-start: 0; height: var(--sf-marker-w); background: var(--sf-accent); box-shadow: var(--sf-glow-accent); z-index: 1; }
+.sf-split__splitter { position: relative; flex: none; width: var(--sf-line-w); background: var(--sf-line-strong); cursor: col-resize; }
+.sf-split__splitter::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: -3px;
+  inset-block-start: 50%;
+  width: 6px;
+  height: 32px;
+  margin-block-start: -16px;
+  box-sizing: border-box;
+  background: var(--sf-bg-raised);
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+}
+.sf-split__splitter:is(:hover, :focus-visible, [dragging]) { background: var(--sf-accent); outline: none; }
+.sf-split__splitter:is(:hover, :focus-visible, [dragging])::after { border-color: var(--sf-accent); }
+/* Плавающая панель половины: «Поменять местами», «Закрыть половину». */
+.sf-split__tools { position: absolute; inset-block-start: 10px; inset-inline-end: 10px; display: flex; align-items: center; gap: var(--sf-gap-1); padding: 3px; background: var(--sf-bg-raised); border: var(--sf-line-w) solid var(--sf-line-strong); border-radius: var(--sf-radius-1); box-shadow: var(--sf-shadow-popup); }
+.sf-split__tools .sf-tbtn { width: 26px; height: 26px; }
+
+/* История: строка 32 px, виртуальный список — фиксированная высота обязательна. */
+.sf-hrow {
+  position: relative;
+  height: var(--sf-history-row-h);
+  display: flex;
+  align-items: center;
+  gap: var(--sf-gap-6);
+  padding: 0 var(--sf-gap-3) 0 var(--sf-gap-4);
+  color: var(--sf-text-2);
+  border-radius: var(--sf-radius-1);
+  contain: strict;
+}
+.sf-hrow__time  { flex: none; width: 40px; font-size: var(--sf-text-sm); color: var(--sf-text-4); }
+.sf-hrow__title { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.sf-hrow__url   { flex: none; width: 30%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: var(--sf-text-sm); color: var(--sf-text-3); }
+.sf-hrow__actions { flex: none; width: 80px; display: flex; justify-content: flex-end; gap: var(--sf-gap-1); visibility: hidden; }
+.sf-hrow__actions .sf-tbtn { width: 24px; height: 24px; }
+.sf-hrow:hover { background: var(--sf-fill-hover); }
+.sf-hrow:is(:hover, :focus-within, [aria-selected="true"]) .sf-hrow__actions { visibility: visible; }
+.sf-hrow[aria-selected="true"] { color: var(--sf-text); font-weight: var(--sf-weight-bold); background: var(--sf-fill-selected); }
+.sf-hrow[aria-selected="true"]::before { content: ""; position: absolute; inset-inline-start: 0; inset-block: 8px; width: var(--sf-marker-w); background: var(--sf-accent); box-shadow: var(--sf-glow-accent); }
+.sf-hrow[aria-selected="true"] :is(.sf-hrow__time, .sf-hrow__url) { font-weight: var(--sf-weight-regular); }
+.sf-hskel { height: var(--sf-history-row-h); display: flex; align-items: center; gap: var(--sf-gap-6); padding: 0 var(--sf-gap-4); }
+.sf-hskel > span { height: 6px; background: var(--sf-fill-skeleton); }

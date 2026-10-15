@@ -1,5 +1,8 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   SunFinch · дизайн-токены · направление A2 «Прибор-моно»
+   SunFinch · дизайн-токены · направление A2 «Прибор-моно» · v2 (шаг 3)
+   v2: + --sf-bg-page, --sf-fill-skeleton, --sf-track, --sf-link,
+       --sf-on-danger, --sf-highlight*, --sf-private*, --sf-flash,
+       размеры Glance/диалога/настроек/новой вкладки, длительности.
    ───────────────────────────────────────────────────────────────────────
    Цвета заданы через light-dark(<светлая>, <тёмная>): тема следует системе
    через color-scheme. Принудительно: <html data-sf-theme="dark|light">.
@@ -17,12 +20,15 @@
   --sf-bg-raised:      light-dark(#FFFCF5, #181B3D); /* заметки, меню, диалоги                       */
   --sf-bg-code:        light-dark(#EFE8DA, #0B0D24); /* код в ответах Claude                         */
   --sf-scrim:          light-dark(rgba(17, 19, 47, .35), rgba(6, 7, 20, .55)); /* под Glance и диалогом */
+  --sf-bg-page:        light-dark(#FBF7EF, #0D0F27); /* свои страницы: новая вкладка, история, настройки, ошибки */
 
   /* ── Заливки состояний (кладутся поверх любой поверхности) ───────────── */
   --sf-fill-hover:     light-dark(rgba(17, 19, 47, .06),  rgba(236, 234, 245, .07));
   --sf-fill-pressed:   light-dark(rgba(17, 19, 47, .11),  rgba(236, 234, 245, .13));
   --sf-fill-selected:  light-dark(rgba(17, 19, 47, .07),  rgba(236, 234, 245, .075)); /* выбранная вкладка, активное пространство, «нажатая» кнопка */
   --sf-fill-bubble:    light-dark(rgba(17, 19, 47, .06),  rgba(236, 234, 245, .08));  /* вопрос в чате Claude */
+  --sf-fill-skeleton:  light-dark(rgba(17, 19, 47, .07),  rgba(236, 234, 245, .08));  /* заглушки при загрузке истории */
+  --sf-track:          light-dark(rgba(17, 19, 47, .16),  rgba(236, 234, 245, .18));  /* дорожка индикатора загрузки */
 
   /* ── Линии ───────────────────────────────────────────────────────────── */
   --sf-line:           light-dark(rgba(17, 19, 47, .12),  rgba(214, 218, 255, .12)); /* разделители 1 px */
@@ -38,11 +44,23 @@
   --sf-accent:         light-dark(#E65300, #FFB300); /* маркер вкладки, иконка «нажатой» кнопки, загрузка */
   --sf-primary:        light-dark(#11132F, #FFB300); /* основная кнопка: «Отправить», «Создать» */
   --sf-on-primary:     light-dark(#FFFFFF, #11132F);
+  --sf-primary-hover:  light-dark(#2C2F55, #FFC233);
+  --sf-primary-pressed: light-dark(#05061A, #E6A100);
   --sf-focus:          light-dark(#4433E0, #7B6CFF); /* кольцо фокуса 2 px, всегда видно */
   --sf-selection:      light-dark(rgba(68, 51, 224, .18), rgba(123, 108, 255, .30));
   --sf-success:        light-dark(#007A70, #1FC2B4); /* «Сохранено» */
   --sf-danger:         light-dark(#C8321E, #FF6F61); /* ошибки Claude */
   --sf-danger-bg:      light-dark(rgba(200, 50, 30, .07), rgba(255, 111, 97, .10));
+  --sf-on-danger:      light-dark(#FFFFFF, #11132F); /* текст на кнопке «Удалить» */
+  --sf-link:           light-dark(#4433E0, #9D93FF); /* ссылки: «О SunFinch», настройки; ≥4.5:1 */
+
+  /* ── Поиск на странице, приватное окно, скриншот ─────────────────────── */
+  --sf-highlight:      light-dark(rgba(230, 83, 0, .22), rgba(255, 179, 0, .40)); /* «Подсветить все» */
+  --sf-highlight-current:    var(--sf-accent);                    /* текущее совпадение */
+  --sf-on-highlight-current: light-dark(#FFFFFF, #11132F);
+  --sf-private-bg:     light-dark(#ECE7F6, #1A1640); /* фон верхней панели приватного окна */
+  --sf-private:        light-dark(#4433E0, #8C7DFF); /* полоса 2 px сверху и значок маски  */
+  --sf-flash:          rgba(255, 255, 255, .55);     /* вспышка скриншота, 120 мс           */
 
   /* ── Цвета пространств (8) ───────────────────────────────────────────── */
   /* Один оттенок, подобранный под каждый фон: ≥3:1 к фону в обеих темах.  */
@@ -54,15 +72,14 @@
   --sf-space-sky:      light-dark(#1F6FD1, #4DA8FF);
   --sf-space-indigo:   light-dark(#4433E0, #8C7DFF); /* «Учёба» */
   --sf-space-slate:    light-dark(#55587D, #A3A6C4); /* нейтральный */
-  /* Элемент пространства получает свой цвет так:
-     .sf-space[data-color="indigo"] { --sf-space: var(--sf-space-indigo); } */
+  /* Элемент пространства получает свой цвет атрибутом data-sf-color="indigo"
+     (правила в конце файла) — тогда и --sf-space, и свечение берут его цвет. */
   --sf-space:          var(--sf-accent);
 
   /* ── Свет и тень ─────────────────────────────────────────────────────── */
   --sf-glow-strength:  70%;                          /* в светлой теме — 30 % (ниже) */
-  --sf-glow-accent:    0 0 8px color-mix(in srgb, var(--sf-accent) var(--sf-glow-strength), transparent);
-  --sf-glow-space:     0 0 8px color-mix(in srgb, var(--sf-space)  var(--sf-glow-strength), transparent);
-  --sf-glow-icon:      drop-shadow(0 0 4px color-mix(in srgb, var(--sf-space) var(--sf-glow-strength), transparent));
+  /* --sf-glow-accent, --sf-glow-space, --sf-glow-icon — в отдельном блоке ниже:
+     их нужно пересчитывать там, где меняется тема или цвет пространства. */
   --sf-shadow-popup:   0 16px 40px -14px light-dark(rgba(17, 19, 47, .28), rgba(0, 0, 0, .60));
   /* Других теней нет: глубина — тоном фона и линией 1 px. */
 
@@ -105,10 +122,22 @@
   --sf-claude-w:       380px;   /* тянется от 260px до 60 % окна */
   --sf-notes-w:        26em;
   --sf-menu-item-h:    28px;
+  --sf-section-h:      24px;    /* «ОСНОВНЫЕ» / «ДОПОЛНИТЕЛЬНЫЕ» */
+  --sf-panel-head-h:   40px;    /* шапки Claude и Glance          */
+  --sf-dialog-w:       480px;   /* «Новое / Изменить пространство» */
+  --sf-confirm-w:      440px;   /* подтверждения                  */
+  --sf-glance-inset-block:  4%; /* отступ Glance от краёв области страницы */
+  --sf-glance-inset-inline: 8%;
+  --sf-glance-inset-narrow: 12px; /* окно уже 1100 px */
+  --sf-settings-nav-w: 236px;
+  --sf-newtab-max:     900px;
+  --sf-history-row-h:  32px;
 
   /* ── Движение ────────────────────────────────────────────────────────── */
-  --sf-dur-1:          120ms;   /* наведение, нажатие            */
+  --sf-dur-1:          120ms;   /* наведение, нажатие, вспышка скриншота */
   --sf-dur-2:          200ms;   /* всплывающие окна, Glance      */
+  --sf-tooltip-delay:  500ms;   /* = ui.tooltip.delay_ms          */
+  --sf-toast-time:     4s;      /* «Скопировано и сохранено», «Запись удалена · Отменить» */
   --sf-ease:           cubic-bezier(.2, .7, .2, 1);
 }
 
@@ -116,8 +145,27 @@
 @media (prefers-color-scheme: light) {
   :root:not([data-sf-theme="dark"]) { --sf-glow-strength: 30%; }
 }
-:root[data-sf-theme="light"] { color-scheme: light; --sf-glow-strength: 30%; }
-:root[data-sf-theme="dark"]  { color-scheme: dark;  --sf-glow-strength: 70%; }
+/* data-sf-theme работает на любом элементе (окно, демо-колонка, превью). */
+[data-sf-theme="light"] { color-scheme: light; --sf-glow-strength: 30%; }
+[data-sf-theme="dark"]  { color-scheme: dark;  --sf-glow-strength: 70%; }
+
+/* ── Свечение ──────────────────────────────────────────────────────────────
+   Пользовательское свойство вычисляет var() там, где объявлено. Поэтому
+   свечение объявлено и на :root, и на каждом элементе, где меняется тема
+   или цвет пространства, — иначе в «Учёбе» светился бы янтарь. */
+:root, [data-sf-theme], [data-sf-color] {
+  --sf-glow-accent:    0 0 8px color-mix(in srgb, var(--sf-accent) var(--sf-glow-strength), transparent);
+  --sf-glow-space:     0 0 8px color-mix(in srgb, var(--sf-space)  var(--sf-glow-strength), transparent);
+  --sf-glow-icon:      drop-shadow(0 0 4px color-mix(in srgb, var(--sf-space) var(--sf-glow-strength), transparent));
+}
+[data-sf-color="orange"] { --sf-space: var(--sf-space-orange); }
+[data-sf-color="amber"]  { --sf-space: var(--sf-space-amber); }
+[data-sf-color="pink"]   { --sf-space: var(--sf-space-pink); }
+[data-sf-color="green"]  { --sf-space: var(--sf-space-green); }
+[data-sf-color="teal"]   { --sf-space: var(--sf-space-teal); }
+[data-sf-color="sky"]    { --sf-space: var(--sf-space-sky); }
+[data-sf-color="indigo"] { --sf-space: var(--sf-space-indigo); }
+[data-sf-color="slate"]  { --sf-space: var(--sf-space-slate); }
 
 /* ── Меньше движения ───────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
@@ -132,23 +180,15 @@
     --sf-line: CanvasText; --sf-line-strong: CanvasText;
     --sf-fill-hover: transparent; --sf-fill-pressed: transparent;
     --sf-fill-selected: SelectedItem; --sf-fill-bubble: transparent;
+    --sf-fill-skeleton: GrayText; --sf-track: GrayText; --sf-bg-page: Canvas;
+    --sf-link: LinkText; --sf-on-danger: Canvas; --sf-private-bg: Canvas; --sf-private: CanvasText;
+    --sf-highlight: Mark; --sf-highlight-current: Highlight; --sf-on-highlight-current: HighlightText;
+    --sf-primary-hover: ButtonText; --sf-primary-pressed: ButtonText;
     --sf-accent: Highlight; --sf-focus: Highlight; --sf-primary: ButtonText; --sf-on-primary: ButtonFace;
     --sf-success: CanvasText; --sf-danger: CanvasText; --sf-danger-bg: transparent;
     --sf-glow-strength: 0%; --sf-shadow-popup: none;
   }
+  [data-sf-theme] { --sf-glow-strength: 0%; }
 }
 
-/* ── Пример применения ─────────────────────────────────────────────────────
-.tab[selected] {
-  background: var(--sf-fill-selected);
-  color: var(--sf-text);
-  font-weight: var(--sf-weight-bold);
-  box-shadow: inset var(--sf-marker-w) 0 0 var(--sf-accent);   маркер слева
-}
-.tab[selected]::before { box-shadow: var(--sf-glow-accent); }    свечение маркера
-.sf-space[aria-current="true"] {
-  background: var(--sf-fill-selected);
-  border-block-end: var(--sf-marker-w) solid var(--sf-space);
-}
-:focus-visible { outline: var(--sf-focus-w) solid var(--sf-focus); outline-offset: -2px; }
-───────────────────────────────────────────────────────────────────────── */
+/* Применение — в components.css (все компоненты и состояния). */
