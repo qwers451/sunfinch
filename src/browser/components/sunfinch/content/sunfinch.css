@@ -6,6 +6,7 @@
    sunfinch-tokens.css, UI font JetBrains Mono, small radii, logo colors. */
 
 @import url("chrome://browser/content/sunfinch/sunfinch-tokens.css");
+@import url("chrome://browser/content/sunfinch/native.css");
 
 /* --- Window colors -------------------------------------------------------
    Only with the default theme: a theme the user picks keeps its colors. */

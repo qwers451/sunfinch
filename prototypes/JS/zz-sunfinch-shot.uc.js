@@ -185,6 +185,59 @@
           D.dialog.close("");
           break;
         }
+        case "ctxmenu": {
+          // Tab context menu, opened by a trusted right click so Firefox
+          // fills it in as for a real one.
+          const menu = document.getElementById("tabContextMenu");
+          const rect = gBrowser.selectedTab.getBoundingClientRect();
+          const x = rect.left + rect.width / 2;
+          const y = rect.top + rect.height / 2;
+          window.windowUtils.sendMouseEvent("mousedown", x, y, 2, 1, 0);
+          window.windowUtils.sendMouseEvent("contextmenu", x, y, 2, 1, 0);
+          window.windowUtils.sendMouseEvent("mouseup", x, y, 2, 1, 0);
+          await waitFor(() => menu.state == "open");
+          await wait(500);
+          await shoot(`ctxmenu-${theme}`);
+          menu.hidePopup();
+          break;
+        }
+        case "appmenu": {
+          PanelUI.show();
+          await waitFor(() => PanelUI.panel.state == "open");
+          await shoot(`appmenu-${theme}`);
+          PanelUI.hide();
+          break;
+        }
+        case "urlbar": {
+          gURLBar.focus();
+          gURLBar.value = "птицы";
+          gURLBar.startQuery({ searchString: "птицы" });
+          await waitFor(() => gURLBar.view.isOpen);
+          await wait(800);
+          await shoot(`urlbar-${theme}`);
+          gURLBar.view.close();
+          break;
+        }
+        case "tooltip": {
+          const tip = document.createXULElement("tooltip");
+          tip.setAttribute("label", "Скриншот (с Shift — вся страница)");
+          document.getElementById("mainPopupSet").append(tip);
+          const anchor = document.getElementById("sunfinch-screenshot-button");
+          tip.openPopup(anchor, "after_end");
+          await waitFor(() => tip.state == "open");
+          await shoot(`tooltip-${theme}`);
+          tip.hidePopup();
+          tip.remove();
+          break;
+        }
+        case "downloads": {
+          DownloadsPanel.showPanel();
+          await waitFor(() => DownloadsPanel.panel?.state == "open");
+          await wait(500);
+          await shoot(`downloads-${theme}`);
+          DownloadsPanel.hidePanel();
+          break;
+        }
         case "menu": {
           const S = window.SunfinchSpaces;
           const button = document.querySelector(".sunfinch-space-button[selected]");

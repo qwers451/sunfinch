@@ -29,6 +29,7 @@ user_pref("termsofuse.bypassNotification", true);
 user_pref("sidebar.revamp", true);
 user_pref("sidebar.verticalTabs", true);
 user_pref("sidebar.verticalTabs.dragToPinPromo.dismissed", true);
+user_pref("widget.windows.mica.popups", 0);
 // Main tabs of spaces survive restarts through session restore.
 user_pref("browser.startup.page", 3);
 

@@ -1,0 +1,133 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+/* Firefox's own popups under the SunFinch tokens (design A2): menus,
+   tooltips, the address bar and its suggestions, the main menu, downloads,
+   permission and site-information panels. Only colors, fonts, radii and
+   spacing change: the structure and behavior stay Firefox's. Colors apply
+   with the default theme only; a theme the user picks keeps its own.
+
+   Firefox sets the popup colors on the popup element itself
+   (menupopup { --panel-background-color: Menu }), so the overrides target
+   popups, not :root. On Windows 11 menus would otherwise use the system
+   "mica" backdrop, which ignores these colors: app-sunfinch-prefs.js sets
+   widget.windows.mica.popups to 0. */
+
+/* --- Popups: menus and panels ------------------------------------------- */
+
+:root:not([lwtheme]) :is(menupopup, panel) {
+  --panel-background-color: var(--sf-bg-raised);
+  --panel-text-color: var(--sf-text);
+  --panel-border-color: var(--sf-line-strong);
+  --panel-separator-color: var(--sf-line);
+  /* Panel rows (main menu, downloads, site information). */
+  --button-background-color-ghost-hover: var(--sf-fill-hover);
+  --button-background-color-ghost-active: var(--sf-fill-pressed);
+  --button-background-color-menu-hover: var(--sf-fill-hover);
+  --button-background-color-menu-active: var(--sf-fill-pressed);
+}
+
+:root :is(menupopup, panel) {
+  --panel-border-radius: var(--sf-radius-2);
+  /* Depth comes from the tone and the 1 px line; the shadow stays inside
+     Firefox's 4 px popup margin. */
+  --panel-box-shadow: 0 2px var(--panel-box-shadow-margin)
+    light-dark(rgba(17, 19, 47, 0.18), rgba(0, 0, 0, 0.5));
+  --menuitem-border-radius: var(--sf-radius-1);
+  font-family: var(--sf-font-ui);
+}
+
+:root menupopup {
+  --panel-padding: var(--sf-gap-2);
+  --menuitem-padding: 0 var(--sf-gap-6) 0 var(--sf-gap-4);
+  font-size: var(--sf-text-md);
+}
+
+menupopup > :is(menuitem, menu) {
+  min-height: var(--sf-menu-item-h);
+}
+
+:root:not([lwtheme]) :is(menu, menuitem)[_moz-menuactive]:not([disabled]) {
+  color: var(--sf-text);
+  background-color: var(--sf-fill-hover);
+}
+
+:root:not([lwtheme]) :is(menu, menuitem)[disabled] {
+  color: var(--sf-text-4);
+}
+
+/* Shortcut text in menus ("Ctrl+T"). */
+:root:not([lwtheme]) .menu-accel {
+  color: var(--sf-text-4);
+}
+
+menupopup > menuseparator {
+  padding-inline: var(--sf-gap-4);
+  margin-block: var(--sf-gap-2);
+}
+
+/* --- Tooltips ------------------------------------------------------------ */
+
+:root:not([lwtheme]) tooltip {
+  appearance: none;
+  color: var(--sf-text);
+  background-color: var(--sf-bg-raised);
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+}
+
+tooltip {
+  padding: 4px var(--sf-gap-4);
+  border-radius: var(--sf-radius-1);
+  font-family: var(--sf-font-ui);
+  font-size: var(--sf-text-sm);
+}
+
+/* --- Address bar and its suggestions ------------------------------------ */
+
+:root:not([lwtheme]) {
+  --urlbarview-background-color-hover: var(--sf-fill-hover);
+  --urlbarview-background-color-selected: var(--sf-fill-selected);
+  --urlbarview-text-color-selected: var(--sf-text);
+  --urlbarview-separator-color: var(--sf-line);
+  --urlbarview-text-color-action: var(--sf-text-3);
+  --urlbar-background-box-shadow-breakout: var(--sf-shadow-popup);
+}
+
+:root {
+  --urlbarview-border-radius: var(--sf-radius-2);
+  --urlbar-background-border-radius: var(--sf-radius-1);
+}
+
+/* The open suggestion list: the field and the list read as one popup. */
+#urlbar[breakout][breakout-extend] > .urlbar-background {
+  border-radius: var(--sf-radius-2);
+}
+
+:root:not([lwtheme]) #urlbar[breakout][breakout-extend] > .urlbar-background {
+  background-color: var(--sf-bg-raised);
+  border: var(--sf-line-w) solid var(--sf-line-strong);
+}
+
+/* Focus: a 2 px ring in the focus color. */
+:root:not([lwtheme]) #urlbar[focused]:not([breakout-extend]) > .urlbar-background {
+  outline: var(--sf-focus-w) solid var(--sf-focus);
+  outline-offset: calc(-1 * var(--sf-focus-w));
+}
+
+.urlbarView {
+  font-family: var(--sf-font-ui);
+}
+
+/* --- Find bar ------------------------------------------------------------ */
+
+:root:not([lwtheme]) findbar {
+  background-color: var(--sf-bg);
+  color: var(--sf-text);
+  border-top-color: var(--sf-line);
+}
+
+findbar {
+  font-family: var(--sf-font-ui);
+  font-size: var(--sf-text-md);
+}

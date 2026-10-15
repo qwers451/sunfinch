@@ -80,3 +80,7 @@ pref("browser.ml.chat.enabled", false);
 pref("browser.newtabpage.activity-stream.showSponsored", false);
 pref("browser.newtabpage.activity-stream.showSponsoredTopSites", false);
 pref("browser.newtabpage.activity-stream.feeds.section.topstories", false);
+
+// Menus are drawn by our CSS (native.css), not by the Windows 11 "mica"
+// backdrop, which would ignore the SunFinch colors.
+pref("widget.windows.mica.popups", 0);
