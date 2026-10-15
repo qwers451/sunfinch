@@ -171,7 +171,15 @@
    - Исправление в `patches/`: на Windows surfer искал распакованные исходники в `firefox-153.5.0esr/`, а в архиве ESR папка называется `firefox-153.5.0/`.
    - Остатки от Zen: surfer пишет в mozconfig `ZEN_FIREFOX_VERSION`, а `displayVersion` бренда — в `browser/config/version.txt`. Поэтому `Services.appinfo.version` будет 0.1.0, а версия движка (`platformVersion`) остаётся 153.5.
 4. ✅ Брендинг: иконки в `configs/branding/release/` генерирует `node tools/gen-branding.mjs` из `branding/source/sunfinch-logo.webp`. Ссылки установщика и prefs бренда берутся из `surfer.json` (`aboutUrl`, `releaseNotesUrl`, `helpUrl`, `downloadUrl`) — это тоже исправление в `patches/`, иначе surfer подставил бы сайт Zen. Упрощённая иконка для 16–32 px — позже.
-5. 🔄 `surfer download` (✅) → `mach bootstrap` → `surfer set brand release` → `surfer import` → `surfer build` → `surfer run`. **Запускать в оболочке MozillaBuild**: `tools\mozshell.cmd "<команда>"` или `E:\MozillaBuild\start-shell.bat`. mach находит MozillaBuild по переменной `MOZILLABUILD`, которую задаёт этот скрипт, а 7z для распаковки surfer берёт из `E:\MozillaBuild\bin`. Скачивание заняло около минуты, а распаковка и `git init` исходников без исключений Defender — больше 20 минут.
+5. ✅ Сборка: `toolsmozshell.cmd "bash tools/first-build.sh"` — шаги bootstrap → brand → import → build (только mozconfig) → mach. Отдельные шаги: `… first-build.sh build mach`. Первая полная сборка — около 50 минут чистого времени. Что пришлось чинить:
+   - surfer на Windows запускал `./mach` без оболочки → патч: `python3 mach`.
+   - `surfer build` держит stdin mach открытым и буферизует вывод; mach молча висел. Компилируем шагом `mach` (`--no-interactive`, stdin закрыт), surfer только пишет mozconfig (`SURFER_MOZCONFIG_ONLY=1`).
+   - Шаблон surfer: `--target=x86_64-pc-mingw32` больше не поддерживается — убран.
+   - cc-крейт в Rust build-скриптах находил установленную Visual Studio 2026 (MSVC 14.52, нужен Clang 22) вместо MSVC 14.50 из bootstrap. Лечится в `first-build.sh`: `VCINSTALLDIR` и `cl.exe` из `E:mozbuilds` в PATH.
+   - Bootstrap дважды подвисал на скачивании (TLS) — помогал перезапуск.
+   - Запуск команд через `cmd /c` съедает `%` — не писать `date +%H` и т. п. в аргументах `mozshell.cmd`.
+   - mach, запущенный из-под ИИ-агента, печатает только предупреждения и ошибки.
+   - Vendor по умолчанию «Mozilla» → `MOZ_APP_VENDOR=SunFinch`; crash reporter слал бы отчёты Mozilla → `--disable-crashreporter`.
 6. ✅ Стенд прототипов: Firefox ESR 153.5 в `E:\tools\firefox-esr-153` (обновления выключены политикой), fx-autoconfig, профиль `E:\tools\sunfinch-proto\profile`. Подробности и самопроверка — в `prototypes/README.md`.
 
 Первая сборка на i5-13400F и 32 ГБ займёт ориентировочно 1–2 часа, повторные — быстрее (кэш).
